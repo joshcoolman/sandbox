@@ -6,6 +6,20 @@ A Next.js-based sandbox for exploring visual design systems, widgets, and intera
 
 ## Experiments
 
+### Day at a Glance
+
+**February 12, 2026**
+
+[![Day at a Glance](./public/screenshots/day-at-a-glance.png)](https://www.joshcoolman.com/day-at-a-glance)
+
+Time-aware workday timeline with a dynamic now-line that tracks real time. Features a 9am-5pm schedule with colored event bars that partially fill as the hour progresses -- gray above the now-line, color below. Past events auto-dim. Built with CSS grid, inline linear-gradient for the fill effect, and 60-second interval updates.
+
+**Tags:** CSS Grid - Timeline - Dynamic State - Dark Theme
+
+**[View Live →](https://www.joshcoolman.com/day-at-a-glance) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/day-at-a-glance)**
+
+---
+
 ### Sourcing Image
 
 **February 11, 2026**
@@ -101,20 +115,6 @@ Interactive brand guidelines with live color and typography customization. Featu
 **Tags:** React Components • Animated Charts • Color Systems • Typography
 
 **[View Live →](https://www.joshcoolman.com/color-spec) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/color-spec)**
-
----
-
-### A Day in the life...
-
-**February 2, 2026**
-
-[![Day at a Glance](./public/screenshots/day-at-a-glance.png)](https://www.joshcoolman.com/day-at-a-glance)
-
-Clean 3-column CSS grid timeline with colored sidebar bars, SVG icons, and a subtle "now" indicator line that shows through semi-transparent event cards. Features split color bars for past/upcoming visualization and continuous horizontal hour lines.
-
-**Tags:** CSS Grid • Timeline • Z-Index Layering • Dark Theme
-
-**[View Live →](https://www.joshcoolman.com/day-at-a-glance) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/day-at-a-glance)**
 
 ---
 

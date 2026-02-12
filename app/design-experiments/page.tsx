@@ -69,6 +69,14 @@ export default function Home() {
 
   const experiments: Experiment[] = [
     {
+      slug: 'day-at-a-glance',
+      date: 'February 12, 2026',
+      title: 'Day at a Glance',
+      description: 'Time-aware workday timeline with dynamic now-line that tracks real time. Features 9am-5pm schedule with colored event bars that partially fill as the hour progresses -- gray above the now-line, color below. Past events auto-dim. Built with CSS grid, inline linear-gradient for the fill effect, and 60-second interval updates.',
+      screenshot: '/screenshots/day-at-a-glance.png',
+      tags: ['CSS Grid', 'Timeline', 'Dynamic State', 'Dark Theme']
+    },
+    {
       slug: 'sourcing-image',
       date: 'February 11, 2026',
       title: 'Sourcing Image',
@@ -131,14 +139,6 @@ export default function Home() {
       description: 'Type specimen sheet with interactive font pairing selector. Features size scale, weight ramp, character set display, drop cap pull quote, and colorful pairing cards inspired by the Color Spec experiment. Text-based controls with underline hover animations.',
       screenshot: '/screenshots/spec-sheet.png',
       tags: ['Typography', 'Font Pairings', 'Dark/Light Mode', 'Type Specimen']
-    },
-    {
-      slug: 'day-at-a-glance',
-      date: 'February 2, 2026',
-      title: 'Day at a Glance',
-      description: 'Clean 3-column CSS grid timeline with colored sidebar bars, SVG icons, and a subtle "now" indicator line that shows through semi-transparent event cards. Features split color bars for past/upcoming visualization.',
-      screenshot: '/screenshots/day-at-a-glance.png',
-      tags: ['CSS Grid', 'Timeline', 'Z-Index Layering', 'Dark Theme']
     },
     {
       slug: 'blend',
