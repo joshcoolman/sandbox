@@ -38,6 +38,15 @@ h1 {
     line-height: 1.5;
 }
 
+.today-date {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    margin-top: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
 .timeline {
     position: relative;
     display: grid;
@@ -124,27 +133,44 @@ h1 {
     color: #888;
 }
 
-.event-bar.shower {
+.event-bar.blue {
     background: #3b82f6;
     color: #fff;
 }
 
-.event-bar.breakfast {
-    background: #f59e0b;
-    color: #fff;
-}
-
-.event-bar.email {
+.event-bar.purple {
     background: #a855f7;
     color: #fff;
 }
 
-.event-bar.split {
-    background: linear-gradient(to bottom, rgba(68, 68, 68, 0.85) 50%, var(--bar-color) 50%);
+.event-bar.yellow {
+    background: #f59e0b;
+    color: #fff;
 }
 
-.event-bar.split.shower {
-    --bar-color: #3b82f6;
+.event-bar.pink {
+    background: #ec4899;
+    color: #fff;
+}
+
+.event-bar.green {
+    background: #22c55e;
+    color: #fff;
+}
+
+.event-bar.teal {
+    background: #14b8a6;
+    color: #fff;
+}
+
+.event-bar.orange {
+    background: #f97316;
+    color: #fff;
+}
+
+.event-bar.indigo {
+    background: #6366f1;
+    color: #fff;
 }
 
 .card-col {
@@ -189,6 +215,10 @@ h1 {
     color: #888;
 }
 
+.hour-row.past .hour-num {
+    color: #333;
+}
+
 .event-time {
     font-size: 13px;
     color: #666;
@@ -222,8 +252,21 @@ h1 {
 }
 
 .checkbox.blue { border-color: #3b82f6; }
+.checkbox.blue.checked { background: #3b82f6; border-color: #3b82f6; }
 .checkbox.yellow { border-color: #f59e0b; }
+.checkbox.yellow.checked { background: #f59e0b; border-color: #f59e0b; }
 .checkbox.purple { border-color: #a855f7; }
+.checkbox.purple.checked { background: #a855f7; border-color: #a855f7; }
+.checkbox.pink { border-color: #ec4899; }
+.checkbox.pink.checked { background: #ec4899; border-color: #ec4899; }
+.checkbox.green { border-color: #22c55e; }
+.checkbox.green.checked { background: #22c55e; border-color: #22c55e; }
+.checkbox.teal { border-color: #14b8a6; }
+.checkbox.teal.checked { background: #14b8a6; border-color: #14b8a6; }
+.checkbox.orange { border-color: #f97316; }
+.checkbox.orange.checked { background: #f97316; border-color: #f97316; }
+.checkbox.indigo { border-color: #6366f1; }
+.checkbox.indigo.checked { background: #6366f1; border-color: #6366f1; }
 
 .now-line {
     position: absolute;
@@ -235,15 +278,6 @@ h1 {
     pointer-events: none;
 }
 
-.now-time {
-    position: absolute;
-    left: 0;
-    top: -7px;
-    font-size: 11px;
-    font-weight: 600;
-    color: #ff6b6b;
-    white-space: nowrap;
-}
 
 @media (max-width: 640px) {
     body {

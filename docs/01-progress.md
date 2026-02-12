@@ -4,6 +4,17 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Day at a Glance: time-aware enhancement
+
+**Date:** 2026-02-12
+**Issue:** #9 - Day at a Glance: time-aware enhancement with dynamic now-line
+
+Rebuilt the Day at a Glance experiment with a full 9am-5pm workday schedule, dynamic now-line that tracks real time, and a partial color fill effect on the current hour's event bar. Added accessibility for checkboxes and fixed hydration mismatch.
+
+**Key files:** `app/day-at-a-glance/page.tsx`, `app/day-at-a-glance/styles.css`
+
+---
+
 ### Write-post skill and TypeScript cleanup
 
 **Date:** 2026-02-12
