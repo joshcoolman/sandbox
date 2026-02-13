@@ -1,6 +1,7 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
 import BackButton from './components/BackButton'
+import Sidebar from './components/Sidebar'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <BackButton />
+        <Sidebar />
         {children}
       </body>
     </html>
