@@ -1,33 +1,35 @@
-.card-stack-page {
+.container {
   background: #000;
   min-height: 100vh;
   position: relative;
 }
 
-.close-button {
+.scrollHint {
   position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 50;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.6);
-  text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+  gap: 6px;
+  z-index: 9;
+  color: rgba(255, 255, 255, 0.25);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  margin-top: calc(-1 * (min(67vw, 1280px) * 9 / 32) - 30px);
 }
 
-.close-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: rgba(255, 255, 255, 0.9);
+@media (max-width: 768px) {
+  .scrollHint {
+    margin-top: calc(-1 * (85vw * 9 / 32) - 30px);
+  }
 }
 
 /* Fixed container that holds all cards stacked on top of each other */
-.card-stack {
+.stack {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -38,7 +40,7 @@
 }
 
 @media (max-width: 768px) {
-  .card-stack {
+  .stack {
     width: 85vw;
   }
 }
@@ -55,7 +57,7 @@
   will-change: transform;
 }
 
-.card-title {
+.cardTitle {
   font-family: system-ui, -apple-system, sans-serif;
   font-size: clamp(1.5rem, 3vw, 2.5rem);
   font-weight: 600;
@@ -65,7 +67,7 @@
 }
 
 /* Overlay: sits outside the stack, truly fixed to viewport */
-.card-overlay {
+.overlay {
   position: fixed;
   z-index: 100;
   display: none;
@@ -76,7 +78,7 @@
 }
 
 /* Invisible spacers that create scroll distance for each card peel */
-.scroll-spacers {
+.scrollSpacers {
   position: relative;
   z-index: 1;
   pointer-events: none;
