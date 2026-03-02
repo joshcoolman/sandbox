@@ -2,6 +2,14 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'card-stack',
+    date: 'March 2, 2026',
+    title: 'Card Stack',
+    description: 'Scroll-driven card stack with seven colored cards. Scroll peels cards off the top to reveal the next. Each card expands to fullscreen with a GSAP-powered zoom transition. Built with GSAP ScrollTrigger.',
+    screenshot: '/screenshots/card-stack.png',
+    tags: ['GSAP', 'Scroll Animation', 'Cards', 'Interactive'],
+  },
+  {
     slug: 'retro-bento',
     date: 'February 23, 2026',
     title: 'Retro Bento',

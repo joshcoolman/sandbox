@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useRef, useCallback, useState } from "react";
 import { flushSync } from "react-dom";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -237,6 +238,12 @@ function CardStack() {
 
   return (
     <div className="card-stack-page">
+      <Link href="/design-experiments" className="close-button" aria-label="Back to experiments">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      </Link>
+
       {/* Fixed stack of cards in the center of the viewport */}
       <div className="card-stack" ref={stackRef}>
         {CARDS.map((card, i) => (

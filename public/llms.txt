@@ -8,6 +8,7 @@ Source: https://github.com/joshcoolman-smc/sandbox
 
 ## Design Experiments
 
+- [Card Stack](https://www.joshcoolman.com/design-experiments/card-stack): Scroll-driven card stack with GSAP ScrollTrigger peel-off animation, opacity fade, and fullscreen expand/collapse
 - [Retro Bento](https://www.joshcoolman.com/design-experiments/retro-bento): CrossFit Bento meets Retro Tech -- nine fictional hardware modules with LCD displays, animated gauges, interactive knobs, and LED matrix
 - [Retro Tech Control Panel](https://www.joshcoolman.com/design-experiments/retro-tech): Hardware-inspired CSS control panel with knobs, faders, toggles, and LED meters
 - [CrossFit Bento](https://www.joshcoolman.com/design-experiments/crossfit-bento): Dark bento grid dashboard for CrossFit training data with charts and heatmaps

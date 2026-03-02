@@ -10,6 +10,20 @@ This is a design sketchbook, not production software. There's no test suite and 
 
 ## Experiments
 
+### Card Stack
+
+**March 2, 2026**
+
+[![Card Stack](./public/screenshots/card-stack.png)](https://www.joshcoolman.com/design-experiments/card-stack)
+
+Scroll-driven card stack with seven colored cards. Scroll peels cards off the top to reveal the next, with opacity fade-out as cards clear the stack. Each card expands to fullscreen with a GSAP-powered zoom transition. Click to expand, click to collapse. URL deep-linking with `?card=N`. Built with GSAP ScrollTrigger, Lenis smooth scroll, and a separate overlay approach to avoid transform-containment issues. Responsive -- 85vw on mobile, 67vw on desktop.
+
+`GSAP` `Scroll Animation` `Cards` `Interactive`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/card-stack) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/card-stack)**
+
+---
+
 ### Retro Bento
 
 **February 23, 2026**
