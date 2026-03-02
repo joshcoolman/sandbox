@@ -1,0 +1,92 @@
+.card-stack-page {
+  background: #000;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Fixed container that holds all cards stacked on top of each other */
+.card-stack {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(50vw, 960px);
+  aspect-ratio: 16 / 9;
+  z-index: 10;
+}
+
+/* Each card is absolutely positioned to fill the stack container */
+.card {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2.5rem;
+  will-change: transform;
+}
+
+.card-title {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.expand-button {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 0.6rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.expand-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.back-button {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 8px;
+  padding: 0.6rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: auto;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Invisible spacers that create scroll distance for each card peel */
+.scroll-spacers {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.spacer {
+  height: 100vh;
+}
