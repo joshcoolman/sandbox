@@ -77,7 +77,7 @@ function CardStack() {
     const cards = cardRefs.current.filter(Boolean) as HTMLElement[];
 
     cards.forEach((card, i) => {
-      gsap.set(card, { zIndex: CARDS.length - i });
+      gsap.set(card, { zIndex: CARDS.length - i, y: i * 5 });
     });
 
     const triggers = spacers.map((spacer, i) => {
@@ -92,7 +92,7 @@ function CardStack() {
         onUpdate: (self) => {
           const distance =
             (window.innerHeight + cards[i].offsetHeight) / 2;
-          gsap.set(cards[i], { y: -self.progress * distance });
+          gsap.set(cards[i], { y: i * 5 - self.progress * distance });
         },
       });
     });
