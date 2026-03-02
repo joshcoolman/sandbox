@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useCallback } from "react";
+import { Suspense, useEffect, useRef, useCallback, useState } from "react";
+import { flushSync } from "react-dom";
 import { useSearchParams, useRouter } from "next/navigation";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -35,19 +36,19 @@ function CardStack() {
   const stackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const spacerRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const backBtnRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const isAnimatingRef = useRef(false);
+  const hasCollapsedRef = useRef(false);
   const savedRectRef = useRef<DOMRect | null>(null);
   const lenisRef = useRef<Lenis | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-  const expandedCard = searchParams.get("card");
-  const expandedIndex =
-    expandedCard !== null ? parseInt(expandedCard, 10) : null;
+  const cardParam = searchParams.get("card");
+  const urlIndex = cardParam !== null ? parseInt(cardParam, 10) : null;
   const isExpanded =
-    expandedIndex !== null &&
-    !isNaN(expandedIndex) &&
-    expandedIndex >= 0 &&
-    expandedIndex < CARDS.length;
+    expandedIndex !== null ||
+    (urlIndex !== null && !isNaN(urlIndex) && urlIndex >= 0 && urlIndex < CARDS.length);
+  const activeIndex = expandedIndex ?? urlIndex;
 
   // Initialize Lenis smooth scroll
   useEffect(() => {
@@ -70,21 +71,17 @@ function CardStack() {
     };
   }, []);
 
-  // Card stack scroll effect:
-  // All cards sit in a fixed stack. As you scroll, the top card peels off
-  // upward, revealing the card beneath it.
+  // Card stack scroll effect
   useEffect(() => {
     const spacers = spacerRefs.current.filter(Boolean) as HTMLElement[];
     const cards = cardRefs.current.filter(Boolean) as HTMLElement[];
 
-    // Set z-index so first card is on top
     cards.forEach((card, i) => {
       gsap.set(card, { zIndex: CARDS.length - i });
     });
 
-    // Each spacer controls when its corresponding card peels off
     const triggers = spacers.map((spacer, i) => {
-      if (i === cards.length - 1) return null; // last card doesn't peel
+      if (i === cards.length - 1) return null;
 
       return ScrollTrigger.create({
         trigger: spacer,
@@ -93,8 +90,6 @@ function CardStack() {
         scrub: true,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          // Distance from card's centered position to fully off the top of screen:
-          // (viewport height + card height) / 2
           const distance =
             (window.innerHeight + cards[i].offsetHeight) / 2;
           gsap.set(cards[i], { y: -self.progress * distance });
@@ -116,53 +111,62 @@ function CardStack() {
     }
   }, [isExpanded]);
 
-  // Handle direct URL load with ?card=N
+  // Handle direct URL load with ?card=N (no animation, just show expanded)
   useEffect(() => {
-    if (isExpanded && !isAnimatingRef.current) {
-      const card = cardRefs.current[expandedIndex];
-      const backBtn = backBtnRefs.current[expandedIndex];
-      if (!card) return;
+    if (urlIndex !== null && !isNaN(urlIndex) && urlIndex >= 0 && urlIndex < CARDS.length && !isAnimatingRef.current && expandedIndex === null && !hasCollapsedRef.current) {
+      const overlay = overlayRef.current;
+      if (!overlay) return;
 
-      savedRectRef.current = card.getBoundingClientRect();
+      overlay.style.backgroundColor = CARDS[urlIndex].color;
 
-      gsap.set(card, {
-        position: "fixed",
+      gsap.set(overlay, {
+        display: "flex",
         top: 0,
         left: 0,
         width: "100vw",
         height: "100vh",
-        zIndex: 500,
         borderRadius: 0,
-        yPercent: 0,
+        opacity: 1,
       });
 
-      if (backBtn) gsap.set(backBtn, { opacity: 1 });
+      setExpandedIndex(urlIndex);
     }
-  }, [isExpanded, expandedIndex]);
+  }, [urlIndex, expandedIndex]);
 
   const handleExpand = useCallback(
     (index: number) => {
       if (isAnimatingRef.current || isExpanded) return;
       isAnimatingRef.current = true;
+      hasCollapsedRef.current = false;
 
       const card = cardRefs.current[index];
-      const backBtn = backBtnRefs.current[index];
-      if (!card) return;
+      const overlay = overlayRef.current;
+      if (!card || !overlay) return;
 
       const rect = card.getBoundingClientRect();
       savedRectRef.current = rect;
 
-      gsap.set(card, {
-        position: "fixed",
+      // Stop scroll immediately
+      lenisRef.current?.stop();
+
+      // Set up the overlay to match the card's current screen position
+      overlay.style.backgroundColor = CARDS[index].color;
+
+      // Render title synchronously so it's in the DOM before GSAP positions
+      flushSync(() => setExpandedIndex(index));
+
+      gsap.set(overlay, {
+        display: "flex",
         top: rect.top,
         left: rect.left,
         width: rect.width,
         height: rect.height,
-        zIndex: 500,
-        yPercent: 0,
+        borderRadius: 12,
+        opacity: 1,
       });
 
-      gsap.to(card, {
+      // Animate overlay to fullscreen
+      gsap.to(overlay, {
         top: 0,
         left: 0,
         width: "100vw",
@@ -171,7 +175,6 @@ function CardStack() {
         duration: 0.5,
         ease: "power3.inOut",
         onComplete: () => {
-          if (backBtn) gsap.to(backBtn, { opacity: 1, duration: 0.2 });
           router.push(`?card=${index}`, { scroll: false });
           isAnimatingRef.current = false;
         },
@@ -180,43 +183,44 @@ function CardStack() {
     [isExpanded, router]
   );
 
-  const handleCollapse = useCallback(
-    (index: number) => {
-      if (isAnimatingRef.current) return;
-      isAnimatingRef.current = true;
+  const handleCollapse = useCallback(() => {
+    if (isAnimatingRef.current || activeIndex === null) return;
+    isAnimatingRef.current = true;
+    hasCollapsedRef.current = true;
 
-      const card = cardRefs.current[index];
-      const backBtn = backBtnRefs.current[index];
-      if (!card) return;
+    const overlay = overlayRef.current;
+    if (!overlay) return;
 
-      const rect = savedRectRef.current;
-      if (!rect) {
-        gsap.set(card, { clearProps: "all" });
-        router.push("/design-experiments/card-stack", { scroll: false });
-        isAnimatingRef.current = false;
-        return;
-      }
+    const rect = savedRectRef.current;
 
-      if (backBtn) gsap.set(backBtn, { opacity: 0 });
+    // If no saved rect (direct URL load), just snap closed
+    if (!rect) {
+      gsap.set(overlay, { display: "none", clearProps: "all" });
+      setExpandedIndex(null);
       router.push("/design-experiments/card-stack", { scroll: false });
+      isAnimatingRef.current = false;
+      lenisRef.current?.start();
+      return;
+    }
 
-      gsap.to(card, {
-        top: rect.top,
-        left: rect.left,
-        width: rect.width,
-        height: rect.height,
-        borderRadius: 12,
-        duration: 0.45,
-        ease: "power3.inOut",
-        onComplete: () => {
-          gsap.set(card, { clearProps: "all" });
-          ScrollTrigger.refresh();
-          isAnimatingRef.current = false;
-        },
-      });
-    },
-    [router]
-  );
+    gsap.to(overlay, {
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+      borderRadius: 12,
+      duration: 0.45,
+      ease: "power3.inOut",
+      onComplete: () => {
+        gsap.set(overlay, { display: "none", clearProps: "all" });
+        setExpandedIndex(null);
+        router.push("/design-experiments/card-stack", { scroll: false });
+        ScrollTrigger.refresh();
+        isAnimatingRef.current = false;
+        lenisRef.current?.start();
+      },
+    });
+  }, [activeIndex, router]);
 
   return (
     <div className="card-stack-page">
@@ -229,49 +233,24 @@ function CardStack() {
               cardRefs.current[i] = el;
             }}
             className="card"
-            style={{ backgroundColor: card.color }}
+            style={{ backgroundColor: card.color, cursor: "pointer" }}
+            onClick={() => handleExpand(i)}
           >
             <h2 className="card-title">{card.title}</h2>
-            <button
-              className="expand-button"
-              onClick={() => handleExpand(i)}
-              aria-label={`Expand ${card.title}`}
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-              </svg>
-            </button>
-            <button
-              ref={(el) => {
-                backBtnRefs.current[i] = el;
-              }}
-              className="back-button"
-              onClick={() => handleCollapse(i)}
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 12H5M12 19l-7-7 7-7" />
-              </svg>
-            </button>
           </div>
         ))}
+      </div>
+
+      {/* Overlay: lives outside the stack, no transform containment issues */}
+      <div
+        ref={overlayRef}
+        className="card-overlay"
+        style={{ display: "none", cursor: "pointer" }}
+        onClick={handleCollapse}
+      >
+        {activeIndex !== null && (
+          <h2 className="card-title">{CARDS[activeIndex].title}</h2>
+        )}
       </div>
 
       {/* Invisible spacers that drive scroll distance for each card peel */}
