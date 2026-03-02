@@ -90,9 +90,22 @@ function CardStack() {
         scrub: true,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          const distance =
-            (window.innerHeight + cards[i].offsetHeight) / 2;
-          gsap.set(cards[i], { y: i * 5 - self.progress * distance });
+          const cardHeight = cards[i].offsetHeight;
+          const distance = (window.innerHeight + cardHeight) / 2;
+          const y = i * 5 - self.progress * distance;
+
+          // Gap between this card's bottom edge and the next card's top edge
+          const nextCardTop = (i + 1) * 5;
+          const thisCardBottom = y + cardHeight;
+          const gap = nextCardTop - thisCardBottom;
+
+          // Stay fully opaque while overlapping. Once 60px clear, fade over 120px.
+          let opacity = 1;
+          if (gap > 60) {
+            opacity = Math.max(0, 1 - (gap - 60) / 120);
+          }
+
+          gsap.set(cards[i], { y, opacity });
         },
       });
     });
