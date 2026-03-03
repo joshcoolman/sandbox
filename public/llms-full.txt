@@ -52,6 +52,8 @@ Source: https://github.com/joshcoolman-smc/sandbox
 
 - [You're Doing It Wrong](https://www.joshcoolman.com/blog/youre-doing-it-wrong): Why AI-powered design tools are just the old paradigm with new paint. Argues that wrapping AI in traditional GUI tools misses the transformative potential. The real shift is working directly with agents through code and conversation, not through constrained interfaces that limit what the AI can do. By Josh Coolman. Date: February 8, 2026.
 
+- [Vibe Coding Is Dead. Long Live Vibe Coding.](https://www.joshcoolman.com/blog/vibe-coding-is-dead): What people call vibes is what designers have always called intuition. Argues that the backlash against vibe coding misses the point -- the real power of AI-assisted development isn't autonomous execution at scale, but making iteration so cheap that you can trash work guilt-free and start over. Disposability, not automation, is the superpower. The best AI work comes from tight feedback loops and design intuition, not massive autonomous PRs. By Josh Coolman. Date: March 2, 2026.
+
 - [Never Google Yourself](https://www.joshcoolman.com/blog/never-google-yourself): Practical SEO for people like me. A personal take on search engine optimization -- what actually matters for individual developers and creators trying to be discoverable online. By Josh Coolman.
 
 ## Docs

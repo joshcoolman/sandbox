@@ -30,6 +30,7 @@ Source: https://github.com/joshcoolman-smc/sandbox
 - [It's Happening](https://www.joshcoolman.com/blog/its-happening): Dispatches from the moment everything shifted
 - [Your Basic Blog](https://www.joshcoolman.com/blog/your-basic-blog): How this blog works and why it's just markdown files in a repo
 - [You're Doing It Wrong](https://www.joshcoolman.com/blog/youre-doing-it-wrong): Why AI-powered design tools are just the old paradigm with new paint
+- [Vibe Coding Is Dead. Long Live Vibe Coding.](https://www.joshcoolman.com/blog/vibe-coding-is-dead): What people call vibes is what designers have always called intuition
 - [Never Google Yourself](https://www.joshcoolman.com/blog/never-google-yourself): Practical SEO for people like me
 
 ## Docs
