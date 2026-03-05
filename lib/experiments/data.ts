@@ -2,6 +2,15 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'candy-icons',
+    date: 'March 4, 2026',
+    title: 'Candy Icons',
+    description:
+      'Ten 3D app icons crafted from pure CSS and SVG. Each squircle shell uses a four-layer gradient stack — specular streak, diffuse highlight, body gradient, and depth shadow — driven by a single --hue custom property. Inner glyphs float as icy raised elements with their own drop-shadow treatment. No 3D libraries, no canvas — just gradients all the way down.',
+    screenshot: '/screenshots/candy-icons.png',
+    tags: ['SVG', 'CSS Gradients', 'Specular', '3D Icons'],
+  },
+  {
     slug: 'card-stack',
     date: 'March 2, 2026',
     title: 'Card Stack',

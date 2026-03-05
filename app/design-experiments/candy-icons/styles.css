@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400&display=swap');
+
+.candy-page {
+  min-height: 100vh;
+  background: linear-gradient(to top, #d4d0c8 0%, #f7f6f4 60%, #ffffff 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.candy-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3rem 2.5rem;
+  max-width: 760px;
+  width: 100%;
+}
+
+.candy-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.candy-icon {
+  width: 128px;
+  height: 128px;
+  border-radius: 28px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.candy-icon:active {
+  transform: scale(0.94);
+  transition: transform 80ms ease;
+}
+
+.candy-icon svg {
+  width: 69px;
+  height: 69px;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.candy-floor-shadow {
+  width: 96px;
+  height: 14px;
+  opacity: 0.4;
+}
+
+
+
+/* ── Outer rim ── */
+.candy-icon {
+  border-radius: 38px;
+
+  /* Thick outer rim: soft upper-left sheen + saturated body gradient */
+  background:
+    radial-gradient(ellipse 55% 28% at 24% 10%,
+      rgba(255, 255, 255, 0.62) 0%, transparent 100%),
+    linear-gradient(148deg,
+      hsl(var(--hue), 86%, 64%) 0%,
+      hsl(var(--hue), 90%, 50%) 30%,
+      hsl(var(--hue), 84%, 34%) 64%,
+      hsl(var(--hue), 80%, 20%) 100%);
+
+  box-shadow:
+    inset 0 3px 4px rgba(255, 255, 255, 0.42),
+    inset 0 -5px 12px rgba(0, 0, 0, 0.38);
+}
+
+
+/* ── Horizontal chrome sheen — sharp line at midpoint ── */
+.candy-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 38px;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.10) 47%,
+    rgba(255, 255, 255, 0.00) 48%);
+}
+
+/* ── Inner face — pastel tint, inset into rim ── */
+.candy-icon::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border-radius: 21px;
+  z-index: 0;
+  background: hsl(var(--hue), 58%, 72%);
+  opacity: 0.92;
+}
+
+/* ── Glyph — gradient fill defined in SVG, CSS only handles shadow ── */
+.candy-icon svg {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.20));
+  z-index: 3;
+}
+
+/* ── Responsive ── */
+@media (max-width: 680px) {
+  .candy-grid {
+    gap: 1.5rem 1rem;
+  }
+
+  .candy-icon {
+    width: 96px;
+    height: 96px;
+    border-radius: 29px;
+  }
+
+  .candy-icon::after {
+    inset: 12px;
+    border-radius: 15px;
+  }
+
+  .candy-icon svg {
+    width: 53px;
+    height: 53px;
+  }
+}
+
+@media (max-width: 480px) {
+  .candy-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem 1.5rem;
+    max-width: 360px;
+  }
+}

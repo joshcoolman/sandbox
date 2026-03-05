@@ -10,6 +10,20 @@ This is a design sketchbook, not production software. There's no test suite and 
 
 ## Experiments
 
+### Candy Icons
+
+**March 4, 2026**
+
+[![Candy Icons](./public/screenshots/candy-icons.png)](https://www.joshcoolman.com/design-experiments/candy-icons)
+
+Five 3D app icons crafted from pure CSS and SVG. Each squircle shell uses a four-layer gradient stack driven by a single --hue custom property. Icons feature spring-bounce hover animations with staggered glyph and floor-shadow physics. Inner glyphs carry a subtle vertical hue gradient — near-white at the top, softly tinted at the bottom. No 3D libraries, no canvas — just gradients and springs.
+
+`SVG` `CSS Gradients` `Specular` `3D Icons`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/candy-icons) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/candy-icons)**
+
+---
+
 ### Card Stack
 
 **March 2, 2026**
