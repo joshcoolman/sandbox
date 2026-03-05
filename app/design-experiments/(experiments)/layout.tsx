@@ -20,8 +20,12 @@ export default function ExperimentLayout({
   const tags = experiment.tags
   const footerTags = tags.length > 3 ? tags.slice(0, 3) : tags
 
+  const bgStyle = experiment.bgTop || experiment.bgBottom
+    ? { '--experiment-bg': `linear-gradient(to top, ${experiment.bgBottom ?? experiment.bgTop}, ${experiment.bgTop ?? experiment.bgBottom})` } as React.CSSProperties
+    : undefined
+
   return (
-    <div className={styles.frame} data-theme={experiment.theme ?? 'dark'}>
+    <div className={styles.frame} data-theme={experiment.theme ?? 'dark'} style={bgStyle}>
       <header className={styles.header}>
         <CurtainLink
           href="/design-experiments"

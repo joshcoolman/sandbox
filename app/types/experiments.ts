@@ -6,4 +6,6 @@ export interface Experiment {
   screenshot: string
   tags: string[]
   theme?: 'light' | 'dark'
+  bgTop?: string
+  bgBottom?: string
 }

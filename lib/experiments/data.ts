@@ -10,6 +10,8 @@ export const experiments: Experiment[] = [
     screenshot: '/screenshots/candy-icons.png',
     tags: ['SVG', 'CSS Gradients', 'Specular', '3D Icons'],
     theme: 'light',
+    bgTop: '#ffffff',
+    bgBottom: '#d4d0c8',
   },
   {
     slug: 'card-stack',

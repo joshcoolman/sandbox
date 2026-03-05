@@ -2,7 +2,7 @@
 
 .candy-page {
   min-height: 100vh;
-  background: linear-gradient(to top, #d4d0c8 0%, #f7f6f4 60%, #ffffff 100%);
+  background: transparent;
   display: flex;
   flex-direction: column;
   align-items: center;
