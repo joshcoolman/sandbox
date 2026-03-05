@@ -57,9 +57,11 @@ export function CandyIconGrid({
               alt=""
               animate={popped[i] ? (hopKey[i] && hopKey[i] > 0 ? {
                 y: [-126, -156, -126],
+                scale: [1, 1, 1],
               } : {
                 y: [0, -156, -116, -136, -126],
-              }) : { y: 0 }}
+                scale: [0.5, 1.05, 0.95, 1, 1],
+              }) : { y: 0, scale: 0.5 }}
               transition={popped[i]
                 ? (hopKey[i] && hopKey[i] > 0
                   ? { duration: 0.3, times: [0, 0.4, 1] }
