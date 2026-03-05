@@ -1,0 +1,5 @@
+---
+date: 2026-03-05T07:27:31
+color: warm
+---
+Know thy bubble.
