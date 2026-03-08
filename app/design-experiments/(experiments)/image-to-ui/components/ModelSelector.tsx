@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import {
   ChevronRight,
   Search,
@@ -18,38 +18,15 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react'
-
-/* ------------------------------------------------------------------ */
-/*  JSON spec types                                                    */
-/* ------------------------------------------------------------------ */
-
-export interface ModelTag {
-  label: string
-  icon?: 'resolution' | 'duration'
-}
-
-export interface ModelItem {
-  id: string
-  label: string
-  icon?: string
-  iconNode?: ReactNode
-  tags?: ModelTag[]
-  badge?: string
-  description?: string
-  children?: ModelItem[]
-}
-
-export interface ModelSection {
-  title: string
-  icon?: string
-  items: ModelItem[]
-}
+import type { ModelTag, ModelItem, ModelSection } from '../types'
+import styles from './ModelSelector.module.css'
 
 export interface ModelSelectorProps {
   sections: ModelSection[]
   defaultValue?: string
   placeholder?: string
   onChange?: (model: ModelItem) => void
+  className?: string
 }
 
 /* ------------------------------------------------------------------ */
@@ -152,6 +129,7 @@ export default function ModelSelector({
   defaultValue,
   placeholder = 'Select model',
   onChange,
+  className,
 }: ModelSelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [selected, setSelected] = useState<ModelItem | null>(
@@ -210,12 +188,10 @@ export default function ModelSelector({
     const pad = 12
     requestAnimationFrame(() => {
       const rect = el.getBoundingClientRect()
-      // Horizontal: if overflows right, flip to left of trigger
       if (rect.right > window.innerWidth - pad) {
         el.style.left = 'auto'
         el.style.right = 'calc(100% + 8px)'
       }
-      // Vertical: clamp within viewport while keeping centered feel
       if (rect.top < pad) {
         el.style.top = '0'
         el.style.transform = 'translateY(0)'
@@ -232,7 +208,6 @@ export default function ModelSelector({
     if (!hoveredParent || !submenuRef.current) return
     const el = submenuRef.current
     const pad = 12
-    // Reset before measuring
     el.style.left = 'calc(100% + 6px)'
     el.style.right = 'auto'
     el.style.top = '0'
@@ -265,25 +240,24 @@ export default function ModelSelector({
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
   }, [])
 
-  // Find the hovered parent across all sections
   const hoveredParentItem = hoveredParent
     ? sections.flatMap((s) => s.items).find((m) => m.id === hoveredParent)
     : null
 
   return (
-    <div className="model-selector-wrapper" ref={wrapperRef}>
+    <div className={`${styles.wrapper} ${className ?? ''}`} ref={wrapperRef}>
       {/* Trigger */}
       <button
-        className="model-trigger"
+        className={styles.trigger}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
-        <span className="model-trigger-left">
-          <span className="model-trigger-meta">Model</span>
+        <span className={styles.triggerLeft}>
+          <span className={styles.triggerMeta}>Model</span>
           {selected ? (
-            <span className="model-trigger-value">{selected.label}</span>
+            <span className={styles.triggerValue}>{selected.label}</span>
           ) : (
-            <span className="model-trigger-placeholder">{placeholder}</span>
+            <span className={styles.triggerPlaceholder}>{placeholder}</span>
           )}
         </span>
         <ChevronRight
@@ -299,38 +273,38 @@ export default function ModelSelector({
 
       {/* Flyout */}
       {isOpen && (
-        <div className="model-flyout component-card" ref={flyoutRef}>
+        <div className={styles.flyout} ref={flyoutRef}>
           {/* Search */}
-          <div className="model-search">
+          <div className={styles.search}>
             <Search size={15} strokeWidth={1.6} style={{ opacity: 0.35, flexShrink: 0 }} />
             <input
               ref={searchRef}
               type="text"
-              className="model-search-input"
+              className={styles.searchInput}
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
-          <div className="model-divider" />
+          <div className={styles.divider} />
 
           {isSearching ? (
-            <div className="model-list">
+            <div className={styles.list}>
               {filtered.length === 0 && (
-                <div className="model-empty">No models found</div>
+                <div className={styles.empty}>No models found</div>
               )}
               {filtered.map((item) => (
                 <button
                   key={item.id}
-                  className={`model-option ${selected?.id === item.id ? 'active' : ''}`}
+                  className={`${styles.option} ${selected?.id === item.id ? styles.optionActive : ''}`}
                   onClick={() => handleSelect(item)}
                 >
                   <ModelIcon item={item} />
-                  <div className="model-option-content">
-                    <span className="model-option-label">{item.label}</span>
+                  <div className={styles.optionContent}>
+                    <span className={styles.optionLabel}>{item.label}</span>
                     {item.tags && (
-                      <span className="model-option-tags">
+                      <span className={styles.optionTags}>
                         {item.tags.map((t, i) => (
                           <TagPill key={i} tag={t} />
                         ))}
@@ -338,17 +312,17 @@ export default function ModelSelector({
                     )}
                   </div>
                   {selected?.id === item.id && (
-                    <Check size={16} strokeWidth={2} className="model-check" />
+                    <Check size={16} strokeWidth={2} className={styles.check} />
                   )}
                 </button>
               ))}
             </div>
           ) : (
-            <div className="model-menu-container">
-              <div className="model-list">
+            <div className={styles.menuContainer}>
+              <div className={styles.list}>
                 {sections.map((section, si) => (
-                  <div key={si} className="model-section">
-                    <div className="model-section-header">
+                  <div key={si}>
+                    <div className={styles.sectionHeader}>
                       {section.icon && ICON_MAP[section.icon] && (() => {
                         const SIcon = ICON_MAP[section.icon!]
                         return <SIcon size={12} strokeWidth={1.6} style={{ opacity: 0.5 }} />
@@ -362,10 +336,10 @@ export default function ModelSelector({
                         (hasChildren && item.children?.some((c) => c.id === selected?.id))
                       return (
                         <div key={item.id}>
-                          {ii > 0 && <div className="model-item-divider" />}
+                          {ii > 0 && <div className={styles.itemDivider} />}
                           <button
-                            className={`model-option ${isSelected ? 'active' : ''} ${
-                              hoveredParent === item.id ? 'submenu-open' : ''
+                            className={`${styles.option} ${isSelected ? styles.optionActive : ''} ${
+                              hoveredParent === item.id ? styles.submenuOpen : ''
                             }`}
                             onClick={() => !hasChildren && handleSelect(item)}
                             onMouseEnter={() =>
@@ -376,26 +350,26 @@ export default function ModelSelector({
                             onMouseLeave={handleParentLeave}
                           >
                             <ModelIcon item={item} />
-                            <div className="model-option-content">
-                              <span className="model-option-label">
+                            <div className={styles.optionContent}>
+                              <span className={styles.optionLabel}>
                                 {item.label}
                                 {item.badge && (
-                                  <span className="model-option-badge">{item.badge}</span>
+                                  <span className={styles.optionBadge}>{item.badge}</span>
                                 )}
                               </span>
                               {item.tags && !hasChildren && (
-                                <span className="model-option-tags">
+                                <span className={styles.optionTags}>
                                   {item.tags.map((t, i) => (
                                     <TagPill key={i} tag={t} />
                                   ))}
                                 </span>
                               )}
                               {item.description && (
-                                <span className="model-option-desc">{item.description}</span>
+                                <span className={styles.optionDesc}>{item.description}</span>
                               )}
                             </div>
                             {!hasChildren && isSelected && (
-                              <Check size={16} strokeWidth={2} className="model-check" />
+                              <Check size={16} strokeWidth={2} className={styles.check} />
                             )}
                             {hasChildren && (
                               <ChevronRight
@@ -409,7 +383,7 @@ export default function ModelSelector({
                       )
                     })}
 
-                    {si < sections.length - 1 && <div className="model-section-divider" />}
+                    {si < sections.length - 1 && <div className={styles.sectionDivider} />}
                   </div>
                 ))}
               </div>
@@ -417,7 +391,7 @@ export default function ModelSelector({
               {/* Submenu flyout */}
               {hoveredParentItem?.children && (
                 <div
-                  className="model-submenu component-card"
+                  className={styles.submenu}
                   ref={submenuRef}
                   onMouseEnter={() => {
                     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
@@ -427,15 +401,15 @@ export default function ModelSelector({
                   {hoveredParentItem.children.map((child) => (
                     <button
                       key={child.id}
-                      className={`model-option ${
-                        selected?.id === child.id ? 'active' : ''
+                      className={`${styles.option} ${
+                        selected?.id === child.id ? styles.optionActive : ''
                       }`}
                       onClick={() => handleSelect(child)}
                     >
-                      <div className="model-option-content">
-                        <span className="model-option-label">{child.label}</span>
+                      <div className={styles.optionContent}>
+                        <span className={styles.optionLabel}>{child.label}</span>
                         {child.tags && (
-                          <span className="model-option-tags">
+                          <span className={styles.optionTags}>
                             {child.tags.map((t, i) => (
                               <TagPill key={i} tag={t} />
                             ))}
@@ -443,7 +417,7 @@ export default function ModelSelector({
                         )}
                       </div>
                       {selected?.id === child.id && (
-                        <Check size={16} strokeWidth={2} className="model-check" />
+                        <Check size={16} strokeWidth={2} className={styles.check} />
                       )}
                     </button>
                   ))}
@@ -453,267 +427,6 @@ export default function ModelSelector({
           )}
         </div>
       )}
-
-      <style jsx>{`
-        .model-selector-wrapper {
-          position: relative;
-        }
-
-        /* ---- Trigger ---- */
-        .model-trigger {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          width: 286px;
-          background: var(--ui-bg-card);
-          border: 1px solid var(--ui-border-subtle);
-          border-radius: var(--ui-radius-md);
-          padding: 12px 14px;
-          font-family: var(--ui-font);
-          color: var(--ui-text-primary);
-          cursor: pointer;
-          transition:
-            background var(--ui-transition-snap),
-            border-color var(--ui-transition-snap);
-        }
-
-        .model-trigger:hover {
-          background: var(--ui-bg-card-hover);
-          border-color: var(--ui-border);
-        }
-
-        .model-trigger-left {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-          text-align: left;
-        }
-
-        .model-trigger-meta {
-          font-size: 11px;
-          color: var(--ui-text-muted);
-          font-weight: 500;
-        }
-
-        .model-trigger-value {
-          font-size: 15px;
-          font-weight: 500;
-        }
-
-        .model-trigger-placeholder {
-          font-size: 15px;
-          color: var(--ui-text-muted);
-        }
-
-        /* ---- Flyout ---- */
-        .model-flyout {
-          position: absolute;
-          top: 50%;
-          left: calc(100% + 8px);
-          transform: translateY(-50%);
-          width: 320px;
-          padding: 6px;
-          z-index: 200;
-          animation: modelFlyIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-          overflow: visible;
-        }
-
-        @keyframes modelFlyIn {
-          from {
-            opacity: 0;
-            transform: translateY(-50%) translateX(-6px) scale(0.94);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(-50%) translateX(0) scale(1);
-          }
-        }
-
-        /* ---- Search ---- */
-        .model-search {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 10px;
-        }
-
-        .model-search-input {
-          flex: 1;
-          background: none;
-          border: none;
-          outline: none;
-          font-family: var(--ui-font);
-          font-size: 14px;
-          color: var(--ui-text-primary);
-        }
-
-        .model-search-input::placeholder {
-          color: var(--ui-text-muted);
-        }
-
-        .model-divider {
-          height: 1px;
-          background: var(--ui-border);
-          margin: 4px 6px;
-        }
-
-        /* ---- Sections ---- */
-        .model-section-header {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 8px 10px 4px;
-          font-family: var(--ui-font);
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 0.03em;
-          color: var(--ui-text-muted);
-        }
-
-        /* ---- Menu container ---- */
-        .model-menu-container {
-          position: relative;
-        }
-
-        .model-list {
-          display: flex;
-          flex-direction: column;
-          max-height: 400px;
-          overflow-y: auto;
-          scrollbar-width: none;
-          -ms-overflow-style: none;
-        }
-
-        .model-list::-webkit-scrollbar {
-          display: none;
-        }
-
-        .model-empty {
-          padding: 16px 12px;
-          font-family: var(--ui-font);
-          font-size: 13px;
-          color: var(--ui-text-muted);
-          text-align: center;
-        }
-
-        /* ---- Option row ---- */
-        .model-option {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          width: 100%;
-          background: none;
-          border: none;
-          border-radius: var(--ui-radius-sm);
-          padding: 8px 10px;
-          font-family: var(--ui-font);
-          color: var(--ui-text-secondary);
-          cursor: pointer;
-          transition:
-            background var(--ui-transition-snap),
-            color var(--ui-transition-snap);
-        }
-
-        .model-option:hover,
-        .model-option.submenu-open {
-          background: var(--ui-bg-surface);
-          color: var(--ui-text-primary);
-        }
-
-        .model-option.active {
-          color: var(--ui-text-primary);
-        }
-
-        .model-option-content {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 3px;
-          text-align: left;
-          min-width: 0;
-        }
-
-        .model-option-label {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 14px;
-          font-weight: 500;
-          white-space: nowrap;
-        }
-
-        .model-option-desc {
-          font-size: 12px;
-          color: var(--ui-text-muted);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .model-option-tags {
-          display: flex;
-          gap: 8px;
-        }
-
-        .model-option-badge {
-          font-family: var(--ui-font-mono);
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: 0.04em;
-          color: var(--ui-accent);
-          background: var(--ui-accent-dim);
-          border-radius: 3px;
-          padding: 1px 5px;
-          text-transform: uppercase;
-        }
-
-        /* Icon and tag styles are inline (sub-component scoping) */
-
-        /* ---- Dividers ---- */
-        .model-item-divider {
-          height: 0;
-          border: none;
-          border-top: 1px dotted var(--ui-border);
-          margin: 1px 10px;
-        }
-
-        .model-section-divider {
-          height: 1px;
-          background: var(--ui-border);
-          margin: 6px 10px;
-        }
-
-        .model-check {
-          color: var(--ui-accent);
-          flex-shrink: 0;
-        }
-
-        /* ---- Submenu ---- */
-        .model-submenu {
-          position: absolute;
-          left: calc(100% + 6px);
-          top: 0;
-          min-width: 240px;
-          padding: 6px;
-          z-index: 210;
-          display: flex;
-          flex-direction: column;
-          overflow: visible;
-          animation: subFlyIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes subFlyIn {
-          from {
-            opacity: 0;
-            transform: translateX(-6px) scale(0.97);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0) scale(1);
-          }
-        }
-      `}</style>
     </div>
   )
 }

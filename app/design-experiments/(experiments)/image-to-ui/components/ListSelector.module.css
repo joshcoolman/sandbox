@@ -1,0 +1,104 @@
+.wrapper {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 80px;
+  background: var(--ui-bg-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-md);
+  padding: 8px 16px;
+  font-family: var(--ui-font);
+  font-size: 14px;
+  color: var(--ui-text-primary);
+  cursor: pointer;
+  transition:
+    background var(--ui-transition-snap),
+    border-color var(--ui-transition-snap);
+}
+
+.trigger:hover {
+  background: var(--ui-bg-elevated);
+  border-color: var(--ui-text-muted);
+}
+
+.triggerIcon {
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+}
+
+.popover {
+  background: var(--ui-bg-card);
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: var(--ui-radius-md);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 180px;
+  padding: 6px;
+  z-index: 100;
+  animation: listPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes listPopIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: var(--ui-radius-sm);
+  padding: 10px 12px;
+  font-family: var(--ui-font);
+  font-size: 15px;
+  color: var(--ui-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--ui-transition-snap),
+    color var(--ui-transition-snap);
+}
+
+.option:hover {
+  background: var(--ui-bg-surface);
+  color: var(--ui-text-primary);
+}
+
+.optionActive {
+  color: var(--ui-text-primary);
+}
+
+.optionLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.optionBadge {
+  font-family: var(--ui-font-mono);
+  font-size: 11px;
+  color: var(--ui-text-muted);
+  background: var(--ui-bg-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.check {
+  color: var(--ui-text-muted);
+  flex-shrink: 0;
+}

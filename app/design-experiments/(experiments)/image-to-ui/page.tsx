@@ -5,8 +5,10 @@ import { DM_Sans, DM_Mono } from 'next/font/google'
 import RotarySelector from './components/RotarySelector'
 import DurationSlider from './components/DurationSlider'
 import ListSelector from './components/ListSelector'
-import ModelSelector, { type ModelSection } from './components/ModelSelector'
-import './styles.css'
+import ModelSelector from './components/ModelSelector'
+import type { ModelSection } from './types'
+import './tokens.css'
+import styles from './page.module.css'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -140,7 +142,7 @@ const MODEL_SECTIONS: ModelSection[] = [
           {
             id: 'kling-3-sub',
             label: 'Kling 3.0',
-                tags: [
+            tags: [
               { label: '1080p', icon: 'resolution' },
               { label: '3s-15s', icon: 'duration' },
             ],
@@ -198,11 +200,11 @@ export default function ImageToUI() {
   } | null>(null)
 
   return (
-    <div className={`page ${dmSans.variable} ${dmMono.variable}`}>
-      <div className="page-columns">
-        <div className="page-components">
+    <div className={`${styles.page} ${dmSans.variable} ${dmMono.variable}`}>
+      <div className={styles.pageColumns}>
+        <div className={styles.pageComponents}>
           <RotarySelector
-            items={['Voiceover', 'Change Voice', 'Translate']}
+            items={['Standard', 'Pro', 'Turbo']}
             defaultIndex={0}
             onChange={(_i, label) =>
               setLastOutput({ component: 'RotarySelector', value: label })
@@ -218,7 +220,7 @@ export default function ImageToUI() {
           />
 
           {/* Parameter toolbar -- three selectors grouped */}
-          <div className="param-toolbar component-card" style={{ width: 286, justifyContent: 'center' }}>
+          <div className={styles.paramToolbar} style={{ width: 286, justifyContent: 'center' }}>
             <DurationSlider
               values={[3, 6, 9, 12, 15]}
               defaultValue={6}
@@ -228,7 +230,7 @@ export default function ImageToUI() {
               }
             />
 
-            <div className="param-divider" />
+            <div className={styles.paramDivider} />
 
             <ListSelector
               options={['16:9', '9:16', '1:1']}
@@ -239,7 +241,7 @@ export default function ImageToUI() {
               }
             />
 
-            <div className="param-divider" />
+            <div className={styles.paramDivider} />
 
             <ListSelector
               options={[
@@ -255,30 +257,14 @@ export default function ImageToUI() {
           </div>
 
           {lastOutput && (
-            <div
-              style={{
-                fontFamily: 'var(--ui-font-mono)',
-                fontSize: 12,
-                color: 'var(--ui-text-muted)',
-                background: 'var(--ui-bg-card)',
-                border: '1px solid var(--ui-border-subtle)',
-                borderRadius: 'var(--ui-radius-md)',
-                padding: '6px 14px',
-                minHeight: 50,
-                display: 'flex',
-                alignItems: 'center',
-                width: 286,
-                boxSizing: 'border-box',
-                textAlign: 'left',
-              }}
-            >
+            <div className={styles.output}>
               {lastOutput.component} &rarr; {lastOutput.value}
             </div>
           )}
         </div>
 
-        <div className="page-description">
-          <h1 className="page-title">Image to UI</h1>
+        <div className={styles.pageDescription}>
+          <h1 className={styles.pageTitle}>Image to UI</h1>
           <p>
             These components were reverse-engineered from screenshots of a video generation UI. Starting from reference images, each element was rebuilt as an interactive, parameterized component through conversation -- describing what we saw, iterating on spacing, color, and behavior until the result felt right.
           </p>

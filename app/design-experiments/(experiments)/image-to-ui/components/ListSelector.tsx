@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import styles from './ListSelector.module.css'
 
 interface ListSelectorOption {
   label: string
@@ -12,6 +13,7 @@ interface ListSelectorProps {
   defaultValue?: string
   icon?: React.ReactNode
   onChange?: (value: string) => void
+  className?: string
 }
 
 function normalize(opt: string | ListSelectorOption): ListSelectorOption {
@@ -23,6 +25,7 @@ export default function ListSelector({
   defaultValue,
   icon,
   onChange,
+  className,
 }: ListSelectorProps) {
   const items = options.map(normalize)
   const [isOpen, setIsOpen] = useState(false)
@@ -52,31 +55,31 @@ export default function ListSelector({
   }, [isOpen])
 
   return (
-    <div className="list-selector-wrapper">
+    <div className={`${styles.wrapper} ${className ?? ''}`}>
       <button
-        className="list-trigger"
+        className={styles.trigger}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
-        {icon && <span className="list-trigger-icon">{icon}</span>}
+        {icon && <span className={styles.triggerIcon}>{icon}</span>}
         {selected}
       </button>
 
       {isOpen && (
-        <div className="list-popover component-card" ref={popoverRef}>
+        <div className={styles.popover} ref={popoverRef}>
           {items.map((item) => (
             <button
               key={item.label}
-              className={`list-option ${item.label === selected ? 'active' : ''}`}
+              className={`${styles.option} ${item.label === selected ? styles.optionActive : ''}`}
               onClick={() => handleSelect(item.label)}
             >
-              <span className="list-option-label">{item.label}</span>
+              <span className={styles.optionLabel}>{item.label}</span>
               {item.badge && (
-                <span className="list-option-badge">{item.badge}</span>
+                <span className={styles.optionBadge}>{item.badge}</span>
               )}
               {item.label === selected && (
                 <svg
-                  className="list-check"
+                  className={styles.check}
                   width="16"
                   height="16"
                   viewBox="0 0 16 16"
@@ -93,110 +96,6 @@ export default function ListSelector({
           ))}
         </div>
       )}
-
-      <style jsx>{`
-        .list-selector-wrapper {
-          position: relative;
-        }
-
-        .list-trigger {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          min-width: 80px;
-          background: var(--ui-bg-surface);
-          border: 1px solid var(--ui-border);
-          border-radius: var(--ui-radius-md);
-          padding: 8px 16px;
-          font-family: var(--ui-font);
-          font-size: 14px;
-          color: var(--ui-text-primary);
-          cursor: pointer;
-          transition:
-            background var(--ui-transition-snap),
-            border-color var(--ui-transition-snap);
-        }
-
-        .list-trigger:hover {
-          background: var(--ui-bg-elevated);
-          border-color: var(--ui-text-muted);
-        }
-
-        .list-trigger-icon {
-          display: flex;
-          align-items: center;
-          opacity: 0.6;
-        }
-
-        .list-popover {
-          position: absolute;
-          bottom: calc(100% + 10px);
-          left: 50%;
-          transform: translateX(-50%);
-          min-width: 180px;
-          padding: 6px;
-          z-index: 100;
-          animation: listPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes listPopIn {
-          from {
-            opacity: 0;
-            transform: translateX(-50%) translateY(8px) scale(0.94);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0) scale(1);
-          }
-        }
-
-        .list-option {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          width: 100%;
-          background: none;
-          border: none;
-          border-radius: var(--ui-radius-sm);
-          padding: 10px 12px;
-          font-family: var(--ui-font);
-          font-size: 15px;
-          color: var(--ui-text-secondary);
-          cursor: pointer;
-          transition:
-            background var(--ui-transition-snap),
-            color var(--ui-transition-snap);
-        }
-
-        .list-option:hover {
-          background: var(--ui-bg-surface);
-          color: var(--ui-text-primary);
-        }
-
-        .list-option.active {
-          color: var(--ui-text-primary);
-        }
-
-        .list-option-label {
-          flex: 1;
-          text-align: left;
-        }
-
-        .list-option-badge {
-          font-family: var(--ui-font-mono);
-          font-size: 11px;
-          color: var(--ui-text-muted);
-          background: var(--ui-bg-surface);
-          border: 1px solid var(--ui-border);
-          border-radius: 4px;
-          padding: 2px 6px;
-        }
-
-        .list-check {
-          color: var(--ui-text-muted);
-          flex-shrink: 0;
-        }
-      `}</style>
     </div>
   )
 }

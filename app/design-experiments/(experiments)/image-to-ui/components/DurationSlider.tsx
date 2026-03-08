@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
+import styles from './DurationSlider.module.css'
 
 interface DurationSliderProps {
   values?: number[]
   defaultValue?: number
   unit?: string
   onChange?: (value: number) => void
+  className?: string
 }
 
 export default function DurationSlider({
@@ -14,6 +16,7 @@ export default function DurationSlider({
   defaultValue = 6,
   unit = 's',
   onChange,
+  className,
 }: DurationSliderProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(
@@ -105,10 +108,10 @@ export default function DurationSlider({
   }, [isOpen])
 
   return (
-    <div className="duration-slider-wrapper">
+    <div className={`${styles.wrapper} ${className ?? ''}`}>
       {/* Trigger button */}
       <button
-        className="duration-trigger"
+        className={styles.trigger}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
@@ -130,19 +133,19 @@ export default function DurationSlider({
 
       {/* Popover */}
       {isOpen && (
-        <div className="duration-popover component-card" ref={popoverRef}>
-          <div className="duration-title">Choose duration</div>
+        <div className={styles.popover} ref={popoverRef}>
+          <div className={styles.title}>Choose duration</div>
 
-          <div className="duration-track-container">
+          <div className={styles.trackContainer}>
             {/* Current value label */}
-            <div className="duration-value">
+            <div className={styles.value}>
               {currentValue}
               {unit}
             </div>
 
             {/* Track */}
             <div
-              className="duration-track"
+              className={styles.track}
               ref={trackRef}
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
@@ -150,7 +153,7 @@ export default function DurationSlider({
             >
               {/* Filled portion */}
               <div
-                className="duration-fill"
+                className={styles.fill}
                 style={{
                   width: `${fraction * 100}%`,
                   transition: isDragging ? 'none' : 'width var(--ui-transition-spring)',
@@ -158,11 +161,11 @@ export default function DurationSlider({
               />
 
               {/* Snap tick marks */}
-              <div className="duration-ticks">
+              <div className={styles.ticks}>
                 {values.map((_, i) => (
                   <div
                     key={i}
-                    className={`duration-tick ${i <= activeIndex ? 'filled' : ''}`}
+                    className={`${styles.tick} ${i <= activeIndex ? styles.tickFilled : ''}`}
                     style={{
                       left: `${(i / (values.length - 1)) * 100}%`,
                     }}
@@ -172,7 +175,7 @@ export default function DurationSlider({
 
               {/* Thumb */}
               <div
-                className={`duration-thumb ${isDragging ? 'dragging' : ''}`}
+                className={`${styles.thumb} ${isDragging ? styles.thumbDragging : ''}`}
                 style={{
                   left: `${fraction * 100}%`,
                   transition: isDragging ? 'none' : 'left var(--ui-transition-spring)',
@@ -182,11 +185,11 @@ export default function DurationSlider({
           </div>
 
           {/* Value labels below track */}
-          <div className="duration-labels">
+          <div className={styles.labels}>
             {values.map((v, i) => (
               <button
                 key={v}
-                className={`duration-label ${i === activeIndex ? 'active' : ''}`}
+                className={`${styles.label} ${i === activeIndex ? styles.labelActive : ''}`}
                 onClick={() => {
                   setActiveIndex(i)
                   onChange?.(v)
@@ -199,176 +202,6 @@ export default function DurationSlider({
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        .duration-slider-wrapper {
-          position: relative;
-        }
-
-        /* ---- Trigger ---- */
-        .duration-trigger {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          background: var(--ui-bg-surface);
-          border: 1px solid var(--ui-border);
-          border-radius: var(--ui-radius-md);
-          padding: 8px 16px;
-          font-family: var(--ui-font);
-          font-size: 14px;
-          color: var(--ui-text-primary);
-          cursor: pointer;
-          transition:
-            background var(--ui-transition-snap),
-            border-color var(--ui-transition-snap);
-        }
-
-        .duration-trigger:hover {
-          background: var(--ui-bg-elevated);
-          border-color: var(--ui-text-muted);
-        }
-
-        .duration-trigger svg {
-          opacity: 0.6;
-        }
-
-        /* ---- Popover ---- */
-        .duration-popover {
-          position: absolute;
-          bottom: calc(100% + 10px);
-          left: 50%;
-          transform: translateX(-50%);
-          width: 280px;
-          padding: 16px 18px 14px;
-          z-index: 100;
-          animation: popoverIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes popoverIn {
-          from {
-            opacity: 0;
-            transform: translateX(-50%) translateY(8px) scale(0.94);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0) scale(1);
-          }
-        }
-
-        .duration-title {
-          font-family: var(--ui-font);
-          font-size: 14px;
-          font-weight: 500;
-          color: var(--ui-text-primary);
-          margin-bottom: 14px;
-        }
-
-        /* ---- Track ---- */
-        .duration-track-container {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-bottom: 10px;
-        }
-
-        .duration-value {
-          font-family: var(--ui-font-mono);
-          font-size: 14px;
-          color: var(--ui-text-primary);
-          min-width: 28px;
-          text-align: right;
-          flex-shrink: 0;
-        }
-
-        .duration-track {
-          position: relative;
-          flex: 1;
-          height: 32px;
-          background: var(--ui-bg-surface);
-          border-radius: 6px;
-          cursor: pointer;
-          touch-action: none;
-          overflow: hidden;
-        }
-
-        .duration-fill {
-          position: absolute;
-          inset: 0;
-          right: auto;
-          background: var(--ui-accent-tint);
-          border-radius: 6px 0 0 6px;
-        }
-
-        .duration-ticks {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-        }
-
-        .duration-tick {
-          position: absolute;
-          top: 50%;
-          width: 2px;
-          height: 8px;
-          margin-top: -4px;
-          margin-left: -1px;
-          background: var(--ui-border);
-          border-radius: 1px;
-          transition: background 0.2s;
-        }
-
-        .duration-tick.filled {
-          background: var(--ui-text-muted);
-        }
-
-        .duration-thumb {
-          position: absolute;
-          top: 2px;
-          bottom: 2px;
-          width: 4px;
-          margin-left: -2px;
-          background: var(--ui-text-primary);
-          border-radius: 2px;
-          z-index: 2;
-          box-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
-          transition: transform var(--ui-transition-snap);
-        }
-
-        .duration-thumb.dragging {
-          transform: scaleY(1.05);
-          box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
-        }
-
-        /* ---- Value labels ---- */
-        .duration-labels {
-          display: flex;
-          justify-content: space-between;
-          padding: 0 4px;
-        }
-
-        .duration-label {
-          background: none;
-          border: none;
-          font-family: var(--ui-font-mono);
-          font-size: 10px;
-          color: var(--ui-text-muted);
-          cursor: pointer;
-          padding: 2px 4px;
-          border-radius: 3px;
-          transition:
-            color var(--ui-transition-snap),
-            background var(--ui-transition-snap);
-        }
-
-        .duration-label:hover {
-          color: var(--ui-text-secondary);
-          background: var(--ui-bg-surface);
-        }
-
-        .duration-label.active {
-          color: var(--ui-accent);
-        }
-      `}</style>
     </div>
   )
 }

@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useRef, useCallback, useEffect } from 'react'
+import styles from './RotarySelector.module.css'
 
 interface RotarySelectorProps {
   items: string[]
   defaultIndex?: number
   onChange?: (index: number, label: string) => void
+  className?: string
 }
 
 // Angles in degrees from 3-o'clock (0°), going clockwise
@@ -21,6 +23,7 @@ export default function RotarySelector({
   items,
   defaultIndex = 0,
   onChange,
+  className,
 }: RotarySelectorProps) {
   const [activeIndex, setActiveIndex] = useState(defaultIndex)
   const [isAnimating, setIsAnimating] = useState(false)
@@ -82,19 +85,12 @@ export default function RotarySelector({
 
   return (
     <div
-      className="rotary-selector component-card"
+      className={`${styles.wrapper} ${className ?? ''}`}
       ref={dialRef}
-      style={{
-        width: cardWidth,
-        height: cardHeight,
-        position: 'relative',
-        userSelect: 'none',
-        overflow: 'visible',
-      }}
+      style={{ width: cardWidth, height: cardHeight }}
     >
       {/* Dial assembly */}
       <div
-        className="rotary-dial-assembly"
         style={{
           position: 'absolute',
           left: padding,
@@ -103,14 +99,14 @@ export default function RotarySelector({
           height: dialSize,
         }}
       >
-        <div className="rotary-groove" />
+        <div className={styles.groove} />
         <div
-          className="rotary-dial"
+          className={styles.dial}
           style={{ transform: `rotate(${dialRotation}deg)` }}
         >
-          <div className="rotary-indicator" />
+          <div className={styles.indicator} />
         </div>
-        <div className="rotary-center-cap" />
+        <div className={styles.centerCap} />
       </div>
 
       {/* Labels positioned radially */}
@@ -119,7 +115,7 @@ export default function RotarySelector({
         return (
           <button
             key={label}
-            className={`rotary-label ${i === activeIndex ? 'active' : ''}`}
+            className={`${styles.label} ${i === activeIndex ? styles.active : ''}`}
             onClick={() => handleSelect(i)}
             aria-pressed={i === activeIndex}
             style={{
@@ -129,121 +125,11 @@ export default function RotarySelector({
               transform: 'translateY(-50%)',
             }}
           >
-            <span className="rotary-dot" />
-            <span className="rotary-label-text">{label}</span>
+            <span className={styles.dot} />
+            <span className={styles.labelText}>{label}</span>
           </button>
         )
       })}
-
-      <style jsx>{`
-        .rotary-groove {
-          position: absolute;
-          inset: -6px;
-          border-radius: 50%;
-          border: 2px solid var(--ui-border);
-          background: radial-gradient(
-            circle at 35% 35%,
-            var(--ui-bg-surface) 0%,
-            var(--ui-bg-card) 100%
-          );
-        }
-
-        .rotary-dial {
-          position: absolute;
-          inset: 0;
-          border-radius: 50%;
-          background: conic-gradient(
-            from 180deg,
-            #2a2a30 0%,
-            #38383f 25%,
-            #2a2a30 50%,
-            #1e1e24 75%,
-            #2a2a30 100%
-          );
-          box-shadow:
-            0 2px 8px rgba(0, 0, 0, 0.6),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
-            inset 0 -1px 0 rgba(0, 0, 0, 0.3);
-          transition: transform var(--ui-transition-spring);
-          z-index: 2;
-        }
-
-        .rotary-indicator {
-          position: absolute;
-          top: 50%;
-          right: 8px;
-          width: 22px;
-          height: 3px;
-          margin-top: -1.5px;
-          background: var(--ui-accent);
-          border-radius: 2px;
-          box-shadow: 0 0 8px var(--ui-accent-glow);
-        }
-
-        .rotary-center-cap {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 28px;
-          height: 28px;
-          margin: -14px 0 0 -14px;
-          border-radius: 50%;
-          background: radial-gradient(
-            circle at 40% 38%,
-            #3a3a42 0%,
-            #222228 100%
-          );
-          box-shadow:
-            0 1px 4px rgba(0, 0, 0, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.06);
-          z-index: 3;
-        }
-
-        .rotary-label {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: none;
-          border: none;
-          padding: 4px 0;
-          cursor: pointer;
-          font-family: var(--ui-font);
-          font-size: 14px;
-          color: var(--ui-text-secondary);
-          z-index: 4;
-          transition:
-            color var(--ui-transition-snap),
-            transform var(--ui-transition-snap);
-        }
-
-        .rotary-label:hover {
-          color: var(--ui-text-primary);
-        }
-
-        .rotary-label.active {
-          color: var(--ui-text-primary);
-        }
-
-        .rotary-dot {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background: var(--ui-border);
-          transition:
-            background var(--ui-transition-smooth),
-            box-shadow var(--ui-transition-smooth);
-          flex-shrink: 0;
-        }
-
-        .rotary-label.active .rotary-dot {
-          background: var(--ui-accent);
-          box-shadow: 0 0 6px var(--ui-accent-glow);
-        }
-
-        .rotary-label-text {
-          white-space: nowrap;
-        }
-      `}</style>
     </div>
   )
 }

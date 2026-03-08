@@ -1,0 +1,36 @@
+/* ============================================
+   Image-to-UI Design Tokens
+   Global custom properties shared across all components
+   ============================================ */
+
+:root {
+  --ui-bg-deep: #0d0d0d;
+  --ui-bg-card: #1a1a1e;
+  --ui-bg-card-hover: #1f1f24;
+  --ui-bg-surface: #252529;
+  --ui-bg-elevated: #2a2a2f;
+  --ui-border: #2e2e34;
+  --ui-border-subtle: #222228;
+
+  --ui-text-primary: #e8e8ec;
+  --ui-text-secondary: #9a9aa4;
+  --ui-text-muted: #5c5c66;
+
+  /* Primary brand color -- change this one value to re-theme everything */
+  --ui-primary: #ff8c2a;
+  --ui-accent: var(--ui-primary);
+  --ui-accent-dim: color-mix(in srgb, var(--ui-primary) 15%, transparent);
+  --ui-accent-glow: color-mix(in srgb, var(--ui-primary) 30%, transparent);
+  --ui-accent-tint: color-mix(in srgb, var(--ui-primary) 8%, var(--ui-bg-surface));
+
+  --ui-radius-sm: 4px;
+  --ui-radius-md: 7px;
+  --ui-radius-lg: 10px;
+
+  --ui-font: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --ui-font-mono: 'DM Mono', 'SF Mono', monospace;
+
+  --ui-transition-snap: 0.2s cubic-bezier(0.2, 0, 0, 1);
+  --ui-transition-smooth: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --ui-transition-spring: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
