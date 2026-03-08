@@ -1,4 +1,6 @@
 "use client";
+// Top-level route (not in (experiments)/) -- fullscreen scroll/zoom animation
+// conflicts with the shared layout wrapper's header/footer chrome
 
 import { Suspense } from "react";
 import Link from "next/link";

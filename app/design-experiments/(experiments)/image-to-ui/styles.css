@@ -48,43 +48,11 @@
   font-family: var(--ui-font);
 }
 
-/* Two-column layout */
-.page-columns {
-  display: flex;
-  align-items: flex-start;
-  gap: 48px;
-}
-
 .page-components {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-}
-
-.page-description {
-  max-width: 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: -10px;
-}
-
-.page-description p {
-  font-family: var(--ui-font);
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--ui-text-secondary);
-  margin: 0;
-}
-
-.page-title {
-  font-family: var(--ui-font);
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ui-text-primary);
-  margin: 0;
 }
 
 /* Shared card base for all components */

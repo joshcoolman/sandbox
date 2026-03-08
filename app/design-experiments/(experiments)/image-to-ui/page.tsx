@@ -199,7 +199,6 @@ export default function ImageToUI() {
 
   return (
     <div className={`page ${dmSans.variable} ${dmMono.variable}`}>
-      <div className="page-columns">
         <div className="page-components">
           <RotarySelector
             items={['Voiceover', 'Change Voice', 'Translate']}
@@ -276,17 +275,6 @@ export default function ImageToUI() {
             </div>
           )}
         </div>
-
-        <div className="page-description">
-          <h1 className="page-title">Image to UI</h1>
-          <p>
-            These components were reverse-engineered from screenshots of a video generation UI. Starting from reference images, each element was rebuilt as an interactive, parameterized component through conversation -- describing what we saw, iterating on spacing, color, and behavior until the result felt right.
-          </p>
-          <p>
-            The process was entirely collaborative: Josh Coolman provided screenshots, visual feedback, and design direction via voice and screen sharing, while Claude Code interpreted the images, wrote the components, and refined details across multiple rounds. No design files or specs were used -- just images and dialogue.
-          </p>
-        </div>
-      </div>
     </div>
   )
 }

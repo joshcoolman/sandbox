@@ -11,16 +11,25 @@ Create a new design experiment in the sandbox. Follow with a description of what
 
 ## Structure
 
-Every experiment lives at `app/design-experiments/[name]/` with:
+Experiments live inside the `(experiments)` route group to get the shared header/footer layout wrapper:
 
 ```
-app/design-experiments/[name]/
+app/design-experiments/(experiments)/[name]/
 ├── page.tsx          # Main experiment (React component or iframe wrapper)
 ├── styles.css        # Scoped styles
 ├── components/       # Extract when page.tsx > 500 lines
 ├── hooks/            # Custom hooks if needed
 └── data/             # Static data files if needed
 ```
+
+The shared layout at `(experiments)/layout.tsx` auto-provides:
+- Back link to gallery
+- Experiment title, tags, date (pulled from `lib/experiments/data.ts`)
+- Site footer
+
+**Do NOT add your own header/footer/title/back-link** -- the wrapper handles it.
+
+**Exception:** Fullscreen/immersive experiments (e.g., scroll-driven animations, z-index-heavy layouts) that conflict with the wrapper can live at `app/design-experiments/[name]/` directly, outside `(experiments)/`. Add a comment explaining why.
 
 For static HTML experiments (no React/framework), put the HTML file in `public/[name].html` and create a thin iframe wrapper:
 
@@ -39,8 +48,8 @@ export default function Page() {
 
 ## Steps
 
-1. Create the experiment files at `app/design-experiments/[name]/`
-2. Add entry to gallery at top of the experiments array in `app/design-experiments/page.tsx`:
+1. Create the experiment files at `app/design-experiments/(experiments)/[name]/`
+2. Add entry to gallery at top of the experiments array in `lib/experiments/data.ts`:
    ```tsx
    {
      slug: '[name]',
