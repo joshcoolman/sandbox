@@ -37,12 +37,10 @@
 
 /* Page layout */
 .page {
-  min-height: 100vh;
   background: var(--ui-bg-deep);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 20px;
   padding: 48px 24px;
   font-family: var(--ui-font);
