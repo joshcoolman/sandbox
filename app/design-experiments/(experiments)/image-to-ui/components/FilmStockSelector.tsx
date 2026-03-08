@@ -2,35 +2,34 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { ChevronRight, Search, Check } from 'lucide-react'
-import styles from './LightingSelector.module.css'
+import styles from './FilmStockSelector.module.css'
 
-export interface LightingPreset {
+export interface FilmStockPreset {
   title: string
-  lighting: string
-  color_grade: string
+  type: string
+  grain: string
+  color: string
   palette?: [string, string, string]
-  filmStock?: string
-  lens?: string
   prompt?: string
 }
 
-interface LightingSelectorProps {
-  presets: LightingPreset[]
+interface FilmStockSelectorProps {
+  presets: FilmStockPreset[]
   defaultValue?: string
   placeholder?: string
-  onChange?: (preset: LightingPreset) => void
+  onChange?: (preset: FilmStockPreset) => void
   className?: string
 }
 
-export default function LightingSelector({
+export default function FilmStockSelector({
   presets,
   defaultValue,
-  placeholder = 'Select look',
+  placeholder = 'Select film',
   onChange,
   className,
-}: LightingSelectorProps) {
+}: FilmStockSelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [selected, setSelected] = useState<LightingPreset | null>(
+  const [selected, setSelected] = useState<FilmStockPreset | null>(
     defaultValue ? presets.find((p) => p.title === defaultValue) ?? null : null
   )
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -42,7 +41,7 @@ export default function LightingSelector({
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSelect = useCallback(
-    (preset: LightingPreset) => {
+    (preset: FilmStockPreset) => {
       setSelected(preset)
       setIsOpen(false)
       setSearch('')
@@ -121,7 +120,7 @@ export default function LightingSelector({
     })
   }, [hoveredIndex])
 
-  const getGradient = (preset: LightingPreset) => {
+  const getGradient = (preset: FilmStockPreset) => {
     if (!preset.palette) return 'linear-gradient(135deg, var(--ui-bg-surface), var(--ui-border))'
     const [a, b, c] = preset.palette
     return `linear-gradient(135deg, ${a}, ${b}, ${c})`
@@ -130,7 +129,8 @@ export default function LightingSelector({
   const isSearching = search.length > 0
   const filtered = isSearching
     ? presets.filter((p) =>
-        p.title.toLowerCase().includes(search.toLowerCase())
+        p.title.toLowerCase().includes(search.toLowerCase()) ||
+        p.type.toLowerCase().includes(search.toLowerCase())
       )
     : presets
 
@@ -154,7 +154,7 @@ export default function LightingSelector({
         aria-expanded={isOpen}
       >
         <span className={styles.triggerLeft}>
-          <span className={styles.triggerMeta}>Lighting</span>
+          <span className={styles.triggerMeta}>Film Stock</span>
           {selected ? (
             <span className={styles.triggerValue}>{selected.title}</span>
           ) : (
@@ -196,7 +196,7 @@ export default function LightingSelector({
           <div className={styles.menuContainer}>
             <div className={styles.list}>
               {filtered.length === 0 && (
-                <div className={styles.empty}>No presets found</div>
+                <div className={styles.empty}>No film stocks found</div>
               )}
               {filtered.map((preset, i) => (
                 <button
@@ -214,6 +214,7 @@ export default function LightingSelector({
                   />
                   <div className={styles.optionContent}>
                     <span className={styles.optionLabel}>{preset.title}</span>
+                    <span className={styles.optionType}>{preset.type}</span>
                   </div>
                   {selected?.title === preset.title && (
                     <Check size={16} strokeWidth={2} className={styles.check} />
@@ -247,33 +248,23 @@ export default function LightingSelector({
                   </span>
                   <div className={styles.detailFields}>
                     <div className={styles.detailField}>
-                      <span className={styles.detailLabel}>Lighting</span>
+                      <span className={styles.detailLabel}>Type</span>
                       <span className={styles.detailValue}>
-                        {hoveredPreset.lighting}
+                        {hoveredPreset.type}
                       </span>
                     </div>
                     <div className={styles.detailField}>
-                      <span className={styles.detailLabel}>Color Grade</span>
+                      <span className={styles.detailLabel}>Grain</span>
                       <span className={styles.detailValue}>
-                        {hoveredPreset.color_grade}
+                        {hoveredPreset.grain}
                       </span>
                     </div>
-                    {hoveredPreset.filmStock && (
-                      <div className={styles.detailField}>
-                        <span className={styles.detailLabel}>Film Stock</span>
-                        <span className={styles.detailValue}>
-                          {hoveredPreset.filmStock}
-                        </span>
-                      </div>
-                    )}
-                    {hoveredPreset.lens && (
-                      <div className={styles.detailField}>
-                        <span className={styles.detailLabel}>Lens</span>
-                        <span className={styles.detailValue}>
-                          {hoveredPreset.lens}
-                        </span>
-                      </div>
-                    )}
+                    <div className={styles.detailField}>
+                      <span className={styles.detailLabel}>Color Character</span>
+                      <span className={styles.detailValue}>
+                        {hoveredPreset.color}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
