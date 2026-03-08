@@ -100,8 +100,9 @@ export default function RotarySelector({
         }}
       >
         <div className={styles.groove} />
+        <div className={styles.dial} />
         <div
-          className={styles.dial}
+          className={styles.dialRotator}
           style={{ transform: `rotate(${dialRotation}deg)` }}
         >
           <div className={styles.indicator} />
