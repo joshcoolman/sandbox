@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { ChevronRight, Search, Check } from 'lucide-react'
+import { ChevronRight, Search, Check, Copy } from 'lucide-react'
 import styles from './LightingSelector.module.css'
 
 export interface LightingPreset {
@@ -12,6 +12,7 @@ export interface LightingPreset {
   filmStock?: string
   lens?: string
   prompt?: string
+  image?: string
 }
 
 interface LightingSelectorProps {
@@ -19,7 +20,16 @@ interface LightingSelectorProps {
   defaultValue?: string
   placeholder?: string
   onChange?: (preset: LightingPreset) => void
+  onExpand?: (preset: LightingPreset) => void
   className?: string
+}
+
+function buildPromptText(preset: LightingPreset): string {
+  if (preset.prompt) return preset.prompt
+  const parts = [preset.lighting, preset.color_grade]
+  if (preset.filmStock) parts.push(`shot on ${preset.filmStock}`)
+  if (preset.lens) parts.push(preset.lens)
+  return parts.join(', ')
 }
 
 export default function LightingSelector({
@@ -27,30 +37,39 @@ export default function LightingSelector({
   defaultValue,
   placeholder = 'Select look',
   onChange,
+  onExpand,
   className,
 }: LightingSelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [selected, setSelected] = useState<LightingPreset | null>(
     defaultValue ? presets.find((p) => p.title === defaultValue) ?? null : null
   )
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  const [copied, setCopied] = useState(false)
   const [search, setSearch] = useState('')
   const wrapperRef = useRef<HTMLDivElement>(null)
   const flyoutRef = useRef<HTMLDivElement>(null)
   const detailRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSelect = useCallback(
     (preset: LightingPreset) => {
       setSelected(preset)
       setIsOpen(false)
       setSearch('')
-      setHoveredIndex(null)
+      setExpandedIndex(null)
       onChange?.(preset)
     },
     [onChange]
   )
+
+  const handleCopy = useCallback(async (preset: LightingPreset, e: React.MouseEvent) => {
+    e.stopPropagation()
+    const text = buildPromptText(preset)
+    await navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 1500)
+  }, [])
 
   useEffect(() => {
     if (!isOpen) return
@@ -58,7 +77,7 @@ export default function LightingSelector({
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setIsOpen(false)
         setSearch('')
-        setHoveredIndex(null)
+        setExpandedIndex(null)
       }
     }
     const id = setTimeout(() => document.addEventListener('click', handle), 0)
@@ -71,12 +90,6 @@ export default function LightingSelector({
   useEffect(() => {
     if (isOpen) setTimeout(() => searchRef.current?.focus(), 50)
   }, [isOpen])
-
-  useEffect(() => {
-    return () => {
-      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
-    }
-  }, [])
 
   // Viewport-aware flyout positioning
   useEffect(() => {
@@ -102,7 +115,7 @@ export default function LightingSelector({
 
   // Viewport-aware detail panel positioning
   useEffect(() => {
-    if (hoveredIndex === null || !detailRef.current) return
+    if (expandedIndex === null || !detailRef.current) return
     const el = detailRef.current
     const pad = 12
     el.style.left = 'calc(100% + 6px)'
@@ -119,7 +132,7 @@ export default function LightingSelector({
         el.style.top = `${-overflow}px`
       }
     })
-  }, [hoveredIndex])
+  }, [expandedIndex])
 
   const getGradient = (preset: LightingPreset) => {
     if (!preset.palette) return 'linear-gradient(135deg, var(--ui-bg-surface), var(--ui-border))'
@@ -134,16 +147,17 @@ export default function LightingSelector({
       )
     : presets
 
-  const handleItemHover = useCallback((index: number) => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
-    hoverTimeoutRef.current = setTimeout(() => setHoveredIndex(index), 80)
-  }, [])
+  const handleItemClick = useCallback((index: number, e: React.MouseEvent) => {
+    e.stopPropagation()
+    const isOpening = expandedIndex !== index
+    setExpandedIndex((prev) => (prev === index ? null : index))
+    setCopied(false)
+    if (isOpening) {
+      onExpand?.(filtered[index])
+    }
+  }, [expandedIndex, filtered, onExpand])
 
-  const handleItemLeave = useCallback(() => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
-  }, [])
-
-  const hoveredPreset = hoveredIndex !== null ? filtered[hoveredIndex] : null
+  const expandedPreset = expandedIndex !== null ? filtered[expandedIndex] : null
 
   return (
     <div className={`${styles.wrapper} ${className ?? ''}`} ref={wrapperRef}>
@@ -186,7 +200,7 @@ export default function LightingSelector({
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value)
-                setHoveredIndex(null)
+                setExpandedIndex(null)
               }}
             />
           </div>
@@ -203,10 +217,9 @@ export default function LightingSelector({
                   key={preset.title}
                   className={`${styles.option} ${
                     selected?.title === preset.title ? styles.optionActive : ''
-                  } ${hoveredIndex === i ? styles.optionHovered : ''}`}
-                  onClick={() => handleSelect(preset)}
-                  onMouseEnter={() => handleItemHover(i)}
-                  onMouseLeave={handleItemLeave}
+                  } ${expandedIndex === i ? styles.optionHovered : ''}`}
+                  onClick={(e) => handleItemClick(i, e)}
+                  onDoubleClick={() => handleSelect(preset)}
                 >
                   <span
                     className={styles.swatch}
@@ -227,50 +240,68 @@ export default function LightingSelector({
               ))}
             </div>
 
-            {/* Detail submenu */}
-            {hoveredPreset && (
+            {/* Detail panel -- click to reveal */}
+            {expandedPreset && (
               <div
                 className={styles.detail}
                 ref={detailRef}
-                onMouseEnter={() => {
-                  if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
-                }}
-                onMouseLeave={() => setHoveredIndex(null)}
               >
-                <div
-                  className={styles.detailGradient}
-                  style={{ background: getGradient(hoveredPreset) }}
-                />
+                <div className={styles.detailImageWrap}>
+                  {expandedPreset.image ? (
+                    <img
+                      src={expandedPreset.image}
+                      alt={expandedPreset.title}
+                      className={styles.detailImage}
+                    />
+                  ) : (
+                    <div
+                      className={styles.detailGradient}
+                      style={{ background: getGradient(expandedPreset) }}
+                    />
+                  )}
+                  {(expandedPreset.prompt || expandedPreset.lighting) && (
+                    <button
+                      className={`${styles.copyButton} ${copied ? styles.copyButtonCopied : ''}`}
+                      onClick={(e) => handleCopy(expandedPreset, e)}
+                      title="Copy prompt"
+                    >
+                      <Copy size={13} strokeWidth={1.8} />
+                      <span className={styles.copyLabel}>
+                        {copied ? 'Copied' : 'Copy'}
+                      </span>
+                    </button>
+                  )}
+                </div>
                 <div className={styles.detailBody}>
                   <span className={styles.detailTitle}>
-                    {hoveredPreset.title}
+                    {expandedPreset.title}
                   </span>
                   <div className={styles.detailFields}>
                     <div className={styles.detailField}>
                       <span className={styles.detailLabel}>Lighting</span>
                       <span className={styles.detailValue}>
-                        {hoveredPreset.lighting}
+                        {expandedPreset.lighting}
                       </span>
                     </div>
                     <div className={styles.detailField}>
                       <span className={styles.detailLabel}>Color Grade</span>
                       <span className={styles.detailValue}>
-                        {hoveredPreset.color_grade}
+                        {expandedPreset.color_grade}
                       </span>
                     </div>
-                    {hoveredPreset.filmStock && (
+                    {expandedPreset.filmStock && (
                       <div className={styles.detailField}>
                         <span className={styles.detailLabel}>Film Stock</span>
                         <span className={styles.detailValue}>
-                          {hoveredPreset.filmStock}
+                          {expandedPreset.filmStock}
                         </span>
                       </div>
                     )}
-                    {hoveredPreset.lens && (
+                    {expandedPreset.lens && (
                       <div className={styles.detailField}>
                         <span className={styles.detailLabel}>Lens</span>
                         <span className={styles.detailValue}>
-                          {hoveredPreset.lens}
+                          {expandedPreset.lens}
                         </span>
                       </div>
                     )}

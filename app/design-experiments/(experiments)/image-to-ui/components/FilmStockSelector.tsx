@@ -16,6 +16,7 @@ export interface FilmStockPreset {
 interface FilmStockSelectorProps {
   presets: FilmStockPreset[]
   defaultValue?: string
+  value?: string
   placeholder?: string
   onChange?: (preset: FilmStockPreset) => void
   className?: string
@@ -24,6 +25,7 @@ interface FilmStockSelectorProps {
 export default function FilmStockSelector({
   presets,
   defaultValue,
+  value,
   placeholder = 'Select film',
   onChange,
   className,
@@ -32,6 +34,15 @@ export default function FilmStockSelector({
   const [selected, setSelected] = useState<FilmStockPreset | null>(
     defaultValue ? presets.find((p) => p.title === defaultValue) ?? null : null
   )
+
+  // Sync from controlled value prop
+  useEffect(() => {
+    if (value === undefined) return
+    const match = presets.find((p) => p.title === value)
+    if (match && match.title !== selected?.title) {
+      setSelected(match)
+    }
+  }, [value, presets, selected?.title])
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const [search, setSearch] = useState('')
   const wrapperRef = useRef<HTMLDivElement>(null)

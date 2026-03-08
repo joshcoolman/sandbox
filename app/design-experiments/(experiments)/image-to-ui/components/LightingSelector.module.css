@@ -213,10 +213,61 @@
   }
 }
 
-.detailGradient {
-  height: 64px;
+.detailImageWrap {
+  position: relative;
   flex-shrink: 0;
+}
+
+.detailImage {
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.detailGradient {
+  width: 100%;
+  aspect-ratio: 21 / 9;
   transition: background 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.copyButton {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--ui-radius-sm);
+  padding: 4px 8px;
+  font-family: var(--ui-font-mono);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition:
+    background var(--ui-transition-snap),
+    color var(--ui-transition-snap),
+    border-color var(--ui-transition-snap);
+}
+
+.copyButton:hover {
+  background: rgba(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.copyButtonCopied {
+  color: var(--ui-accent);
+  border-color: var(--ui-accent-dim);
+}
+
+.copyLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .detailBody {
