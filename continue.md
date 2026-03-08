@@ -1,40 +1,55 @@
-Continuing work on the "image-to-ui" design experiment at app/design-experiments/image-to-ui/. Read all files in that directory and its components/ folder to get up to speed.
+Continuing work on the promoted "image-to-ui" experiment at `app/design-experiments/(experiments)/image-to-ui/`. Read all files in that directory and its `components/` folder to get up to speed.
 
-**What this is:** A collection of interactive UI components reverse-engineered from reference images (FAL.ai video generation UI). User provides screenshots, Claude builds faithful interactive versions. Components share design tokens, are composable, and have parameterized inputs with open-ended outputs.
+## What this is
 
-**Files (all uncommitted/untracked except data.ts which is modified):**
-- `app/design-experiments/image-to-ui/page.tsx` -- two-column layout: components on left, description panel on right. DM Sans + DM Mono fonts. MODEL_SECTIONS JSON data defined here.
-- `app/design-experiments/image-to-ui/styles.css` -- shared design tokens. `--ui-primary: #ff8c2a` (fluorescent orange). Radius tokens: sm 4px, md 7px, lg 10px. All wrapper containers use --ui-radius-md. Two-column layout via .page-columns flexbox. Description panel has -10px margin-top for optical alignment.
-- `app/design-experiments/image-to-ui/components/RotarySelector.tsx` -- circular dial with radial labels (max 4), spring-eased rotation
-- `app/design-experiments/image-to-ui/components/DurationSlider.tsx` -- popover snap slider (3s/6s/9s/12s/15s)
-- `app/design-experiments/image-to-ui/components/ListSelector.tsx` -- popover list with checkmark, optional badge
-- `app/design-experiments/image-to-ui/components/ModelSelector.tsx` -- two-level flyout model selector, JSON-driven. Flyout opens to the RIGHT of trigger, vertically centered (top: 50%, translateY(-50%)). Viewport-aware: flips left or clamps vertically if overflowing. Submenu also viewport-aware.
-- `lib/experiments/data.ts` -- gallery entry added at top
+Interactive UI components reverse-engineered from video generation UI screenshots (Kling-style). Four components share design tokens, are composable, and now have a barrel export for use elsewhere in the app.
 
-**Changes made this session:**
-- Standardized all wrapper container border-radius to --ui-radius-md (7px) matching ModelSelector trigger
-- Tightened page gap from 48px to 20px
-- ModelSelector flyout repositioned: was opening above trigger, now opens to the right, vertically centered
-- Added viewport-aware positioning (useEffect with getBoundingClientRect) for both flyout and submenu -- flips horizontally, clamps vertically
-- Removed "Exclusive" badges from model data
-- Changed --ui-primary from #b4f74a (green) to #ff8c2a (fluorescent orange)
-- Added two-column layout: components left, description right
-- "Image to UI" moved from centered page label to h1 headline in description panel, 22px/600 weight
-- Description: two paragraphs about the collaborative image-to-code process
-- Tried glassmorphism (backdrop-filter blur) on flyout -- removed, didn't work well
+## Current file structure
 
-**Key decisions:**
-- --ui-primary is single brand color source of truth, currently orange. All accent tokens derive from it.
-- Wrapper containers (component-card, param-toolbar, model-trigger) all share --ui-radius-md (7px)
-- ModelSelector flyout direction: RIGHT of trigger (not above), vertically centered
-- styled-jsx scoping: ModelIcon and TagPill use inline styles (not in style jsx block)
-- Description panel uses negative margin-top (-10px) for optical alignment with first component
+```
+app/design-experiments/(experiments)/image-to-ui/
+  index.ts                    -- barrel export (public API)
+  types.ts                    -- ModelTag, ModelItem, ModelSection interfaces
+  tokens.css                  -- :root design tokens (--ui-primary: #ff8c2a orange)
+  page.tsx                    -- demo page, two-column layout, MODEL_SECTIONS data
+  page.module.css             -- page layout + param-toolbar styles
+  components/
+    RotarySelector.tsx         -- circular dial, radial labels, spring rotation
+    RotarySelector.module.css
+    DurationSlider.tsx         -- popover snap slider (3s-15s)
+    DurationSlider.module.css
+    ListSelector.tsx           -- popover dropdown with checkmark, optional badge
+    ListSelector.module.css
+    ModelSelector.tsx           -- two-level flyout, JSON-driven, viewport-aware
+    ModelSelector.module.css
+```
 
-**Outstanding / next session:**
-- User has "minor changes" to make -- unspecified
-- No commit yet -- user will review and use /ship-experiment when ready
-- Build should pass cleanly (not verified this session)
-- May want to refine submenu hover zones
-- Could add keyboard navigation to ModelSelector
+## Changes made this session
 
-**Git state:** Branch main, all experiment files are untracked (new), gallery entry in data.ts is the only modified tracked file. Nothing committed this session.
+- **Promoted experiment**: converted global `styles.css` + styled-jsx to per-component CSS Modules
+- Extracted shared types to `types.ts` (ModelTag, ModelItem, ModelSection)
+- Design tokens isolated to `tokens.css` (previously in styles.css)
+- Added `className` prop to all 4 components for composability
+- Created barrel export `index.ts` re-exporting all components + types
+- Updated RotarySelector demo labels: `Voiceover/Change Voice/Translate` -> `Standard/Pro/Turbo` (Kling 3.0 mode tiers)
+- Deleted old `styles.css`
+
+## Key decisions
+
+- `--ui-primary` (#ff8c2a orange) is single brand color source; all accent tokens derive from it
+- CSS Modules per component, design tokens stay global in `tokens.css`
+- Page-level toolbar overrides component trigger styles via `button[aria-expanded]` selector in page.module.css
+- RotarySelector labels themed to Kling 3.0 video generation context
+- Kling 3.0 research done: key params are mode (std/pro), cfg_scale (0-1), duration, aspect_ratio, camera control (pan/dolly/crane), motion intensity (1-10), native audio toggle, frame rate (24/30/60fps)
+- Consumer import path: `import { RotarySelector, ModelSelector } from '@/app/design-experiments/(experiments)/image-to-ui'`
+
+## Outstanding / next session
+
+- May want to `/ship-experiment` (screenshot, gallery entry, README)
+- Could add more Kling-authentic parameters to demo (cfg_scale slider, camera motion dial)
+- Keyboard navigation for ModelSelector not yet implemented
+- No tests written (visual components, verify visually)
+
+## Git state
+
+Branch `main`, clean working tree. Latest commit: `09e7a85` "Promote image-to-ui experiment: CSS Modules, barrel export, themed labels". Pushed to remote.

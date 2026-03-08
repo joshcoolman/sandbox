@@ -6,6 +6,8 @@ import RotarySelector from './components/RotarySelector'
 import DurationSlider from './components/DurationSlider'
 import ListSelector from './components/ListSelector'
 import ModelSelector from './components/ModelSelector'
+import LightingSelector from './components/LightingSelector'
+import type { LightingPreset } from './components/LightingSelector'
 import type { ModelSection } from './types'
 import './tokens.css'
 import styles from './page.module.css'
@@ -36,6 +38,19 @@ const QualityIcon = (
     <path d="M4.5 6L2 8.5L7 12.5L12 8.5L9.5 6" />
   </svg>
 )
+
+const LIGHTING_PRESETS: LightingPreset[] = [
+  { title: 'Blade Runner', lighting: 'Low-key neo-noir lighting, heavy volumetric fog, dramatic backlighting, neon practical light sources, wet pavement reflections', color_grade: 'Cyberpunk color grade, vibrant cyan and magenta neon hues, deep blue shadows, high contrast, cinematic teal-and-pink palette', palette: ['#0af5f5', '#1a1a3e', '#ff2d95'] },
+  { title: 'The Godfather', lighting: 'Top-down overhead lighting, Gordon Willis style, deep eye-socket shadows, low-key chiaroscuro, minimal background illumination', color_grade: 'Vintage 1940s color grade, warm amber and sepia tones, deep ink-black shadows, desaturated earthy browns, classic film grain', palette: ['#c88b3a', '#3d2b1a', '#1a1008'] },
+  { title: 'The Matrix', lighting: 'Cold industrial lighting, harsh overhead fluorescents, green-tinted shadows, sharp high-contrast illumination, clinical atmosphere', color_grade: 'Digital code color grade, heavy monochromatic green tint, neutralized skin tones, deep forest green shadows, high-tech dystopian look', palette: ['#00ff41', '#0d3b0d', '#0a0a0a'] },
+  { title: 'Mad Max: Fury Road', lighting: 'Harsh high-noon desert sunlight, intense heat haze, extreme high-key highlights, sharp defined shadows, day-for-night blue sequences', color_grade: 'Hyper-saturated color grade, aggressive orange and teal palette, vivid cobalt skies, burnt sienna sands, high dynamic range (HDR)', palette: ['#e8691a', '#0a5e7a', '#f5c842'] },
+  { title: 'Apocalypse Now', lighting: 'Extreme high-contrast chiaroscuro, flickering warm firelight, hazy jungle smoke, long dramatic silhouettes, moody rim lighting', color_grade: 'Gritty 70s film grade, deep jungle greens, oversaturated fire oranges, high-contrast shadows, humid atmospheric haze', palette: ['#2d5a1e', '#e85a1a', '#1a1a0a'] },
+  { title: '2001: A Space Odyssey', lighting: 'Soft white diffused lighting, sterile futuristic glow, clinical even illumination, bounce lighting, high-key sci-fi brightness', color_grade: 'Pristine white color grade, clean primary colors, high-fidelity clarity, sterile and clinical palette, minimal color bleeding', palette: ['#f0f0f5', '#cc2222', '#2244aa'] },
+  { title: 'The Shining', lighting: 'Clinical cold fluorescent lighting, symmetrical interior illumination, uncanny high-key brightness, absence of shadows, unsettling clarity', color_grade: 'Ominous high-saturation palette, vibrant reds and oranges, cold blue-tinted whites, sterile hotel aesthetic, flat lighting profile', palette: ['#cc2222', '#e8a035', '#c0d0e0'] },
+  { title: 'Her', lighting: 'Soft natural window light, gentle morning glow, airy diffused illumination, low-contrast shadows, intimate and warm lighting', color_grade: 'Modern pastel color grade, soft salmon pinks and warm reds, sunny yellow highlights, nostalgic shallow depth of field, romantic haze', palette: ['#e87070', '#f5c08a', '#f5e0d0'] },
+  { title: 'Alien', lighting: 'Low-key industrial lighting, flickering cold blue practicals, high-contrast shadows, claustrophobic atmospheric depth, steam and haze', color_grade: 'Grimy industrial color grade, cold steel blues, deep shadows, desaturated greens, gritty metallic textures, dark sci-fi horror', palette: ['#4a6a8a', '#1a2a1a', '#0a0a0f'] },
+  { title: 'Sin City', lighting: 'Hard-edged comic book lighting, extreme high-contrast noir, stark white highlights, pitch-black voids, sharp rim lighting', color_grade: 'Strict monochromatic black and white, high-contrast ink style, selective spot-color highlights, graphic novel aesthetic', palette: ['#ffffff', '#333333', '#000000'] },
+]
 
 const MODEL_SECTIONS: ModelSection[] = [
   {
@@ -216,6 +231,14 @@ export default function ImageToUI() {
             defaultValue="kling-3"
             onChange={(m) =>
               setLastOutput({ component: 'ModelSelector', value: m.label })
+            }
+          />
+
+          <LightingSelector
+            presets={LIGHTING_PRESETS}
+            defaultValue="Blade Runner"
+            onChange={(p) =>
+              setLastOutput({ component: 'LightingSelector', value: p.title })
             }
           />
 
