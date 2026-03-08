@@ -149,13 +149,17 @@ export default function LightingSelector({
 
   const handleItemClick = useCallback((index: number, e: React.MouseEvent) => {
     e.stopPropagation()
+    const preset = filtered[index]
     const isOpening = expandedIndex !== index
     setExpandedIndex((prev) => (prev === index ? null : index))
     setCopied(false)
+    // Select on click (checkmark updates) without closing the dropdown
+    setSelected(preset)
+    onChange?.(preset)
     if (isOpening) {
-      onExpand?.(filtered[index])
+      onExpand?.(preset)
     }
-  }, [expandedIndex, filtered, onExpand])
+  }, [expandedIndex, filtered, onChange, onExpand])
 
   const expandedPreset = expandedIndex !== null ? filtered[expandedIndex] : null
 

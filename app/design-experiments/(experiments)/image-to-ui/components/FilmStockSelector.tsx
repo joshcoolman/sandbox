@@ -49,6 +49,7 @@ export default function FilmStockSelector({
   const flyoutRef = useRef<HTMLDivElement>(null)
   const detailRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const handleSelect = useCallback(
@@ -81,6 +82,17 @@ export default function FilmStockSelector({
   useEffect(() => {
     if (isOpen) setTimeout(() => searchRef.current?.focus(), 50)
   }, [isOpen])
+
+  // Scroll selected item into view when flyout opens
+  useEffect(() => {
+    if (!isOpen || !listRef.current || !selected) return
+    requestAnimationFrame(() => {
+      const idx = presets.findIndex((p) => p.title === selected.title)
+      if (idx < 0 || !listRef.current) return
+      const item = listRef.current.children[idx] as HTMLElement | undefined
+      item?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    })
+  }, [isOpen, selected, presets])
 
   useEffect(() => {
     return () => {
@@ -205,7 +217,7 @@ export default function FilmStockSelector({
           <div className={styles.divider} />
 
           <div className={styles.menuContainer}>
-            <div className={styles.list}>
+            <div className={styles.list} ref={listRef}>
               {filtered.length === 0 && (
                 <div className={styles.empty}>No film stocks found</div>
               )}
