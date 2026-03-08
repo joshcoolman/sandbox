@@ -1,0 +1,126 @@
+/* ============================================
+   Image-to-UI Design Tokens
+   Shared across all components in this family
+   ============================================ */
+
+:root {
+  --ui-bg-deep: #0d0d0d;
+  --ui-bg-card: #1a1a1e;
+  --ui-bg-card-hover: #1f1f24;
+  --ui-bg-surface: #252529;
+  --ui-bg-elevated: #2a2a2f;
+  --ui-border: #2e2e34;
+  --ui-border-subtle: #222228;
+
+  --ui-text-primary: #e8e8ec;
+  --ui-text-secondary: #9a9aa4;
+  --ui-text-muted: #5c5c66;
+
+  /* Primary brand color -- change this one value to re-theme everything */
+  --ui-primary: #ff8c2a;
+  --ui-accent: var(--ui-primary);
+  --ui-accent-dim: color-mix(in srgb, var(--ui-primary) 15%, transparent);
+  --ui-accent-glow: color-mix(in srgb, var(--ui-primary) 30%, transparent);
+  --ui-accent-tint: color-mix(in srgb, var(--ui-primary) 8%, var(--ui-bg-surface));
+
+  --ui-radius-sm: 4px;
+  --ui-radius-md: 7px;
+  --ui-radius-lg: 10px;
+
+  --ui-font: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --ui-font-mono: 'DM Mono', 'SF Mono', monospace;
+
+  --ui-transition-snap: 0.2s cubic-bezier(0.2, 0, 0, 1);
+  --ui-transition-smooth: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --ui-transition-spring: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Page layout */
+.page {
+  min-height: 100vh;
+  background: var(--ui-bg-deep);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 48px 24px;
+  font-family: var(--ui-font);
+}
+
+/* Two-column layout */
+.page-columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+}
+
+.page-components {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.page-description {
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: -10px;
+}
+
+.page-description p {
+  font-family: var(--ui-font);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ui-text-secondary);
+  margin: 0;
+}
+
+.page-title {
+  font-family: var(--ui-font);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ui-text-primary);
+  margin: 0;
+}
+
+/* Shared card base for all components */
+.component-card {
+  background: var(--ui-bg-card);
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: var(--ui-radius-md);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Parameter toolbar -- groups selectors in a row */
+.param-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 6px 8px;
+  overflow: visible;
+  border-radius: var(--ui-radius-md);
+}
+
+.param-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--ui-border);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+/* Triggers inside toolbar lose their own card styling */
+.param-toolbar button[aria-expanded] {
+  background: transparent;
+  border-color: transparent;
+}
+
+.param-toolbar button[aria-expanded]:hover {
+  background: var(--ui-bg-surface);
+  border-color: transparent;
+}

@@ -2,6 +2,15 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'image-to-ui',
+    date: 'March 8, 2026',
+    title: 'Image to UI',
+    description:
+      'Interactive components reverse-engineered from reference images. Each component is parameterized with inputs and open-ended outputs, designed as a family with shared dark-theme design tokens. Rotary selector, and more to come.',
+    screenshot: '/screenshots/image-to-ui.png',
+    tags: ['Components', 'Interactive', 'Dark UI', 'Animation'],
+  },
+  {
     slug: 'candy-icons',
     date: 'March 4, 2026',
     title: 'Candy Icons',

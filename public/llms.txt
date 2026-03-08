@@ -8,6 +8,8 @@ Source: https://github.com/joshcoolman-smc/sandbox
 
 ## Design Experiments
 
+- [Image to UI](https://www.joshcoolman.com/design-experiments/image-to-ui): Interactive components reverse-engineered from video generation UI screenshots -- rotary selector, model picker, duration slider, aspect ratio and quality selectors with shared dark-theme design tokens
+- [Candy Icons](https://www.joshcoolman.com/design-experiments/candy-icons): Ten 3D app icons from pure CSS and SVG with four-layer gradient stacks and spring-bounce animations
 - [Card Stack](https://www.joshcoolman.com/design-experiments/card-stack): Scroll-driven card stack with GSAP ScrollTrigger peel-off animation, opacity fade, and fullscreen expand/collapse
 - [Retro Bento](https://www.joshcoolman.com/design-experiments/retro-bento): CrossFit Bento meets Retro Tech -- nine fictional hardware modules with LCD displays, animated gauges, interactive knobs, and LED matrix
 - [Retro Tech Control Panel](https://www.joshcoolman.com/design-experiments/retro-tech): Hardware-inspired CSS control panel with knobs, faders, toggles, and LED meters

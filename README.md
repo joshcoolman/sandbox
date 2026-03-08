@@ -10,6 +10,20 @@ This is a design sketchbook, not production software. There's no test suite and 
 
 ## Experiments
 
+### Image to UI
+
+**March 8, 2026**
+
+[![Image to UI](./public/screenshots/image-to-ui.png)](https://www.joshcoolman.com/design-experiments/image-to-ui)
+
+Interactive components reverse-engineered from screenshots of a video generation UI. Starting from reference images, each element was rebuilt as a parameterized component through conversation -- describing what we saw, iterating on spacing, color, and behavior until the result felt right. Rotary selector, model picker, duration slider, aspect ratio and quality selectors, all sharing dark-theme design tokens. No design files or specs -- just images and dialogue.
+
+`Components` `Interactive` `Dark UI` `Animation`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/image-to-ui) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/image-to-ui)**
+
+---
+
 ### Candy Icons
 
 **March 4, 2026**
