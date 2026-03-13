@@ -5,6 +5,7 @@ import { DM_Sans, DM_Mono } from 'next/font/google'
 import RotarySelector from './components/RotarySelector'
 import DurationSlider from './components/DurationSlider'
 import ListSelector from './components/ListSelector'
+import AspectRatioSelector from './components/AspectRatioSelector'
 import ModelSelector from './components/ModelSelector'
 import LightingSelector from './components/LightingSelector'
 import FilmStockSelector from './components/FilmStockSelector'
@@ -27,12 +28,6 @@ const dmMono = DM_Mono({
   display: 'swap',
   variable: '--ui-font-mono',
 })
-
-const AspectIcon = (
-  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="3.5" width="10" height="7" rx="1.5" />
-  </svg>
-)
 
 const QualityIcon = (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
@@ -308,12 +303,10 @@ export default function ImageToUI() {
 
             <div className={styles.paramDivider} />
 
-            <ListSelector
-              options={['16:9', '9:16', '1:1']}
+            <AspectRatioSelector
               defaultValue="16:9"
-              icon={AspectIcon}
               onChange={(v) =>
-                setLastOutput({ component: 'ListSelector (Aspect)', value: v })
+                setLastOutput({ component: 'AspectRatioSelector', value: v })
               }
             />
 

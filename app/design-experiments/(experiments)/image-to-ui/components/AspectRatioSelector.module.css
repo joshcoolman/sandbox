@@ -1,0 +1,116 @@
+.wrapper {
+  position: relative;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 80px;
+  background: var(--ui-bg-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-md);
+  padding: 8px 16px;
+  font-family: var(--ui-font);
+  font-size: 14px;
+  color: var(--ui-text-primary);
+  cursor: pointer;
+  transition:
+    background var(--ui-transition-snap),
+    border-color var(--ui-transition-snap);
+}
+
+.trigger:hover {
+  background: var(--ui-bg-elevated);
+  border-color: var(--ui-text-muted);
+}
+
+.triggerIcon {
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+}
+
+.popover {
+  background: var(--ui-bg-card);
+  border: 1px solid var(--ui-border-subtle);
+  border-radius: var(--ui-radius-lg);
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 220px;
+  padding: 8px;
+  z-index: 100;
+  animation: aspectPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes aspectPopIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(8px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.header {
+  font-family: var(--ui-font);
+  font-size: 13px;
+  color: var(--ui-text-muted);
+  padding: 8px 12px 6px;
+  letter-spacing: 0.01em;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: var(--ui-radius-md);
+  padding: 12px 12px;
+  font-family: var(--ui-font);
+  font-size: 15px;
+  color: var(--ui-text-secondary);
+  cursor: pointer;
+  transition:
+    background var(--ui-transition-snap),
+    color var(--ui-transition-snap);
+}
+
+.option:hover {
+  background: var(--ui-bg-surface);
+  color: var(--ui-text-primary);
+}
+
+.optionActive {
+  background: var(--ui-bg-elevated);
+  color: var(--ui-text-primary);
+}
+
+.optionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  flex-shrink: 0;
+  color: var(--ui-text-secondary);
+}
+
+.optionActive .optionIcon {
+  color: var(--ui-text-primary);
+}
+
+.optionLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.check {
+  color: var(--ui-text-muted);
+  flex-shrink: 0;
+}
