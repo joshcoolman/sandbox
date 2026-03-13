@@ -147,19 +147,21 @@ export default function LightingSelector({
       )
     : presets
 
+  const handleItemHover = useCallback((index: number) => {
+    const preset = filtered[index]
+    if (expandedIndex !== index) {
+      setExpandedIndex(index)
+      setCopied(false)
+      onExpand?.(preset)
+    }
+  }, [expandedIndex, filtered, onExpand])
+
   const handleItemClick = useCallback((index: number, e: React.MouseEvent) => {
     e.stopPropagation()
     const preset = filtered[index]
-    const isOpening = expandedIndex !== index
-    setExpandedIndex((prev) => (prev === index ? null : index))
-    setCopied(false)
-    // Select on click (checkmark updates) without closing the dropdown
     setSelected(preset)
     onChange?.(preset)
-    if (isOpening) {
-      onExpand?.(preset)
-    }
-  }, [expandedIndex, filtered, onChange, onExpand])
+  }, [filtered, onChange])
 
   const expandedPreset = expandedIndex !== null ? filtered[expandedIndex] : null
 
@@ -222,6 +224,7 @@ export default function LightingSelector({
                   className={`${styles.option} ${
                     selected?.title === preset.title ? styles.optionActive : ''
                   } ${expandedIndex === i ? styles.optionHovered : ''}`}
+                  onMouseEnter={() => handleItemHover(i)}
                   onClick={(e) => handleItemClick(i, e)}
                   onDoubleClick={() => handleSelect(preset)}
                 >
@@ -244,11 +247,13 @@ export default function LightingSelector({
               ))}
             </div>
 
-            {/* Detail panel -- click to reveal */}
+            {/* Detail panel -- click anywhere to copy */}
             {expandedPreset && (
               <div
-                className={styles.detail}
+                className={`${styles.detail} ${copied ? styles.detailCopied : ''}`}
                 ref={detailRef}
+                onClick={(e) => handleCopy(expandedPreset, e)}
+                style={{ cursor: 'pointer' }}
               >
                 <div className={styles.detailImageWrap}>
                   {expandedPreset.image ? (
