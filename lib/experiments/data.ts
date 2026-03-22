@@ -2,6 +2,15 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'moodboard',
+    date: 'March 22, 2026',
+    title: 'Moodboard',
+    description:
+      'Infinite canvas for visual brainstorming. Paste, drop, or upload images and arrange them freely. Pan with Space+drag, zoom with scroll wheel, marquee select, multi-select with Shift. All local-first -- images stay as blob URLs, nothing uploaded.',
+    screenshot: '/screenshots/moodboard.png',
+    tags: ['Infinite Canvas', 'Local-First', 'Interactive', 'Dark Theme'],
+  },
+  {
     slug: 'image-to-ui',
     date: 'March 8, 2026',
     title: 'Image to UI',

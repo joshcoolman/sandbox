@@ -1,0 +1,114 @@
+.mb-canvas {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0a;
+  overflow: hidden;
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+  z-index: 1;
+}
+
+.mb-canvas.mb-pan-mode {
+  cursor: grab;
+}
+
+.mb-canvas.mb-pan-mode:active {
+  cursor: grabbing;
+}
+
+.mb-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.mb-image {
+  position: absolute;
+  cursor: move;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color 0.1s;
+}
+
+.mb-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+.mb-selected {
+  outline-color: #4a9eff;
+}
+
+.mb-marquee {
+  position: fixed;
+  border: 1px solid rgba(74, 158, 255, 0.6);
+  background: rgba(74, 158, 255, 0.08);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.mb-empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #444;
+  font-family: var(--font-space-mono), monospace;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.mb-empty p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.mb-empty .mb-empty-hint {
+  margin-top: 12px;
+  font-size: 11px;
+  color: #2a2a2a;
+}
+
+.mb-toolbar {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 20;
+}
+
+.mb-toolbar button {
+  background: #141414;
+  color: #666;
+  border: 1px solid #2a2a2a;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-family: var(--font-space-mono), monospace;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.mb-toolbar button:hover {
+  color: #aaa;
+  border-color: #444;
+}
+
+.mb-zoom {
+  color: #444;
+  font-size: 11px;
+  font-family: var(--font-space-mono), monospace;
+  min-width: 36px;
+  text-align: right;
+  padding-left: 6px;
+}

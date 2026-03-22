@@ -10,6 +10,20 @@ This is a design sketchbook, not production software. There's no test suite and 
 
 ## Experiments
 
+### Moodboard
+
+**March 22, 2026**
+
+[![Moodboard](./public/screenshots/moodboard.png)](https://www.joshcoolman.com/design-experiments/moodboard)
+
+Infinite canvas for visual brainstorming. Paste, drop, or upload images and arrange them freely on a dark canvas. Pan with Space+drag, zoom with scroll wheel toward cursor, marquee select by dragging, multi-select with Shift. Batch imports lay out in masonry columns. All local-first -- images persist as data URLs in IndexedDB, nothing uploaded. Built with custom pan/zoom transform math and hotkeys-js.
+
+`Infinite Canvas` `Local-First` `Interactive` `Dark Theme`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/moodboard) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/moodboard)**
+
+---
+
 ### Image to UI
 
 **March 8, 2026**
