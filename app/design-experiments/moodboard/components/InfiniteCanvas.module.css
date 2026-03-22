@@ -1,4 +1,4 @@
-.mb-canvas {
+.canvas {
   position: fixed;
   inset: 0;
   background: #0a0a0a;
@@ -10,30 +10,30 @@
   z-index: 1;
 }
 
-.mb-canvas.mb-pan-mode {
+.panMode {
   cursor: grab;
 }
 
-.mb-canvas.mb-pan-mode:active {
+.panMode:active {
   cursor: grabbing;
 }
 
-.mb-inner {
+.inner {
   position: absolute;
   top: 0;
   left: 0;
   will-change: transform;
 }
 
-.mb-image {
+.image {
   position: absolute;
   cursor: move;
-  outline: 2px solid transparent;
-  outline-offset: 2px;
+  outline: 3px solid transparent;
+  outline-offset: 4px;
   transition: outline-color 0.1s;
 }
 
-.mb-image img {
+.image img {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -41,11 +41,18 @@
   pointer-events: none;
 }
 
-.mb-selected {
-  outline-color: #4a9eff;
+.selected {
+  outline-color: #5cb3ff;
 }
 
-.mb-marquee {
+.groupBounds {
+  position: absolute;
+  border: 3px solid #5cb3ff;
+  pointer-events: none;
+  border-radius: 2px;
+}
+
+.marquee {
   position: fixed;
   border: 1px solid rgba(74, 158, 255, 0.6);
   background: rgba(74, 158, 255, 0.08);
@@ -53,7 +60,7 @@
   z-index: 10;
 }
 
-.mb-empty {
+.empty {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -65,19 +72,19 @@
   z-index: 5;
 }
 
-.mb-empty p {
+.empty p {
   margin: 0;
   font-size: 14px;
   line-height: 1.6;
 }
 
-.mb-empty .mb-empty-hint {
+.emptyHint {
   margin-top: 12px;
   font-size: 11px;
   color: #2a2a2a;
 }
 
-.mb-toolbar {
+.toolbar {
   position: fixed;
   bottom: 16px;
   right: 16px;
@@ -87,7 +94,7 @@
   z-index: 20;
 }
 
-.mb-toolbar button {
+.toolbar button {
   background: #141414;
   color: #666;
   border: 1px solid #2a2a2a;
@@ -99,12 +106,12 @@
   transition: color 0.15s, border-color 0.15s;
 }
 
-.mb-toolbar button:hover {
+.toolbar button:hover {
   color: #aaa;
   border-color: #444;
 }
 
-.mb-zoom {
+.zoom {
   color: #444;
   font-size: 11px;
   font-family: var(--font-space-mono), monospace;
