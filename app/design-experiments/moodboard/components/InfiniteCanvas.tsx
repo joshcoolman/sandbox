@@ -76,6 +76,37 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
     mode: null, sx: 0, sy: 0, moved: false,
   })
 
+  /* ── Undo / Redo ── */
+  const undoStack = useRef<{ images: CanvasImage[]; groups: CanvasGroup[] }[]>([])
+  const redoStack = useRef<{ images: CanvasImage[]; groups: CanvasGroup[] }[]>([])
+  const MAX_UNDO = 50
+
+  const pushUndo = useCallback(() => {
+    undoStack.current.push({ images: iRef.current, groups: gRef.current })
+    if (undoStack.current.length > MAX_UNDO) undoStack.current.shift()
+    redoStack.current = []
+  }, [])
+
+  const undo = useCallback(() => {
+    const entry = undoStack.current.pop()
+    if (!entry) return
+    redoStack.current.push({ images: iRef.current, groups: gRef.current })
+    setImages(entry.images)
+    setGroups(entry.groups)
+    iRef.current = entry.images
+    gRef.current = entry.groups
+  }, [])
+
+  const redo = useCallback(() => {
+    const entry = redoStack.current.pop()
+    if (!entry) return
+    undoStack.current.push({ images: iRef.current, groups: gRef.current })
+    setImages(entry.images)
+    setGroups(entry.groups)
+    iRef.current = entry.images
+    gRef.current = entry.groups
+  }, [])
+
   useEffect(() => { tRef.current = transform }, [transform])
   useEffect(() => { iRef.current = images }, [images])
   useEffect(() => { sRef.current = selected }, [selected])
@@ -140,6 +171,7 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
   const arrangeSelected = useCallback((columns: number) => {
     const sel = sRef.current
     if (sel.size < 2) return
+    pushUndo()
     const selImgs = iRef.current.filter(img => sel.has(img.id))
     const sorted = spatialSort(selImgs)
     const bounds = getBounds(selImgs)
@@ -159,6 +191,7 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
   const groupSelected = useCallback((columns: number) => {
     const sel = sRef.current
     if (sel.size < 2) return
+    pushUndo()
 
     // Remove selected images from any existing groups first
     const selArr = [...sel]
@@ -194,9 +227,10 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
 
   const ungroupSelected = useCallback(() => {
     const sel = sRef.current
+    pushUndo()
     // Remove any groups that overlap with the selection
     setGroups(prev => prev.filter(g => !g.imageIds.some(id => sel.has(id))))
-  }, [])
+  }, [pushUndo])
 
   /* ── Image loading ── */
 
@@ -227,14 +261,16 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
     }))
 
     const newIds = new Set(newImages.map(img => img.id))
+    pushUndo()
     setImages(prev => [...prev, ...newImages])
     setSelected(newIds)
     sRef.current = newIds
-  }, [])
+  }, [pushUndo])
 
   const addImageFromDataUrl = useCallback((dataUrl: string, cx: number, cy: number) => {
     const img = new Image()
     img.onload = () => {
+      pushUndo()
       const id = crypto.randomUUID()
       setImages(prev => [...prev, {
         id,
@@ -464,7 +500,10 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     const d = dragRef.current
     if (!d.mode) return
-    if (!d.moved && Math.abs(e.clientX - d.sx) + Math.abs(e.clientY - d.sy) > 3) d.moved = true
+    if (!d.moved && Math.abs(e.clientX - d.sx) + Math.abs(e.clientY - d.sy) > 3) {
+      d.moved = true
+      if (d.mode === 'move') pushUndo()
+    }
     if (!d.moved) return
 
     if (d.mode === 'pan') {
@@ -569,6 +608,7 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
     hotkeys('backspace,delete', e => {
       e.preventDefault()
       if (sRef.current.size === 0) return
+      pushUndo()
       const sel = sRef.current
       setImages(prev => prev.filter(img => !sel.has(img.id)))
       // Clean up groups: remove deleted images, dissolve groups with <2 members
@@ -591,6 +631,16 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
 
     hotkeys('escape', () => { setSelected(new Set()); sRef.current = new Set() })
 
+    hotkeys('command+z', e => {
+      e.preventDefault()
+      undo()
+    })
+
+    hotkeys('command+shift+z', e => {
+      e.preventDefault()
+      redo()
+    })
+
     hotkeys('command+g', e => {
       e.preventDefault()
       if (sRef.current.size >= 2) groupSelected(4)
@@ -611,10 +661,12 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
       hotkeys.unbind('backspace,delete')
       hotkeys.unbind('command+a')
       hotkeys.unbind('escape')
+      hotkeys.unbind('command+z')
+      hotkeys.unbind('command+shift+z')
       hotkeys.unbind('command+g')
       hotkeys.unbind('command+shift+g')
     }
-  }, [zoomCenter, fitBounds, groupSelected, ungroupSelected])
+  }, [zoomCenter, fitBounds, groupSelected, ungroupSelected, undo, redo, pushUndo])
 
   /* ── File input ── */
 
