@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import path from 'path'
 import { Permanent_Marker } from 'next/font/google'
 import { experimentMetadata } from '@/lib/experiments/metadata'
@@ -12,7 +13,7 @@ const permanentMarker = Permanent_Marker({
   variable: '--font-marker',
 })
 
-export const metadata = experimentMetadata('sticky-notes')
+export const metadata: Metadata = experimentMetadata('sticky-notes')
 
 export default function StickyNotesExperiment() {
   const notes = getAllNotes(path.join(process.cwd(), 'app/design-experiments/(experiments)/sticky-notes/data'))

@@ -1,12 +1,9 @@
-'use client'
+import type { Metadata } from 'next';
+import { experimentMetadata } from '@/lib/experiments/metadata';
+import { CandyIconsContent } from './components/CandyIconsContent';
 
-import { CandyIconGrid } from './components/CandyIconGrid'
-import styles from './page.module.css'
+export const metadata: Metadata = experimentMetadata('candy-icons');
 
 export default function CandyIconsPage() {
-  return (
-    <main className={styles.page}>
-      <CandyIconGrid />
-    </main>
-  )
+  return <CandyIconsContent />;
 }

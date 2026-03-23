@@ -1,10 +1,11 @@
+import type { Metadata } from 'next';
 import { experimentMetadata } from '@/lib/experiments/metadata';
 import { RetroTechPanel } from './components/RetroTechPanel';
 import { EditorialBrief } from '../../components/EditorialBrief';
 import type { EditorialImage } from '../../components/EditorialBrief';
 import styles from './page.module.css';
 
-export const metadata = experimentMetadata('retro-tech');
+export const metadata: Metadata = experimentMetadata('retro-tech');
 
 const images: EditorialImage[] = [
   { src: '/design-experiments/retro-tech/sample-product-design-2.jpg', alt: 'Control surface detail', cropClass: 'imageCropped' },
