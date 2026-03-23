@@ -253,7 +253,7 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
       width: w,
       height: h,
     }))
-    const results = layoutMasonry(items, 6, cx, cy)
+    const results = layoutMasonry(items, 6, cx, cy, 300)
 
     const newImages: CanvasImage[] = results.map((r, i) => ({
       ...r,
@@ -732,7 +732,7 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
           <div
             key={img.id}
             data-image-id={img.id}
-            className={`${styles.image}${selectionBounds && !selected.has(img.id) && img.x + img.width >= selectionBounds.x && img.x <= selectionBounds.x + selectionBounds.w && img.y + img.height >= selectionBounds.y && img.y <= selectionBounds.y + selectionBounds.h ? ` ${styles.dimmed}` : ''}`}
+            className={`${styles.image}${selected.size >= 2 && selectionBounds && !selected.has(img.id) && img.x + img.width >= selectionBounds.x && img.x <= selectionBounds.x + selectionBounds.w && img.y + img.height >= selectionBounds.y && img.y <= selectionBounds.y + selectionBounds.h ? ` ${styles.dimmed}` : ''}`}
             style={{ left: img.x, top: img.y, width: img.width, height: img.height }}
           >
             <img src={img.src} alt="" draggable={false} />

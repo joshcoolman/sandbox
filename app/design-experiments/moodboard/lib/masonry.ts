@@ -12,26 +12,36 @@ export interface MasonryResult {
   height: number
 }
 
+/**
+ * Layout items in a masonry grid, preserving each item's current size.
+ * Column width is derived from the median item width.
+ */
 export function layoutMasonry(
   items: MasonryItem[],
   columns: number,
   originX: number,
   originY: number,
-  colWidth = 300,
+  colWidth?: number,
   gap = 16,
 ): MasonryResult[] {
   const cols = Math.min(columns, items.length)
-  const totalWidth = cols * colWidth + (cols - 1) * gap
+
+  // Use provided colWidth, or derive from median of actual widths
+  const effectiveColWidth = colWidth ?? (() => {
+    const widths = items.map(i => i.width).sort((a, b) => a - b)
+    return widths[Math.floor(widths.length / 2)]
+  })()
+
+  const totalWidth = cols * effectiveColWidth + (cols - 1) * gap
   const colHeights = new Array(cols).fill(0)
 
   return items.map(item => {
-    const displayW = colWidth
-    const displayH = (item.height / item.width) * colWidth
     const col = colHeights.indexOf(Math.min(...colHeights))
-    const x = originX - totalWidth / 2 + col * (colWidth + gap)
+    const x = originX - totalWidth / 2 + col * (effectiveColWidth + gap)
     const y = originY + colHeights[col]
-    colHeights[col] += displayH + gap
+    // Keep original dimensions — just reposition
+    colHeights[col] += item.height + gap
 
-    return { id: item.id, x, y, width: displayW, height: displayH }
+    return { id: item.id, x, y, width: item.width, height: item.height }
   })
 }
