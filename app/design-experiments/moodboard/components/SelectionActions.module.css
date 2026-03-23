@@ -1,0 +1,52 @@
+.bar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 8px 16px;
+  z-index: 30;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.label {
+  color: #666;
+  font-size: 12px;
+  font-family: var(--font-space-mono), monospace;
+  white-space: nowrap;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: #2a2a2a;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
+.actionBtn {
+  padding: 6px 14px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #aaa;
+  font-size: 12px;
+  font-family: var(--font-space-mono), monospace;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s, background 0.1s;
+  white-space: nowrap;
+}
+
+.actionBtn:hover {
+  color: #eee;
+  border-color: #555;
+  background: #222;
+}

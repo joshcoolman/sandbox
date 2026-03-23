@@ -2,8 +2,10 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react'
 import hotkeys from 'hotkeys-js'
-import type { CanvasImage, Transform, DragMode } from '../types'
+import type { CanvasImage, CanvasGroup, Transform, DragMode } from '../types'
 import { loadPersistedState, savePersistedState, fileToDataUrl } from '../lib/persistence'
+import { layoutMasonry } from '../lib/masonry'
+import { SelectionActions } from './SelectionActions'
 import styles from './InfiniteCanvas.module.css'
 
 interface InfiniteCanvasProps {
@@ -14,6 +16,31 @@ interface InfiniteCanvasProps {
 const MIN_SCALE = 0.02
 const MAX_SCALE = 1.0
 const DEFAULT_SCALE = 0.5
+
+/** Sort images in reading order (top-to-bottom, left-to-right) to preserve
+ *  the rough spatial layout the user arranged before grouping/arranging. */
+function spatialSort(imgs: CanvasImage[]): CanvasImage[] {
+  if (imgs.length < 2) return imgs
+  const sorted = [...imgs].sort((a, b) => a.y - b.y)
+  // Use half the average height as the row tolerance
+  const avgH = imgs.reduce((s, i) => s + i.height, 0) / imgs.length
+  const rowTolerance = avgH * 0.5
+  // Group into rows, then sort each row left-to-right
+  const rows: CanvasImage[][] = []
+  let currentRow: CanvasImage[] = [sorted[0]]
+  let rowY = sorted[0].y
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i].y - rowY <= rowTolerance) {
+      currentRow.push(sorted[i])
+    } else {
+      rows.push(currentRow.sort((a, b) => a.x - b.x))
+      currentRow = [sorted[i]]
+      rowY = sorted[i].y
+    }
+  }
+  rows.push(currentRow.sort((a, b) => a.x - b.x))
+  return rows.flat()
+}
 
 function getBounds(imgs: CanvasImage[]) {
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity
@@ -28,6 +55,7 @@ function getBounds(imgs: CanvasImage[]) {
 
 export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCanvasProps) {
   const [images, setImages] = useState<CanvasImage[]>([])
+  const [groups, setGroups] = useState<CanvasGroup[]>([])
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [transform, setTransform] = useState<Transform>({ x: 0, y: 0, scale: DEFAULT_SCALE })
   const [marquee, setMarquee] = useState<{ x1: number; y1: number; x2: number; y2: number } | null>(null)
@@ -40,6 +68,7 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
   const tRef = useRef(transform)
   const iRef = useRef(images)
   const sRef = useRef(selected)
+  const gRef = useRef(groups)
   const spaceRef = useRef(false)
   const pasteTargetRef = useRef<{ x: number; y: number } | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -50,6 +79,7 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
   useEffect(() => { tRef.current = transform }, [transform])
   useEffect(() => { iRef.current = images }, [images])
   useEffect(() => { sRef.current = selected }, [selected])
+  useEffect(() => { gRef.current = groups }, [groups])
 
   /* ── Load persisted state ── */
 
@@ -58,8 +88,10 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
       if (state) {
         setImages(state.images)
         setTransform(state.transform)
+        setGroups(state.groups ?? [])
         tRef.current = state.transform
         iRef.current = state.images
+        gRef.current = state.groups ?? []
       }
       setLoaded(true)
     })
@@ -71,9 +103,9 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
     if (!loaded) return
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(() => {
-      savePersistedState({ images, transform }, storageKey)
+      savePersistedState({ images, transform, groups }, storageKey)
     }, 500)
-  }, [images, transform, loaded, storageKey])
+  }, [images, transform, groups, loaded, storageKey])
 
   /* ── Coordinates ── */
 
@@ -94,6 +126,100 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
     return pasteTargetRef.current ?? viewportCenter()
   }, [viewportCenter])
 
+  /* ── Group helpers ── */
+
+  const getSelectedGroup = useCallback(() => {
+    const sel = sRef.current
+    if (sel.size < 2) return null
+    const selArr = [...sel]
+    return gRef.current.find(g =>
+      g.imageIds.length === selArr.length && selArr.every(id => g.imageIds.includes(id))
+    ) ?? null
+  }, [])
+
+  const arrangeSelected = useCallback((columns: number) => {
+    const sel = sRef.current
+    if (sel.size < 2) return
+    const selImgs = iRef.current.filter(img => sel.has(img.id))
+    const sorted = spatialSort(selImgs)
+    const bounds = getBounds(selImgs)
+    const centerX = bounds.x + bounds.w / 2
+    const originY = bounds.y
+
+    const items = sorted.map(img => ({ id: img.id, width: img.width, height: img.height }))
+    const results = layoutMasonry(items, columns, centerX, originY)
+
+    const posMap = new Map(results.map(r => [r.id, r]))
+    setImages(prev => prev.map(img => {
+      const pos = posMap.get(img.id)
+      return pos ? { ...img, x: pos.x, y: pos.y, width: pos.width, height: pos.height } : img
+    }))
+  }, [])
+
+  const groupSelected = useCallback((columns: number) => {
+    const sel = sRef.current
+    if (sel.size < 2) return
+
+    // Remove selected images from any existing groups first
+    const selArr = [...sel]
+    setGroups(prev => {
+      let next = prev.map(g => ({
+        ...g,
+        imageIds: g.imageIds.filter(id => !sel.has(id)),
+      })).filter(g => g.imageIds.length >= 2)
+
+      // Arrange first (spatial sort to preserve rough layout order)
+      const selImgs = spatialSort(iRef.current.filter(img => sel.has(img.id)))
+      const bounds = getBounds(selImgs)
+      const centerX = bounds.x + bounds.w / 2
+      const originY = bounds.y
+      const items = selImgs.map(img => ({ id: img.id, width: img.width, height: img.height }))
+      const results = layoutMasonry(items, columns, centerX, originY)
+      const posMap = new Map(results.map(r => [r.id, r]))
+
+      setImages(prev => prev.map(img => {
+        const pos = posMap.get(img.id)
+        return pos ? { ...img, x: pos.x, y: pos.y, width: pos.width, height: pos.height } : img
+      }))
+
+      next = [...next, {
+        id: crypto.randomUUID(),
+        imageIds: selArr,
+        columns,
+        padding: 24,
+      }]
+      return next
+    })
+  }, [])
+
+  const ungroupSelected = useCallback(() => {
+    const sel = sRef.current
+    // Remove any groups that overlap with the selection
+    setGroups(prev => prev.filter(g => !g.imageIds.some(id => sel.has(id))))
+  }, [])
+
+  const toggleGroup = useCallback(() => {
+    const sel = sRef.current
+    if (sel.size < 2) return
+    const selArr = [...sel]
+    const groups = gRef.current
+
+    // Check if the selection is exactly one group (pure ungroup case)
+    const isExactlyOneGroup = groups.some(g =>
+      g.imageIds.length === selArr.length && selArr.every(id => g.imageIds.includes(id))
+    )
+    // Check if all selected images belong to groups (no loose items)
+    const allGrouped = selArr.every(id => groups.some(g => g.imageIds.includes(id)))
+
+    if (isExactlyOneGroup && allGrouped) {
+      // Pure ungroup: selection is exactly one group
+      ungroupSelected()
+    } else {
+      // Group: dissolve any overlapping groups and merge everything into one new group
+      groupSelected(4)
+    }
+  }, [ungroupSelected, groupSelected])
+
   /* ── Image loading ── */
 
   const addImagesFromFiles = useCallback(async (files: FileList | File[], cx: number, cy: number) => {
@@ -110,28 +236,17 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
       })
     }))
 
-    const maxCols = Math.min(6, loaded.length)
-    const colWidth = 300
-    const gap = 16
-    const totalWidth = maxCols * colWidth + (maxCols - 1) * gap
-    const colHeights = new Array(maxCols).fill(0)
+    const items = loaded.map(({ w, h }) => ({
+      id: crypto.randomUUID(),
+      width: w,
+      height: h,
+    }))
+    const results = layoutMasonry(items, 6, cx, cy)
 
-    const newImages: CanvasImage[] = loaded.map(({ dataUrl, w, h }) => {
-      const displayW = colWidth
-      const displayH = (h / w) * colWidth
-      const col = colHeights.indexOf(Math.min(...colHeights))
-      const x = cx - totalWidth / 2 + col * (colWidth + gap)
-      const y = cy + colHeights[col]
-      colHeights[col] += displayH + gap
-
-      return {
-        id: crypto.randomUUID(),
-        src: dataUrl,
-        x, y,
-        width: displayW,
-        height: displayH,
-      }
-    })
+    const newImages: CanvasImage[] = results.map((r, i) => ({
+      ...r,
+      src: loaded[i].dataUrl,
+    }))
 
     const newIds = new Set(newImages.map(img => img.id))
     setImages(prev => [...prev, ...newImages])
@@ -301,17 +416,58 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     if (e.button !== 0) return
     if ((e.target as HTMLElement).closest(`.${styles.toolbar}`)) return
+
+    // Check for group background click
+    const groupTarget = (e.target as HTMLElement).closest('[data-group-id]')
+    const groupId = groupTarget?.getAttribute('data-group-id')
+    if (groupId && !spaceRef.current) {
+      const group = gRef.current.find(g => g.id === groupId)
+      if (group) {
+        const next = new Set(group.imageIds)
+        setSelected(next)
+        sRef.current = next
+        dragRef.current = { mode: 'move', sx: e.clientX, sy: e.clientY, moved: false }
+        containerRef.current?.setPointerCapture(e.pointerId)
+        return
+      }
+    }
+
     const target = (e.target as HTMLElement).closest('[data-image-id]')
     const imageId = target?.getAttribute('data-image-id')
 
     if (imageId && !spaceRef.current) {
+      // Check if this image belongs to a group
+      const group = gRef.current.find(g => g.imageIds.includes(imageId))
+
       if (e.shiftKey) {
-        setSelected(prev => {
-          const next = new Set(prev)
-          next.has(imageId) ? next.delete(imageId) : next.add(imageId)
+        if (group) {
+          // Shift+click on grouped image: toggle entire group
+          setSelected(prev => {
+            const next = new Set(prev)
+            const allIn = group.imageIds.every(id => next.has(id))
+            if (allIn) {
+              group.imageIds.forEach(id => next.delete(id))
+            } else {
+              group.imageIds.forEach(id => next.add(id))
+            }
+            sRef.current = next
+            return next
+          })
+        } else {
+          setSelected(prev => {
+            const next = new Set(prev)
+            next.has(imageId) ? next.delete(imageId) : next.add(imageId)
+            sRef.current = next
+            return next
+          })
+        }
+      } else if (group) {
+        // Click on grouped image: select entire group
+        if (!group.imageIds.every(id => sRef.current.has(id))) {
+          const next = new Set(group.imageIds)
+          setSelected(next)
           sRef.current = next
-          return next
-        })
+        }
       } else if (!sRef.current.has(imageId)) {
         const next = new Set([imageId])
         setSelected(next)
@@ -363,6 +519,12 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
       for (const img of iRef.current) {
         if (img.x + img.width >= left && img.x <= right && img.y + img.height >= top && img.y <= bottom) {
           hit.add(img.id)
+        }
+      }
+      // Expand selection to include full groups if any member was hit
+      for (const g of gRef.current) {
+        if (g.imageIds.some(id => hit.has(id))) {
+          g.imageIds.forEach(id => hit.add(id))
         }
       }
       if (e.shiftKey) {
@@ -418,6 +580,13 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
       if (sRef.current.size === 0) return
       const sel = sRef.current
       setImages(prev => prev.filter(img => !sel.has(img.id)))
+      // Clean up groups: remove deleted images, dissolve groups with <2 members
+      setGroups(prev =>
+        prev.map(g => ({
+          ...g,
+          imageIds: g.imageIds.filter(id => !sel.has(id)),
+        })).filter(g => g.imageIds.length >= 2)
+      )
       setSelected(new Set())
       sRef.current = new Set()
     })
@@ -431,6 +600,11 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
 
     hotkeys('escape', () => { setSelected(new Set()); sRef.current = new Set() })
 
+    hotkeys('command+g', e => {
+      e.preventDefault()
+      toggleGroup()
+    })
+
     return () => {
       hotkeys.unbind('command+=,command+plus')
       hotkeys.unbind('command+-')
@@ -439,8 +613,9 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
       hotkeys.unbind('backspace,delete')
       hotkeys.unbind('command+a')
       hotkeys.unbind('escape')
+      hotkeys.unbind('command+g')
     }
-  }, [zoomCenter, fitBounds])
+  }, [zoomCenter, fitBounds, toggleGroup])
 
   /* ── File input ── */
 
@@ -458,9 +633,12 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
   const isMultiSelect = selected.size > 1
 
   // Group bounding box for multi-select
-  const groupBounds = isMultiSelect
+  const selectionBounds = isMultiSelect
     ? getBounds(images.filter(img => selected.has(img.id)))
     : null
+
+  // Detect if current selection is exactly a group
+  const selectedGroup = getSelectedGroup()
 
   return (
     <div
@@ -480,6 +658,27 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
           transformOrigin: '0 0',
         }}
       >
+        {/* Group backgrounds (rendered behind images) */}
+        {groups.map(group => {
+          const memberImgs = images.filter(img => group.imageIds.includes(img.id))
+          if (memberImgs.length < 2) return null
+          const bounds = getBounds(memberImgs)
+          const pad = group.padding
+          return (
+            <div
+              key={group.id}
+              data-group-id={group.id}
+              className={styles.groupBackground}
+              style={{
+                left: bounds.x - pad,
+                top: bounds.y - pad,
+                width: bounds.w + pad * 2,
+                height: bounds.h + pad * 2,
+              }}
+            />
+          )
+        })}
+
         {images.map(img => (
           <div
             key={img.id}
@@ -491,17 +690,18 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
           </div>
         ))}
 
-        {groupBounds && (
+        {selectionBounds && (
           <div
             className={styles.groupBounds}
             style={{
-              left: groupBounds.x - 6,
-              top: groupBounds.y - 6,
-              width: groupBounds.w + 12,
-              height: groupBounds.h + 12,
+              left: selectionBounds.x - 6,
+              top: selectionBounds.y - 6,
+              width: selectionBounds.w + 12,
+              height: selectionBounds.h + 12,
             }}
           />
         )}
+
       </div>
 
       {marquee && (
@@ -523,6 +723,16 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
             Click to set paste target &middot; Scroll to zoom &middot; Space+drag to pan
           </p>
         </div>
+      )}
+
+      {selected.size >= 2 && (
+        <SelectionActions
+          count={selected.size}
+          isGrouped={!!selectedGroup}
+          onArrange={arrangeSelected}
+          onGroup={groupSelected}
+          onUngroup={ungroupSelected}
+        />
       )}
 
       <div className={styles.toolbar}>

@@ -1,2 +1,2 @@
 export { InfiniteCanvas } from './components/InfiniteCanvas'
-export type { CanvasImage, Transform } from './types'
+export type { CanvasImage, CanvasGroup, Transform } from './types'

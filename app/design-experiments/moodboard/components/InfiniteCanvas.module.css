@@ -119,3 +119,9 @@
   text-align: right;
   padding-left: 6px;
 }
+
+.groupBackground {
+  position: absolute;
+  background: #1a1a1a;
+  border-radius: 4px;
+}
