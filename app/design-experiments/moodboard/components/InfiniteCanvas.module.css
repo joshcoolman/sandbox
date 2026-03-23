@@ -28,9 +28,19 @@
 .image {
   position: absolute;
   cursor: move;
-  outline: 3px solid transparent;
-  outline-offset: 4px;
-  transition: outline-color 0.1s;
+  transition: opacity 0.15s;
+}
+
+.dimmed {
+  opacity: 0.4;
+}
+
+.dimmed::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(180, 50, 50, 0.70);
+  pointer-events: none;
 }
 
 .image img {
@@ -41,15 +51,12 @@
   pointer-events: none;
 }
 
-.selected {
-  outline-color: #5cb3ff;
-}
-
 .groupBounds {
-  position: absolute;
-  border: 3px solid #5cb3ff;
+  position: fixed;
+  border: 2px solid #5cb3ff;
   pointer-events: none;
-  border-radius: 2px;
+  border-radius: 3px;
+  z-index: 5;
 }
 
 .marquee {
@@ -82,42 +89,6 @@
   margin-top: 12px;
   font-size: 11px;
   color: #2a2a2a;
-}
-
-.toolbar {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  z-index: 20;
-}
-
-.toolbar button {
-  background: #141414;
-  color: #666;
-  border: 1px solid #2a2a2a;
-  padding: 5px 10px;
-  font-size: 11px;
-  font-family: var(--font-space-mono), monospace;
-  cursor: pointer;
-  border-radius: 3px;
-  transition: color 0.15s, border-color 0.15s;
-}
-
-.toolbar button:hover {
-  color: #aaa;
-  border-color: #444;
-}
-
-.zoom {
-  color: #444;
-  font-size: 11px;
-  font-family: var(--font-space-mono), monospace;
-  min-width: 36px;
-  text-align: right;
-  padding-left: 6px;
 }
 
 .groupBackground {

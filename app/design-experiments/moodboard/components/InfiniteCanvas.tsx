@@ -198,28 +198,6 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
     setGroups(prev => prev.filter(g => !g.imageIds.some(id => sel.has(id))))
   }, [])
 
-  const toggleGroup = useCallback(() => {
-    const sel = sRef.current
-    if (sel.size < 2) return
-    const selArr = [...sel]
-    const groups = gRef.current
-
-    // Check if the selection is exactly one group (pure ungroup case)
-    const isExactlyOneGroup = groups.some(g =>
-      g.imageIds.length === selArr.length && selArr.every(id => g.imageIds.includes(id))
-    )
-    // Check if all selected images belong to groups (no loose items)
-    const allGrouped = selArr.every(id => groups.some(g => g.imageIds.includes(id)))
-
-    if (isExactlyOneGroup && allGrouped) {
-      // Pure ungroup: selection is exactly one group
-      ungroupSelected()
-    } else {
-      // Group: dissolve any overlapping groups and merge everything into one new group
-      groupSelected(4)
-    }
-  }, [ungroupSelected, groupSelected])
-
   /* ── Image loading ── */
 
   const addImagesFromFiles = useCallback(async (files: FileList | File[], cx: number, cy: number) => {
@@ -415,7 +393,7 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     if (e.button !== 0) return
-    if ((e.target as HTMLElement).closest(`.${styles.toolbar}`)) return
+    // Bottom bar handles its own stopPropagation
 
     // Check for group background click
     const groupTarget = (e.target as HTMLElement).closest('[data-group-id]')
@@ -575,6 +553,19 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
       fitBounds(getBounds(iRef.current))
     })
 
+    hotkeys('command+1', e => {
+      e.preventDefault()
+      zoomCenter(1.0)
+    })
+
+    hotkeys('command+2', e => {
+      e.preventDefault()
+      const sel = sRef.current, imgs = iRef.current
+      const targets = sel.size > 0 ? imgs.filter(i => sel.has(i.id)) : imgs
+      if (targets.length === 0) return
+      fitBounds(getBounds(targets))
+    })
+
     hotkeys('backspace,delete', e => {
       e.preventDefault()
       if (sRef.current.size === 0) return
@@ -602,20 +593,28 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
 
     hotkeys('command+g', e => {
       e.preventDefault()
-      toggleGroup()
+      if (sRef.current.size >= 2) groupSelected(4)
+    })
+
+    hotkeys('command+shift+g', e => {
+      e.preventDefault()
+      ungroupSelected()
     })
 
     return () => {
       hotkeys.unbind('command+=,command+plus')
       hotkeys.unbind('command+-')
       hotkeys.unbind('command+0')
+      hotkeys.unbind('command+1')
+      hotkeys.unbind('command+2')
       hotkeys.unbind('command+shift+0')
       hotkeys.unbind('backspace,delete')
       hotkeys.unbind('command+a')
       hotkeys.unbind('escape')
       hotkeys.unbind('command+g')
+      hotkeys.unbind('command+shift+g')
     }
-  }, [zoomCenter, fitBounds, toggleGroup])
+  }, [zoomCenter, fitBounds, groupSelected, ungroupSelected])
 
   /* ── File input ── */
 
@@ -630,10 +629,8 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
 
   const zoomPct = Math.round(transform.scale * 100)
   const rootClass = [styles.canvas, spaceHeld && styles.panMode, className].filter(Boolean).join(' ')
-  const isMultiSelect = selected.size > 1
-
-  // Group bounding box for multi-select
-  const selectionBounds = isMultiSelect
+  // Bounding box for any selection (single or multi)
+  const selectionBounds = selected.size >= 1
     ? getBounds(images.filter(img => selected.has(img.id)))
     : null
 
@@ -683,26 +680,26 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
           <div
             key={img.id}
             data-image-id={img.id}
-            className={`${styles.image}${selected.has(img.id) && !isMultiSelect ? ` ${styles.selected}` : ''}`}
+            className={`${styles.image}${selectionBounds && !selected.has(img.id) && img.x + img.width >= selectionBounds.x && img.x <= selectionBounds.x + selectionBounds.w && img.y + img.height >= selectionBounds.y && img.y <= selectionBounds.y + selectionBounds.h ? ` ${styles.dimmed}` : ''}`}
             style={{ left: img.x, top: img.y, width: img.width, height: img.height }}
           >
             <img src={img.src} alt="" draggable={false} />
           </div>
         ))}
 
-        {selectionBounds && (
-          <div
-            className={styles.groupBounds}
-            style={{
-              left: selectionBounds.x - 6,
-              top: selectionBounds.y - 6,
-              width: selectionBounds.w + 12,
-              height: selectionBounds.h + 12,
-            }}
-          />
-        )}
-
       </div>
+
+      {selectionBounds && (
+        <div
+          className={styles.groupBounds}
+          style={{
+            left: transform.x + selectionBounds.x * transform.scale - 6,
+            top: transform.y + selectionBounds.y * transform.scale - 6,
+            width: selectionBounds.w * transform.scale + 12,
+            height: selectionBounds.h * transform.scale + 12,
+          }}
+        />
+      )}
 
       {marquee && (
         <div
@@ -725,22 +722,15 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
         </div>
       )}
 
-      {selected.size >= 2 && (
-        <SelectionActions
-          count={selected.size}
-          isGrouped={!!selectedGroup}
-          onArrange={arrangeSelected}
-          onGroup={groupSelected}
-          onUngroup={ungroupSelected}
-        />
-      )}
-
-      <div className={styles.toolbar}>
-        <button onClick={() => fileInputRef.current?.click()} title="Select image files">
-          + Images
-        </button>
-        <span className={styles.zoom}>{zoomPct}%</span>
-      </div>
+      <SelectionActions
+        count={selected.size}
+        isGrouped={!!selectedGroup}
+        onArrange={arrangeSelected}
+        onGroup={groupSelected}
+        onUngroup={ungroupSelected}
+        zoomPct={zoomPct}
+        onUpload={() => fileInputRef.current?.click()}
+      />
 
       <input ref={fileInputRef} type="file" multiple accept="image/*" onChange={onFileChange} hidden />
     </div>

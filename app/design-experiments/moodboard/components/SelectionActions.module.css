@@ -8,45 +8,81 @@
   gap: 12px;
   background: #141414;
   border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  padding: 8px 16px;
+  border-radius: 10px;
+  padding: 8px 14px;
   z-index: 30;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
 .label {
-  color: #666;
-  font-size: 12px;
-  font-family: var(--font-space-mono), monospace;
+  color: #888;
+  font-size: 13px;
+  font-family: var(--font-bitter), serif;
   white-space: nowrap;
 }
 
 .divider {
   width: 1px;
-  height: 20px;
+  height: 24px;
   background: #2a2a2a;
 }
 
 .actions {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .actionBtn {
-  padding: 6px 14px;
+  padding: 7px 16px;
   background: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 4px;
-  color: #aaa;
-  font-size: 12px;
-  font-family: var(--font-space-mono), monospace;
+  border-radius: 6px;
+  color: #bbb;
+  font-size: 13px;
+  font-family: var(--font-bitter), serif;
   cursor: pointer;
   transition: color 0.1s, border-color 0.1s, background 0.1s;
   white-space: nowrap;
 }
 
 .actionBtn:hover {
-  color: #eee;
+  color: #fff;
   border-color: #555;
   background: #222;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s, background 0.1s;
+}
+
+.iconBtn:hover {
+  color: #fff;
+  border-color: #555;
+  background: #222;
+}
+
+.zoom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 30px;
+  padding: 0 10px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 12px;
+  font-family: var(--font-bitter), serif;
+  font-weight: 700;
+  border-radius: 15px;
+  white-space: nowrap;
 }
