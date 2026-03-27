@@ -272,13 +272,17 @@ export function InfiniteCanvas({ storageKey = 'canvas', className }: InfiniteCan
     img.onload = () => {
       pushUndo()
       const id = crypto.randomUUID()
+      const maxW = 300
+      const scale = img.naturalWidth > maxW ? maxW / img.naturalWidth : 1
+      const w = img.naturalWidth * scale
+      const h = img.naturalHeight * scale
       setImages(prev => [...prev, {
         id,
         src: dataUrl,
-        x: cx - img.naturalWidth / 2,
-        y: cy - img.naturalHeight / 2,
-        width: img.naturalWidth,
-        height: img.naturalHeight,
+        x: cx - w / 2,
+        y: cy - h / 2,
+        width: w,
+        height: h,
       }])
       const sel = new Set([id])
       setSelected(sel)
