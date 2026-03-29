@@ -65,11 +65,7 @@
 
 .skull {
   display: block;
-  width: 20px;
-  height: 20px;
-  mask: url('/skull-icon.svg') center / contain no-repeat;
-  -webkit-mask: url('/skull-icon.svg') center / contain no-repeat;
-  background: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 :global([data-theme="light"]) .footer {
@@ -79,7 +75,7 @@
 }
 
 :global([data-theme="light"]) .skull {
-  background: var(--light-meta);
+  color: var(--light-meta);
 }
 
 :global([data-theme="light"]) .iconLink:hover {

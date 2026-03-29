@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { Skull } from "lucide-react";
 import { Permanent_Marker } from "next/font/google";
 
 const marker = Permanent_Marker({
@@ -41,14 +42,16 @@ export default function SkullEasterEgg({
       <span
         className={className}
         onClick={handleClick}
-        style={{ cursor: "pointer" }}
+        style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
         role="button"
         tabIndex={0}
         aria-label="Easter egg"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") handleClick();
         }}
-      />
+      >
+        <Skull size={20} />
+      </span>
       <span
         style={{
           position: "absolute",
