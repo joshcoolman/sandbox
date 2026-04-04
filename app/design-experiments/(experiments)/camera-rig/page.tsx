@@ -12,6 +12,9 @@ const CameraRig = dynamic(() => import('./components/CameraRig').then(m => ({ de
 
 export default function CameraRigPage() {
   return (
-    <CameraRig className={`${mono.variable} ${body.variable}`} />
+    <CameraRig
+      className={`${mono.variable} ${body.variable}`}
+      defaultImage="/design-experiments/camera-rig/default-image.jpg"
+    />
   )
 }

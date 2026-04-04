@@ -11,6 +11,8 @@ import styles from './CameraRig.module.css'
 export interface CameraRigProps {
   /** Initial camera state. Defaults to `{ rotate: 41, vertical: 0, zoom: 5 }`. */
   initialCamera?: CameraState
+  /** URL of a default image to preload. If provided, the rig starts with this image. */
+  defaultImage?: string
   /** Called when the user clicks "Generate View". Receives the current camera state. */
   onGenerate?: (cam: CameraState) => void
   /** Duration (ms) of the generating animation. Default 2800. */
@@ -21,12 +23,13 @@ export interface CameraRigProps {
 
 export function CameraRig({
   initialCamera = DEFAULT_CAMERA,
+  defaultImage,
   onGenerate,
   generateDuration = 2800,
   className,
 }: CameraRigProps) {
   const [cam, setCam] = useState<CameraState>(initialCamera)
-  const [src, setSrc] = useState<string | null>(null)
+  const [src, setSrc] = useState<string | null>(defaultImage ?? null)
   const [generating, setGenerating] = useState(false)
 
   const update = useCallback((p: Partial<CameraState>) => setCam(c => ({ ...c, ...p })), [])
