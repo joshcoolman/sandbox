@@ -10,6 +10,20 @@ This is a design sketchbook, not production software. There's no test suite and 
 
 ## Experiments
 
+### Camera Rig
+
+**April 2026**
+
+[![Camera Rig](./public/screenshots/camera-rig.png)](https://www.joshcoolman.com/design-experiments/camera-rig)
+
+Virtual camera controller for image generation workflows. Upload a source image and orbit a virtual camera around the subject — adjusting azimuth, elevation, and distance. Outputs JSON camera parameters for models like Zero123-XL, SV3D, and Era3D. Interactive SVG 3D viewport with draggable orbit spheres, perspective camera preview, and real-time parameter sliders.
+
+`3D` `Camera Controls` `Image Generation` `Interactive` `Dark Theme`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/camera-rig) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/camera-rig)**
+
+---
+
 ### Moodboard
 
 **March 22, 2026**
