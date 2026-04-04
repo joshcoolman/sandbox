@@ -8,6 +8,7 @@ Source: https://github.com/joshcoolman-smc/sandbox
 
 ## Design Experiments
 
+- [Camera Rig](https://www.joshcoolman.com/design-experiments/camera-rig): Virtual camera controller for image generation workflows -- orbit a virtual camera around a subject, adjusting rotation, elevation, and distance with interactive 3D viewport and real-time parameter sliders
 - [Moodboard](https://www.joshcoolman.com/design-experiments/moodboard): Infinite canvas for visual brainstorming -- paste, drop, or upload images, arrange freely, masonry batch layout, IndexedDB persistence, custom pan/zoom
 - [Image to UI](https://www.joshcoolman.com/design-experiments/image-to-ui): Interactive components reverse-engineered from video generation UI screenshots -- rotary selector, model picker, duration slider, aspect ratio and quality selectors with shared dark-theme design tokens
 - [Candy Icons](https://www.joshcoolman.com/design-experiments/candy-icons): Ten 3D app icons from pure CSS and SVG with four-layer gradient stacks and spring-bounce animations

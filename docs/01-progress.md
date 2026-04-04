@@ -8,6 +8,19 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Camera Rig — Promoted to Importable Component
+
+**Date:** 2026-04-04
+
+Promoted the Camera Rig experiment to a reusable, importable component. Extracted 4 components (CameraRig, Viewport3D, CameraView, ParamSlider) from monolithic page.tsx into `components/` with CSS Modules. Added barrel export (`index.ts`) with public API: `CameraRig` component, `CameraRigProps`, `CameraState` type, and `DEFAULT_CAMERA` constant. Theme variables scoped to component root — no global style leakage.
+
+**Key files:**
+- `app/design-experiments/(experiments)/camera-rig/index.ts` — barrel export
+- `app/design-experiments/(experiments)/camera-rig/components/CameraRig.tsx` — composed component
+- `app/design-experiments/(experiments)/camera-rig/types.ts` — shared types
+
+---
+
 ### Theme System, SiteFooter, Layout Refinements
 
 **Date:** 2026-02-23

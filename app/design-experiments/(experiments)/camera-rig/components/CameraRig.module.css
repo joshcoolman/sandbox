@@ -1,0 +1,129 @@
+/* ── Theme vars (scoped to component) ───── */
+.root {
+  --cr-bg: #0d0e14;
+  --cr-surface: #13141c;
+  --cr-surface-2: #191a24;
+  --cr-border: #252736;
+  --cr-border-dim: #1c1d28;
+  --cr-purple: #8b6cf6;
+  --cr-purple-dim: #5a45a0;
+  --cr-purple-glow: rgba(139, 108, 246, 0.25);
+  --cr-blue: #4a8ef7;
+  --cr-blue-dim: #2d5a9e;
+  --cr-blue-glow: rgba(74, 142, 247, 0.25);
+  --cr-cyan: #3dc4cc;
+  --cr-text: #b8bcc8;
+  --cr-text-dim: #565a6e;
+  --cr-text-bright: #e0e2ea;
+
+  font-family: var(--cr-font-body), system-ui, sans-serif;
+  background: var(--cr-bg);
+  color: var(--cr-text);
+}
+
+/* ── Two-column layout ────────────────────── */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 0;
+  min-height: 520px;
+}
+
+/* ── Left: 3D Viewport ────────────────────── */
+.main {
+  border-right: 1px solid var(--cr-border-dim);
+}
+
+/* ── Right: Sidebar ───────────────────────── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--cr-surface);
+  overflow-y: auto;
+}
+
+.sidePanel {
+  padding: 16px;
+  border-bottom: 1px solid var(--cr-border-dim);
+}
+.sidePanel:last-child {
+  border-bottom: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.panelLabel {
+  font-family: var(--cr-font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--cr-text-dim);
+  margin-bottom: 12px;
+}
+
+/* ── Output ───────────────────────────────── */
+.json {
+  font-family: var(--cr-font-mono), monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--cr-cyan);
+  background: var(--cr-bg);
+  border: 1px solid var(--cr-border-dim);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 0 0 12px;
+  flex: 1;
+}
+
+.genBtn {
+  padding: 10px 16px;
+  background: var(--cr-purple);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-family: var(--cr-font-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+.genBtn:hover:not(:disabled) {
+  background: #7a5ce6;
+  box-shadow: 0 0 20px var(--cr-purple-glow);
+}
+.genBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.genBtnBusy {
+  background: var(--cr-purple-dim);
+}
+
+.spin {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ───────────────────────────── */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .main {
+    border-right: none;
+    border-bottom: 1px solid var(--cr-border-dim);
+    min-height: 360px;
+  }
+}

@@ -1,0 +1,166 @@
+.cameraView {
+  position: relative;
+  border: 1px solid var(--cr-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+}
+
+.inner {
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cr-bg);
+}
+
+/* 3D plane container */
+.plane {
+  width: 80%;
+  height: 80%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.08s ease-out;
+}
+
+/* Shared face styles */
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.faceHidden {
+  visibility: hidden;
+}
+
+/* Front face */
+.front {
+  composes: face;
+  background: var(--cr-surface-2);
+}
+
+.faceImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.faceEmpty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cr-surface-2);
+  border: 1px solid var(--cr-border);
+  border-radius: 2px;
+  color: var(--cr-text-dim);
+}
+
+/* Back face */
+.back {
+  composes: face;
+  transform: rotateY(180deg);
+}
+
+.backInner {
+  width: 100%;
+  height: 100%;
+  background: var(--cr-surface-2);
+  border: 1px solid var(--cr-border);
+  border-radius: 2px;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(255,255,255,0.02) 8px,
+      rgba(255,255,255,0.02) 9px
+    );
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 33.33% 33.33%;
+}
+
+.clearBtn,
+.uploadBtn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0, 0, 0, 0.5);
+  color: rgba(255,255,255,0.6);
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+  transition: all 0.15s;
+}
+.clearBtn:hover {
+  background: #e84040;
+  color: #fff;
+  border-color: #e84040;
+}
+.uploadBtn:hover {
+  background: var(--cr-purple);
+  color: #fff;
+  border-color: var(--cr-purple);
+}
+
+.backLabel {
+  color: var(--cr-text-dim);
+  opacity: 0.6;
+}
+
+.scan {
+  position: absolute;
+  inset: 0;
+  background: rgba(139, 108, 246, 0.06);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.scanLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--cr-purple);
+  box-shadow: 0 0 12px var(--cr-purple), 0 0 30px var(--cr-purple-glow);
+  animation: scan 1.4s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% { top: 0; opacity: 0.8; }
+  50% { opacity: 0.4; }
+  100% { top: 100%; opacity: 0.8; }
+}
+
+.readout {
+  padding: 6px 10px;
+  font-family: var(--cr-font-mono), monospace;
+  font-size: 10px;
+  color: var(--cr-text-dim);
+  text-align: center;
+  border-top: 1px solid var(--cr-border-dim);
+  letter-spacing: 0.06em;
+  background: var(--cr-surface-2);
+}

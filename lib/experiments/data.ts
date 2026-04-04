@@ -2,6 +2,15 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'camera-rig',
+    date: 'April 4, 2026',
+    title: 'Camera Rig',
+    description:
+      'Virtual camera controller for image generation workflows. Upload a source image and orbit a virtual camera around the subject — adjusting azimuth, elevation, distance, and FOV. Outputs JSON camera parameters for models like Zero123-XL, SV3D, and Era3D. Cinema rig aesthetic with amber LCD readouts, orbital SVG viewport, and real-time parameter sliders.',
+    screenshot: '/screenshots/camera-rig.png',
+    tags: ['Image Gen', 'Camera Controls', 'Interactive', 'Dark Theme'],
+  },
+  {
     slug: 'moodboard',
     date: 'March 22, 2026',
     title: 'Moodboard',
