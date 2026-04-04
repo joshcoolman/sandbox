@@ -1,3 +1,8 @@
+---
+name: replace
+description: Replace a blog post's hero image from natural language. Fuzzy-matches the post title, crops the source image to 1.87:1 aspect ratio, and swaps the hero.
+---
+
 # replace
 
 Replace a blog post's hero image from natural language.

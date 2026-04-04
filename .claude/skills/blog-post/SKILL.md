@@ -1,3 +1,8 @@
+---
+name: blog-post
+description: Draft a blog post from conversation context. Creates a markdown file with frontmatter and placeholder image so it's immediately visible on the homepage and blog index.
+---
+
 # blog-post
 
 Draft a blog post from conversation context. Creates the markdown file with a placeholder image so it's immediately visible on the homepage and blog index.

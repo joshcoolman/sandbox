@@ -1,3 +1,8 @@
+---
+name: sketch
+description: Rapid visual prototyping. Paint with code — get ideas on screen fast from a text description or pasted image. No architecture, no data layer.
+---
+
 # sketch
 
 Rapid visual prototyping. Paint with code — no architecture, no data layer, no framework opinions. Get ideas on screen fast and iterate until it feels right.

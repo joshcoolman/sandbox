@@ -1,3 +1,8 @@
+---
+name: link
+description: Add a link to the Link Worthy (recommended) page. Parses URL and comment, detects source type, creates markdown file with auto-fetched thumbnail.
+---
+
 # link
 
 Add a link to the Link Worthy page.

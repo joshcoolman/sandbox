@@ -1,3 +1,8 @@
+---
+name: ship-experiment
+description: Ship a design experiment with automated screenshot, gallery/homepage/README updates, git commit, and push. Triggers Vercel deploy.
+---
+
 # ship-experiment
 
 Ship a design experiment with automated screenshot, updates, and commit workflow for Next.js sandbox.

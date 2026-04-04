@@ -1,3 +1,8 @@
+---
+name: design-experiment
+description: Create a new design experiment in the sandbox. Scaffolds the route, page.tsx, and styles.css for a self-contained frontend experiment.
+---
+
 # design-experiment
 
 Create a new design experiment in the sandbox. Follow with a description of what to build.
