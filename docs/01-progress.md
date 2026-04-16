@@ -8,6 +8,23 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Monono — First AI-Backed Experiment
+
+**Date:** 2026-04-16
+
+Added the first experiment that calls an external AI model: Monono, a sarcastic J-pop idol chat character inspired by Monono Aware from M.R. Carey's *Book of Koli*. Introduces a reusable pattern for cheap, safe, public-facing AI experiments:
+
+- Claude Haiku 4.5 via Anthropic SDK, called from a Next.js route handler (`app/api/monono/route.ts`) so the API key stays server-side
+- Anthropic prompt caching on the character system prompt — near-zero input cost after the first call per cache window
+- Per-IP session cap (60 messages/month) and global monthly spend tracking via Upstash Redis (`lib/ai/rate-limit.ts`)
+- Anthropic workspace hard cap as the final wall
+- Canned Monono-voice strings (`data/voice.ts`) power greeting, idle nudges, session cutoff, and refresh-blocked moments — zero model cost for any non-conversational moment
+- Rolling 10-turn memory window keeps late-session cost flat
+
+Cost envelope: ~$0.002 per turn, ~$0.12 per fully-maxed user, $5 monthly Anthropic cap. Tags: AI Chat, Character, Claude Haiku, Interactive.
+
+---
+
 ### Camera Rig — Promoted to Importable Component
 
 **Date:** 2026-04-04

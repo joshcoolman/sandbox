@@ -10,6 +10,20 @@ This is a design sketchbook, not production software. There's no test suite and 
 
 ## Experiments
 
+### Monono
+
+**April 16, 2026**
+
+[![Monono](./public/screenshots/monono.png)](https://www.joshcoolman.com/design-experiments/monono)
+
+A sparkly J-pop idol AI trapped inside a cheap entertainment device. Chat with Monono Aware — cute, playful, sarcastic, and constitutionally incapable of being serious. Deflects real questions with songs, nicknames you "dopey boy," and abruptly signs off mid-sentence when bored. Claude Haiku backend with per-session budget caps (Upstash Redis) so one smitten user can fall in love without bankrupting the site. Inspired by the AI character in M.R. Carey's *Book of Koli*.
+
+`AI Chat` `Character` `Claude Haiku` `Interactive`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/monono) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/monono)**
+
+---
+
 ### Camera Rig
 
 **April 2026**

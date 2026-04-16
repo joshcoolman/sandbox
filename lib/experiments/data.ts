@@ -2,6 +2,15 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'monono',
+    date: 'April 16, 2026',
+    title: 'Monono',
+    description:
+      'A sparkly J-pop idol AI trapped inside a cheap entertainment device. Chat with Monono Aware -- cute, playful, sarcastic, constitutionally incapable of being serious. Deflects real questions with songs, nicknames you "dopey boy," and abruptly signs off when bored. Claude Haiku backend with per-session budget caps so one user can fall in love, not bankrupt the site. Inspired by the AI character in M.R. Carey\'s Book of Koli.',
+    screenshot: '/screenshots/monono.png',
+    tags: ['AI Chat', 'Character', 'Claude Haiku', 'Interactive'],
+  },
+  {
     slug: 'camera-rig',
     date: 'April 4, 2026',
     title: 'Camera Rig',
