@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { MononoFace } from './MononoFace'
+import { MononoSprite } from './MononoSprite'
 import { voice, pick } from '../data/voice'
 
 type Turn = {
@@ -159,7 +159,7 @@ export function MononoChat() {
 
         <div className="monono-screen">
           <div className="monono-face-wrap">
-            <MononoFace mood={mood} speaking={speaking} />
+            <MononoSprite mood={mood} speaking={speaking} />
           </div>
 
           <div className="monono-transcript" ref={scrollRef}>
