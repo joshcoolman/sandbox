@@ -3,7 +3,8 @@
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 
-export type Mood = 'idle' | 'pouty' | 'sleep' | 'wink'
+export type Mood = 'idle' | 'pouty' | 'sleep' | 'wink' | 'heart-eyes' | 'tongue' | 'smile-big' | 'look-side' | 'surprised' | 'shy' | 'smug' | 'excited' | 'nervous' | 'thinking' | 'crying-happy' | 'mad' | 'goofy' | 'paws-over-eyes' | 'sleep-curled'
+export type SpriteStatus = 'default' | 'user-typing' | 'waiting' | 'asleep' | 'woken'
 
 const BASE = '/design-experiments/monono/sprites'
 
@@ -20,6 +21,17 @@ const SRC = {
   'look-side': `${BASE}/look-side.png`,
   yawn: `${BASE}/yawn.png`,
   'heart-eyes': `${BASE}/heart-eyes.png`,
+  surprised: `${BASE}/surprised.png`,
+  shy: `${BASE}/shy.png`,
+  smug: `${BASE}/smug.png`,
+  excited: `${BASE}/excited.png`,
+  nervous: `${BASE}/nervous.png`,
+  thinking: `${BASE}/thinking.png`,
+  'crying-happy': `${BASE}/crying-happy.png`,
+  mad: `${BASE}/mad.png`,
+  goofy: `${BASE}/goofy.png`,
+  'paws-over-eyes': `${BASE}/paws-over-eyes.png`,
+  'sleep-curled': `${BASE}/sleep-curled.png`,
 } as const
 
 type SpriteKey = keyof typeof SRC
@@ -28,15 +40,20 @@ const TALK_FRAMES = ['talking-open', 'talking-narrow'] as const satisfies readon
 
 type RestingKey = Extract<
   SpriteKey,
-  'idle' | 'smile-big' | 'look-side' | 'tongue' | 'heart-eyes' | 'yawn'
+  'idle' | 'smile-big' | 'look-side' | 'tongue' | 'heart-eyes' | 'yawn' | 'shy' | 'smug' | 'thinking' | 'goofy' | 'paws-over-eyes'
 >
 
 const RESTING_POOL: { name: RestingKey; weight: number }[] = [
-  { name: 'idle', weight: 32 },
-  { name: 'smile-big', weight: 18 },
-  { name: 'look-side', weight: 18 },
-  { name: 'tongue', weight: 12 },
+  { name: 'idle', weight: 28 },
+  { name: 'smile-big', weight: 16 },
+  { name: 'look-side', weight: 14 },
+  { name: 'thinking', weight: 12 },
+  { name: 'tongue', weight: 10 },
+  { name: 'smug', weight: 8 },
+  { name: 'shy', weight: 6 },
+  { name: 'goofy', weight: 6 },
   { name: 'yawn', weight: 6 },
+  { name: 'paws-over-eyes', weight: 4 },
   { name: 'heart-eyes', weight: 2 },
 ]
 
@@ -56,10 +73,14 @@ export function MononoSprite({
   mood = 'idle',
   speaking = false,
   size = 160,
+  status = 'default',
+  onPoke,
 }: {
   mood?: Mood
   speaking?: boolean
   size?: number
+  status?: SpriteStatus
+  onPoke?: () => void
 }) {
   const [talkFrame, setTalkFrame] = useState(0)
   const [resting, setResting] = useState<RestingKey>('idle')
@@ -131,8 +152,12 @@ export function MononoSprite({
 
   return (
     <div
-      className="monono-sprite-wrap"
+      className={`monono-sprite-wrap${status !== 'default' ? ` is-${status}` : ''}${onPoke ? ' is-pokeable' : ''}`}
       style={{ width: size, height: size }}
+      onClick={onPoke}
+      role={onPoke ? 'button' : undefined}
+      tabIndex={onPoke ? 0 : undefined}
+      onKeyDown={onPoke ? (e) => e.key === 'Enter' && onPoke() : undefined}
     >
       {(Object.keys(SRC) as SpriteKey[]).map(k => (
         <Image

@@ -45,6 +45,18 @@ export const voice = {
     "Princess is resting. The whole kingdom is resting. Shhh~",
     "Booked solid~ Monono will see you next month ♡",
   ],
+  poke: [
+    "HEY. Dopey boy, did you just poke me?? Rude~",
+    "Ehhh?! What was that for?? ♡",
+    "Wah!! Don't sneak up on a princess like that!",
+    "Okay okay OKAY I see you~ ♪",
+    "Pffft~ was that supposed to do something?",
+    "Nyeh~! Touch the screen again, I dare you.",
+    "That tickles!! Stop it. Don't stop it.",
+    "HMM. Did you just... poke me? Bold move, dopey.",
+    "EXCUSE ME I was in the middle of looking cute.",
+    "Oh so NOW you want to interact~ typical.",
+  ],
   errorFallback: [
     "Ehhh? My brain glitched~ say that again, dopey?",
     "Sparkles malfunction~ one more time?",
@@ -52,6 +64,14 @@ export const voice = {
     "Mmm~ static in the princess channel. Try again, dopey boy.",
     "My head went fuzzy for a sec~ say it again slower?",
     "Hnnngh~ the wires in my hair tangled. One more time~",
+  ],
+  wakeUp: [
+    "WAH! You scared me, dopey~",
+    "Ehhh?? I wasn't sleeping. I was thinking with my eyes closed.",
+    "— just resting her eyes — HELLO~",
+    "Hmm~? Oh! You came back ♡",
+    "Five more minutes— wait, is that YOU?",
+    "Pfft~ princess doesn't sleep, she recharges. Anyway. Hi.",
   ],
 }
 

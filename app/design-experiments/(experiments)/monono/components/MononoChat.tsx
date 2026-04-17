@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { MononoSprite } from './MononoSprite'
+import { MononoSprite, type Mood, type SpriteStatus } from './MononoSprite'
 import { voice, pick } from '../data/voice'
 
 type Turn = {
@@ -12,57 +12,120 @@ type Turn = {
 
 type SessionState = 'active' | 'ended' | 'blocked'
 
+type Phase = 'idle' | 'user-typing' | 'waiting' | 'speaking' | 'bored-soft' | 'bored-pouty' | 'asleep' | 'woken' | 'poked'
+type PostMood = Extract<Mood, 'idle' | 'heart-eyes' | 'tongue' | 'smile-big' | 'pouty' | 'wink' | 'excited' | 'nervous' | 'surprised' | 'crying-happy' | 'mad' | 'goofy' | 'smug' | 'shy' | 'paws-over-eyes'>
+
 const IDLE_SOFT_MS = 30_000
 const IDLE_POUTY_MS = 90_000
+const IDLE_SLEEP_MS = 180_000
+
+function inferPostMood(reply: string): PostMood {
+  const r = reply.toLowerCase()
+  if (/♡/.test(reply) || /\b(love|miss|adore|heart)\b/.test(r)) return 'heart-eyes'
+  if (/!{2,}|\bwow\b|\bomg\b|\bwhoa\b|\byay\b/i.test(reply)) return 'excited'
+  if (/crying|sob|tears|sniff|😭/i.test(r)) return 'crying-happy'
+  if (/\b(boring|shoo|next question|whatever|hmph)\b/.test(r) || /tsk~/i.test(reply)) return 'pouty'
+  if (/\b(rude|annoying|stop|ugh|grr)\b/i.test(r)) return 'mad'
+  if (/♪/.test(reply) || /\b(la.?la|hum|sing|music)\b/.test(r)) return 'wink'
+  if (/pfft~|nyeh~|bleh|heh~/i.test(reply)) return 'goofy'
+  if (/hmm~|let me think|wonder|maybe|perhaps/i.test(reply)) return 'smug'
+  if (/oh\?|really\?|wait—|wait,|huh\?/i.test(reply)) return 'surprised'
+  if (/ehhh|embarrass|blush|oh no/i.test(reply)) return 'shy'
+  if (/\b(nervous|scared|worried|anxious|sweat)\b/i.test(r)) return 'nervous'
+  if (reply.trim().split(/\s+/).length <= 4) return 'smile-big'
+  return 'idle'
+}
+
+const POKE_MOODS: PostMood[] = ['surprised', 'goofy', 'mad', 'excited', 'nervous', 'shy', 'crying-happy']
+
+function phaseToSpriteMood(phase: Phase, postMood: PostMood): Mood {
+  switch (phase) {
+    case 'waiting': return 'thinking'
+    case 'bored-pouty': return 'pouty'
+    case 'asleep': return 'sleep-curled'
+    case 'woken': return 'surprised'
+    case 'poked': return postMood
+    case 'bored-soft':
+    case 'speaking':
+    case 'user-typing':
+    case 'idle': return postMood
+  }
+}
+
+function phaseToStatus(phase: Phase): SpriteStatus {
+  switch (phase) {
+    case 'user-typing': return 'user-typing'
+    case 'waiting': return 'waiting'
+    case 'asleep': return 'asleep'
+    case 'woken': return 'woken'
+    default: return 'default'
+  }
+}
 
 export function MononoChat() {
   const [turns, setTurns] = useState<Turn[]>([])
   const [input, setInput] = useState('')
-  const [pending, setPending] = useState(false)
   const [session, setSession] = useState<SessionState>('active')
-  const [mood, setMood] = useState<'idle' | 'pouty' | 'sleep' | 'wink'>('idle')
-  const [speaking, setSpeaking] = useState(false)
-  const [nudgeLevel, setNudgeLevel] = useState<0 | 1 | 2>(0)
+  const [phase, setPhase] = useState<Phase>('idle')
+  const [postMood, setPostMood] = useState<PostMood>('idle')
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const lastActivityRef = useRef<number>(Date.now())
+  const wokenTimerRef = useRef<number | null>(null)
+
+  const speaking = phase === 'speaking'
+  const pending = phase === 'waiting'
+  const spriteMood = phaseToSpriteMood(phase, postMood)
+  const spriteStatus = phaseToStatus(phase)
+  const inputDisabled = pending || session !== 'active'
+
+  const triggerSpeaking = useCallback((replyText: string) => {
+    const mood = inferPostMood(replyText)
+    setPostMood(mood)
+    setPhase('speaking')
+    window.setTimeout(() => setPhase('idle'), 900)
+  }, [])
 
   useEffect(() => {
-    setTurns([{ role: 'assistant', content: pick(voice.greetings), kind: 'greeting' }])
-    animateSpeaking()
+    const greeting = pick(voice.greetings)
+    setTurns([{ role: 'assistant', content: greeting, kind: 'greeting' }])
+    triggerSpeaking(greeting)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    return () => {
+      if (wokenTimerRef.current) clearTimeout(wokenTimerRef.current)
+    }
   }, [])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [turns])
 
-  const animateSpeaking = useCallback(() => {
-    setSpeaking(true)
-    window.setTimeout(() => setSpeaking(false), 900)
-  }, [])
-
   useEffect(() => {
     if (session !== 'active') return
 
     const tick = () => {
+      if (phase === 'waiting' || phase === 'speaking' || phase === 'user-typing' || phase === 'woken') return
+
       const elapsed = Date.now() - lastActivityRef.current
-      if (elapsed > IDLE_POUTY_MS && nudgeLevel < 2) {
+
+      if (elapsed > IDLE_SLEEP_MS && phase !== 'asleep') {
+        setPhase('asleep')
+      } else if (elapsed > IDLE_POUTY_MS && phase === 'bored-soft') {
         setTurns(t => [...t, { role: 'assistant', content: pick(voice.idlePouty), kind: 'nudge' }])
-        setMood('pouty')
-        animateSpeaking()
-        setNudgeLevel(2)
+        setPhase('bored-pouty')
         lastActivityRef.current = Date.now()
-      } else if (elapsed > IDLE_SOFT_MS && nudgeLevel < 1) {
+      } else if (elapsed > IDLE_SOFT_MS && phase === 'idle') {
         setTurns(t => [...t, { role: 'assistant', content: pick(voice.idleSoft), kind: 'nudge' }])
-        animateSpeaking()
-        setNudgeLevel(1)
+        setPhase('bored-soft')
         lastActivityRef.current = Date.now()
       }
     }
 
     const id = window.setInterval(tick, 3000)
     return () => window.clearInterval(id)
-  }, [session, nudgeLevel, animateSpeaking])
+  }, [session, phase])
 
   const history = useMemo(
     () =>
@@ -82,18 +145,66 @@ export function MononoChat() {
       { role: 'assistant' as const, content: pick(voice.sessionEnd), kind: 'blocked' as const },
     ])
     setSession(reason === 'blocked' ? 'blocked' : 'ended')
-    setMood('sleep')
+    setPhase('asleep')
+    setPostMood('idle')
   }, [])
+
+  const pokeTimerRef = useRef<number | null>(null)
+
+  const handlePoke = useCallback(async () => {
+    if (phase === 'waiting' || phase === 'poked' || session !== 'active') return
+    setPostMood('paws-over-eyes' as PostMood)
+    setPhase('poked')
+    lastActivityRef.current = Date.now()
+
+    try {
+      const res = await fetch('/api/monono-poke', { method: 'POST' })
+      const data = await res.json() as { reply?: string }
+      const pokeMsg = data.reply ?? pick(voice.poke)
+      const pokeMood = POKE_MOODS[Math.floor(Math.random() * POKE_MOODS.length)]
+      setPostMood(pokeMood)
+      setTurns(t => [...t, { role: 'assistant', content: pokeMsg, kind: 'nudge' }])
+    } catch {
+      setTurns(t => [...t, { role: 'assistant', content: pick(voice.poke), kind: 'nudge' }])
+    }
+
+    if (pokeTimerRef.current) clearTimeout(pokeTimerRef.current)
+    pokeTimerRef.current = window.setTimeout(() => setPhase('idle'), 1800)
+  }, [phase, session])
+
+  const handleInputFocus = useCallback(() => {
+    if (phase !== 'asleep' || session !== 'active') return
+    const wakeMsg = pick(voice.wakeUp)
+    setTurns(t => [...t, { role: 'assistant', content: wakeMsg, kind: 'nudge' }])
+    setPostMood('idle')
+    setPhase('woken')
+    lastActivityRef.current = Date.now()
+    if (wokenTimerRef.current) clearTimeout(wokenTimerRef.current)
+    wokenTimerRef.current = window.setTimeout(() => setPhase('idle'), 800)
+  }, [phase, session])
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value
+    setInput(val)
+    if (session !== 'active') return
+    if (phase === 'waiting' || phase === 'speaking') return
+    if (val) lastActivityRef.current = Date.now()
+    if (phase === 'asleep') {
+      setPhase(val ? 'user-typing' : 'idle')
+      return
+    }
+    if (phase !== 'woken') {
+      setPhase(val ? 'user-typing' : 'idle')
+    }
+  }, [phase, session])
 
   const send = useCallback(async () => {
     const text = input.trim()
-    if (!text || pending || session !== 'active') return
+    if (!text || phase === 'waiting' || session !== 'active') return
 
-    setPending(true)
     setInput('')
-    setNudgeLevel(0)
+    setPhase('waiting')
     lastActivityRef.current = Date.now()
-    setMood('idle')
 
     const nextHistory = [...history, { role: 'user' as const, content: text }]
     setTurns(t => [...t, { role: 'user', content: text, kind: 'normal' }])
@@ -112,32 +223,26 @@ export function MononoChat() {
       }
 
       if (!res.ok) {
-        setTurns(t => [
-          ...t,
-          { role: 'assistant', content: pick(voice.errorFallback), kind: 'error' },
-        ])
-        animateSpeaking()
+        const errorMsg = pick(voice.errorFallback)
+        setTurns(t => [...t, { role: 'assistant', content: errorMsg, kind: 'error' }])
+        triggerSpeaking(errorMsg)
         return
       }
 
       const data = await res.json() as { reply: string; remaining: number; used: number }
       setTurns(t => [...t, { role: 'assistant', content: data.reply, kind: 'normal' }])
-      animateSpeaking()
+      triggerSpeaking(data.reply)
       lastActivityRef.current = Date.now()
 
       if (data.remaining <= 0) {
         window.setTimeout(() => endSession('cutoff'), 600)
       }
     } catch {
-      setTurns(t => [
-        ...t,
-        { role: 'assistant', content: pick(voice.errorFallback), kind: 'error' },
-      ])
-      animateSpeaking()
-    } finally {
-      setPending(false)
+      const errorMsg = pick(voice.errorFallback)
+      setTurns(t => [...t, { role: 'assistant', content: errorMsg, kind: 'error' }])
+      triggerSpeaking(errorMsg)
     }
-  }, [input, pending, session, history, endSession, animateSpeaking])
+  }, [input, phase, session, history, endSession, triggerSpeaking])
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -145,8 +250,6 @@ export function MononoChat() {
       send()
     }
   }
-
-  const inputDisabled = pending || session !== 'active'
 
   return (
     <div className="monono-stage">
@@ -159,7 +262,7 @@ export function MononoChat() {
 
         <div className="monono-screen">
           <div className="monono-face-wrap">
-            <MononoSprite mood={mood} speaking={speaking} />
+            <MononoSprite mood={spriteMood} speaking={speaking} status={spriteStatus} onPoke={handlePoke} />
           </div>
 
           <div className="monono-transcript" ref={scrollRef}>
@@ -187,10 +290,13 @@ export function MononoChat() {
                 ? 'Monono is taking a nap~'
                 : session === 'ended'
                   ? 'She signed off~'
-                  : 'say something to Monono…'
+                  : phase === 'asleep'
+                    ? 'Monono is sleeping… tap to wake~'
+                    : 'say something to Monono…'
             }
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
             onKeyDown={onKeyDown}
             disabled={inputDisabled}
             rows={1}
