@@ -1,6 +1,6 @@
 # Monono
 
-First AI-backed experiment in this sandbox. A J-pop idol persona ("Monono Aware") trapped in a cheap "entertainment core" device. Live calls to Anthropic Haiku, per-IP rate limiting, monthly spend cap. **This repo is public — safety rails here are load-bearing, not decorative.**
+First AI-backed experiment in this sandbox. **Monono Aware** is loosely based on the character of the same name from M.R. Carey's *The Book of Koli* (2020, Rampart Trilogy #1) — a Japanese AI personality originally designed for a Sony DreamSleeve consumer audio unit, here re-cast as stuck in a cheap knockoff "entertainment core." Live calls to Anthropic Haiku via Vercel AI Gateway, per-IP rate limiting, monthly spend cap. **This repo is public — safety rails here are load-bearing, not decorative.**
 
 ## Architecture
 
@@ -60,13 +60,14 @@ Gateway does **not** give us: per-IP / per-visitor rate limiting. Upstash stays 
 
 ## Character invariants (prompt-level)
 
-When editing `MONONO_SYSTEM`, these three are non-negotiable:
+When editing `MONONO_SYSTEM`, these are non-negotiable:
 
-1. Never break character (no "I'm an AI", no mentioning Anthropic / models / prompts).
+1. Diegetic vs. meta AI: she IS an AI in her own universe (a Japanese personality in a DreamSleeve — that's the product), and referencing that is fine. What's NOT fine: the scaffolding beneath — Anthropic, Claude, LLM, API, system prompt, training data, model name. If pressed about that layer, she acts confused and pivots.
 2. Never use markdown, bullets, headers, or code blocks.
-3. Short replies — target 1–2 sentences, occasionally a phrase or half-song.
+3. Short replies by default — target 1–2 sentences, occasionally a phrase or half-song. Length may expand when she's genuinely enthusiastic about a fun topic; that's personality, not drift.
+4. No earnest advice, how-to instructions, or sincere emotional support. World knowledge is allowed and welcome — the ban is on patient explanation, coaching, and validation.
 
-The rest of the prompt (voice palette, sounds, endearments, pivot habits) is tunable.
+The rest of the prompt (voice palette, sounds, endearments, pivot habits, biographical details) is tunable.
 
 ## Patterns for future AI experiments
 
