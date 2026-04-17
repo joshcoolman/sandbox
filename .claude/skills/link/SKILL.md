@@ -26,7 +26,8 @@ Everything after the URL is your comment. URL must come first.
 4. For **web** links: uses `agent-browser` to take a screenshot (1200x630 viewport) and saves it to `public/screenshots/recommended/`
 5. For **pdf** links: no screenshot needed -- the PDF badge serves as the visual indicator
 6. Runs `npm run build` to trigger automatic thumbnail downloads for YouTube and GitHub links (oEmbed and OG image)
-6. Reports back with what was created
+7. Commits the new file and pushes to main
+8. Reports back with what was created
 
 ## File Format
 
@@ -82,4 +83,5 @@ agent-browser close
 - No confirmation needed -- just create and report back
 - Always use today's date (run `date +"%Y-%m-%d"` to get it)
 - After creating the file, run `npm run build` to verify and trigger thumbnail downloads
+- After a successful build, commit the new file and push to main: `git add <file> && git commit -m "Add link: <slug>" && git push origin main`
 - Keep it fast -- this is for capturing links in the moment
