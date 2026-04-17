@@ -73,6 +73,16 @@ export async function peekSession(
   return raw ?? 0
 }
 
+export async function clearSession(
+  ip: string,
+  namespace: string
+): Promise<void> {
+  const r = getRedis()
+  if (!r || ip === 'unknown') return
+  const key = `${namespace}:session:${currentMonthKey()}:${ip}`
+  await r.del(key)
+}
+
 export async function addSpend(
   amountUsd: number,
   namespace: string

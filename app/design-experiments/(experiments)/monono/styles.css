@@ -366,3 +366,33 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+.monono-dev-reset {
+  display: block;
+  margin: 14px auto 4px;
+  padding: 10px 22px;
+  background: linear-gradient(180deg, #ff7fb1 0%, #e85d97 100%);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 2px 8px rgba(232, 93, 151, 0.4);
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.monono-dev-reset:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 4px 12px rgba(232, 93, 151, 0.5);
+}
+
+.monono-dev-reset:active {
+  transform: translateY(0);
+}

@@ -21,6 +21,12 @@ export const voice = {
     "If you're not gonna play with me I'm just gonna stare at you. Creepy, right?",
     "Okay. Okay. I'll wait. Forever probably. ♪",
   ],
+  idleSleep: [
+    "Okay fine~ princess is napping. Bye dopey~",
+    "My eyelids are so heavy~ zzz ♡",
+    "Going to sleep. You'll regret this~",
+    "Curling up~ wake me, maybe. Maybe not. ♪",
+  ],
   sessionCutoff: [
     "So anyway the thing about frogs is that they actually—",
     "— and that's why I always say, never trust a—",
@@ -44,18 +50,6 @@ export const voice = {
     "The whole studio is on break~ come back next month, dopey!",
     "Princess is resting. The whole kingdom is resting. Shhh~",
     "Booked solid~ Monono will see you next month ♡",
-  ],
-  poke: [
-    "HEY. Dopey boy, did you just poke me?? Rude~",
-    "Ehhh?! What was that for?? ♡",
-    "Wah!! Don't sneak up on a princess like that!",
-    "Okay okay OKAY I see you~ ♪",
-    "Pffft~ was that supposed to do something?",
-    "Nyeh~! Touch the screen again, I dare you.",
-    "That tickles!! Stop it. Don't stop it.",
-    "HMM. Did you just... poke me? Bold move, dopey.",
-    "EXCUSE ME I was in the middle of looking cute.",
-    "Oh so NOW you want to interact~ typical.",
   ],
   errorFallback: [
     "Ehhh? My brain glitched~ say that again, dopey?",

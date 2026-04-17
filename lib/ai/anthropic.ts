@@ -4,11 +4,14 @@ let client: Anthropic | null = null
 
 export function getAnthropic(): Anthropic {
   if (!client) {
-    const apiKey = process.env.ANTHROPIC_API_KEY
-    if (!apiKey) throw new Error('ANTHROPIC_API_KEY is not set')
-    client = new Anthropic({ apiKey })
+    const apiKey = process.env.VERCEL_AI_GATEWAY_KEY
+    if (!apiKey) throw new Error('VERCEL_AI_GATEWAY_KEY is not set')
+    client = new Anthropic({
+      apiKey,
+      baseURL: 'https://ai-gateway.vercel.sh',
+    })
   }
   return client
 }
 
-export const HAIKU_MODEL = 'claude-haiku-4-5-20251001'
+export const HAIKU_MODEL = 'anthropic/claude-haiku-4.5'

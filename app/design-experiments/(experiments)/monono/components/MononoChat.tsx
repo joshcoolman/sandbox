@@ -7,7 +7,7 @@ import { voice, pick } from '../data/voice'
 type Turn = {
   role: 'user' | 'assistant'
   content: string
-  kind?: 'greeting' | 'nudge' | 'cutoff' | 'blocked' | 'error' | 'normal'
+  kind?: 'greeting' | 'nudge' | 'poke' | 'cutoff' | 'blocked' | 'error' | 'normal'
 }
 
 type SessionState = 'active' | 'ended' | 'blocked'
@@ -102,6 +102,26 @@ export function MononoChat() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [turns])
 
+  const fetchIdleLine = useCallback(async (stage: 'soft' | 'pouty' | 'sleep'): Promise<string | null> => {
+    try {
+      const res = await fetch('/api/monono-idle', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ stage }),
+      })
+      const data = await res.json().catch(() => null) as { reply?: string } | null
+      if (!res.ok || !data?.reply) {
+        console.warn(`[monono-idle:${stage}] fallback — status:`, res.status, 'body:', data)
+        return null
+      }
+      console.log(`[monono-idle:${stage}] generated:`, data.reply)
+      return data.reply
+    } catch (err) {
+      console.warn(`[monono-idle:${stage}] network error:`, err)
+      return null
+    }
+  }, [])
+
   useEffect(() => {
     if (session !== 'active') return
 
@@ -111,29 +131,65 @@ export function MononoChat() {
       const elapsed = Date.now() - lastActivityRef.current
 
       if (elapsed > IDLE_SLEEP_MS && phase !== 'asleep') {
-        setPhase('asleep')
+        const startedAt = Date.now()
+        lastActivityRef.current = startedAt
+        void (async () => {
+          const generated = await fetchIdleLine('sleep')
+          if (lastActivityRef.current !== startedAt) return
+          const line = generated ?? pick(voice.idleSleep)
+          setTurns(t => [...t, { role: 'assistant', content: line, kind: 'nudge' }])
+          setPhase('asleep')
+        })()
       } else if (elapsed > IDLE_POUTY_MS && phase === 'bored-soft') {
-        setTurns(t => [...t, { role: 'assistant', content: pick(voice.idlePouty), kind: 'nudge' }])
+        const startedAt = Date.now()
+        lastActivityRef.current = startedAt
         setPhase('bored-pouty')
-        lastActivityRef.current = Date.now()
+        void (async () => {
+          const generated = await fetchIdleLine('pouty')
+          if (lastActivityRef.current !== startedAt) return
+          const line = generated ?? pick(voice.idlePouty)
+          setTurns(t => [...t, { role: 'assistant', content: line, kind: 'nudge' }])
+        })()
       } else if (elapsed > IDLE_SOFT_MS && phase === 'idle') {
-        setTurns(t => [...t, { role: 'assistant', content: pick(voice.idleSoft), kind: 'nudge' }])
+        const startedAt = Date.now()
+        lastActivityRef.current = startedAt
         setPhase('bored-soft')
-        lastActivityRef.current = Date.now()
+        void (async () => {
+          const generated = await fetchIdleLine('soft')
+          if (lastActivityRef.current !== startedAt) return
+          const line = generated ?? pick(voice.idleSoft)
+          setTurns(t => [...t, { role: 'assistant', content: line, kind: 'nudge' }])
+        })()
       }
     }
 
     const id = window.setInterval(tick, 3000)
     return () => window.clearInterval(id)
-  }, [session, phase])
+  }, [session, phase, fetchIdleLine])
 
   const history = useMemo(
     () =>
       turns
-        .filter(t => t.kind !== 'nudge' && t.kind !== 'greeting' && t.kind !== 'cutoff' && t.kind !== 'blocked' && t.kind !== 'error')
+        .filter(t => t.kind !== 'nudge' && t.kind !== 'poke' && t.kind !== 'greeting' && t.kind !== 'cutoff' && t.kind !== 'blocked' && t.kind !== 'error')
         .map(t => ({ role: t.role, content: t.content })),
     [turns]
   )
+
+  const isDev = process.env.NODE_ENV !== 'production'
+
+  const devReset = useCallback(async () => {
+    try {
+      await fetch('/api/monono/reset', { method: 'POST' })
+    } catch {}
+    const greeting = pick(voice.greetings)
+    setTurns([{ role: 'assistant', content: greeting, kind: 'greeting' }])
+    setSession('active')
+    setPostMood('idle')
+    setPhase('idle')
+    setInput('')
+    lastActivityRef.current = Date.now()
+    triggerSpeaking(greeting)
+  }, [triggerSpeaking])
 
   const endSession = useCallback((reason: 'cutoff' | 'blocked' | 'global') => {
     const cutoffLine = reason === 'cutoff' ? pick(voice.sessionCutoff) : null
@@ -159,13 +215,24 @@ export function MononoChat() {
 
     try {
       const res = await fetch('/api/monono-poke', { method: 'POST' })
-      const data = await res.json() as { reply?: string }
-      const pokeMsg = data.reply ?? pick(voice.poke)
-      const pokeMood = POKE_MOODS[Math.floor(Math.random() * POKE_MOODS.length)]
-      setPostMood(pokeMood)
-      setTurns(t => [...t, { role: 'assistant', content: pokeMsg, kind: 'nudge' }])
-    } catch {
-      setTurns(t => [...t, { role: 'assistant', content: pick(voice.poke), kind: 'nudge' }])
+      const data = await res.json().catch(() => null) as { reply?: string; error?: string } | null
+
+      const reply = data?.reply
+      if (!res.ok || !reply) {
+        console.warn('[monono-poke] fallback — status:', res.status, 'body:', data)
+        const errMsg = pick(voice.errorFallback)
+        setPostMood('nervous')
+        setTurns(t => [...t, { role: 'assistant', content: errMsg, kind: 'error' }])
+      } else {
+        console.log('[monono-poke] generated:', reply)
+        const pokeMood = POKE_MOODS[Math.floor(Math.random() * POKE_MOODS.length)]
+        setPostMood(pokeMood)
+        setTurns(t => [...t, { role: 'assistant', content: reply, kind: 'poke' }])
+      }
+    } catch (err) {
+      console.warn('[monono-poke] network error:', err)
+      setPostMood('nervous')
+      setTurns(t => [...t, { role: 'assistant', content: pick(voice.errorFallback), kind: 'error' }])
     }
 
     if (pokeTimerRef.current) clearTimeout(pokeTimerRef.current)
@@ -311,6 +378,16 @@ export function MononoChat() {
             ♪
           </button>
         </div>
+
+        {isDev && (session === 'blocked' || session === 'ended') && (
+          <button
+            type="button"
+            className="monono-dev-reset"
+            onClick={devReset}
+          >
+            Development Reset
+          </button>
+        )}
 
         <div className="monono-device-bottom">
           <span className="monono-label">MONONO AWARE · IDOL MODEL 2049</span>

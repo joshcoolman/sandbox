@@ -25,7 +25,7 @@ cp .env.local.example .env.local
 
 Current env vars used:
 
-- `ANTHROPIC_API_KEY` — required by Monono. Create a scoped workspace in the [Anthropic Console](https://console.anthropic.com/) with a monthly spend cap, then create a key inside that workspace
+- `VERCEL_AI_GATEWAY_KEY` — required by Monono. AI experiments route through [Vercel AI Gateway](https://vercel.com/ai-gateway), which fronts Anthropic and other providers with a unified API, spend dashboard, and per-project budgets. Create a key in the Vercel dashboard and set a budget cap there
 - `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` — optional for local dev (rate limiting is disabled without them), required in production. Free tier at [upstash.com](https://upstash.com/) is plenty
 
 Experiments degrade gracefully without their keys set — Monono, for example, shows in-character "brain glitched" fallback messages instead of returning errors.

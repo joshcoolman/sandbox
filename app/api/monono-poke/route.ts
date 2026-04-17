@@ -34,7 +34,7 @@ export async function POST() {
       model: HAIKU_MODEL,
       max_tokens: 30,
       system: [{ type: 'text', text: POKE_SYSTEM, cache_control: { type: 'ephemeral' } }],
-      messages: [{ role: 'user', content: '*pokes you*' }],
+      messages: [{ role: 'user', content: 'Say something random and in-character right now. Do NOT react to being poked — share a thought, feeling, observation, or tiny song. Surprise me.' }],
     })
 
     const text = response.content
