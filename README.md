@@ -8,6 +8,30 @@ This is a design sketchbook, not production software. There's no test suite and 
 
 ---
 
+## Local Setup
+
+Most experiments are self-contained client-side toys and need nothing beyond:
+
+```bash
+npm install
+npm run dev
+```
+
+Some experiments call external services (the first of these is **Monono**, which talks to Claude Haiku). For those, copy the example env file and fill in the keys you need:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Current env vars used:
+
+- `ANTHROPIC_API_KEY` — required by Monono. Create a scoped workspace in the [Anthropic Console](https://console.anthropic.com/) with a monthly spend cap, then create a key inside that workspace
+- `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` — optional for local dev (rate limiting is disabled without them), required in production. Free tier at [upstash.com](https://upstash.com/) is plenty
+
+Experiments degrade gracefully without their keys set — Monono, for example, shows in-character "brain glitched" fallback messages instead of returning errors.
+
+---
+
 ## Experiments
 
 ### Monono
