@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { experiments } from '@/lib/experiments/data'
 import CurtainLink from '@/app/components/CurtainLink'
 import SiteFooter from '@/app/components/SiteFooter'
+import { useExperimentBack } from '../useExperimentBack'
 import styles from './layout.module.css'
 
 export default function ExperimentLayout({
@@ -14,6 +15,7 @@ export default function ExperimentLayout({
   const pathname = usePathname()
   const slug = pathname.split('/').pop() || ''
   const experiment = experiments.find(e => e.slug === slug)
+  const back = useExperimentBack()
 
   if (!experiment) return <>{children}</>
 
@@ -28,12 +30,12 @@ export default function ExperimentLayout({
     <div className={styles.frame} data-theme={experiment.theme ?? 'dark'} style={bgStyle}>
       <header className={styles.header}>
         <CurtainLink
-          href="/design-experiments"
+          href={back.href}
           className={styles.backLink}
           curtainTransition
           curtainReverse
         >
-          <span className={styles.backArrow}>&larr;</span> Design
+          <span className={styles.backArrow}>&larr;</span> {back.label}
         </CurtainLink>
         <div className={styles.rule} />
         <div className={styles.headerRow}>

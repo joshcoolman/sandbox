@@ -4,6 +4,7 @@ import HeroVideo from "./components/HeroVideo";
 import CurtainLink from "./components/CurtainLink";
 import SiteFooter from "./components/SiteFooter";
 import HomeExperimentCard from "./components/HomeExperimentCard";
+import HomeScrollRestore from "./components/HomeScrollRestore";
 import { getAllPosts } from "@/lib/blog/loadBlog";
 import { getRecentDocs } from "@/lib/docs/loadDocs";
 import { experiments } from "@/lib/experiments/data";
@@ -11,12 +12,13 @@ import { experiments } from "@/lib/experiments/data";
 import styles from "./page.module.css";
 
 export default function Home() {
-  const recentExperiments = experiments.slice(0, 6);
+  const recentExperiments = experiments.slice(0, 9);
   const posts = getAllPosts().slice(0, 4);
   const recentDocs = getRecentDocs(4);
 
   return (
     <main className={styles.mainContainer}>
+      <HomeScrollRestore />
       <div className={styles.networkBackground}>
         <NetworkCanvas className={styles.networkCanvas} />
       </div>
@@ -45,7 +47,7 @@ export default function Home() {
                 <HomeExperimentCard
                   key={exp.slug}
                   experiment={exp}
-                  delay={index + 1}
+                  delay={Math.min(index + 1, 6)}
                 />
               ))}
             </div>

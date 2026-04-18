@@ -1,0 +1,31 @@
+.link {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-family: var(--font-lora), 'Lora', serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.link:hover {
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.75);
+  border-color: rgba(143, 247, 249, 0.35);
+}
+
+.arrow {
+  font-size: 14px;
+  line-height: 1;
+}

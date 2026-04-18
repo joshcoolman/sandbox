@@ -89,7 +89,10 @@ export default function Home() {
           <div className={styles.experimentPreviewContainer}>
             <Link
               href={`/design-experiments/${experiment.slug}`}
-              onClick={() => sessionStorage.setItem('gallery-last-slug', experiment.slug)}
+              onClick={() => {
+                sessionStorage.setItem('gallery-last-slug', experiment.slug)
+                sessionStorage.setItem('experiment-referrer', '/design-experiments')
+              }}
             >
               <Image
                 src={experiment.screenshot}
@@ -105,7 +108,10 @@ export default function Home() {
             <h2 className={styles.experimentTitle}>
               <Link
                 href={`/design-experiments/${experiment.slug}`}
-                onClick={() => sessionStorage.setItem('gallery-last-slug', experiment.slug)}
+                onClick={() => {
+                  sessionStorage.setItem('gallery-last-slug', experiment.slug)
+                  sessionStorage.setItem('experiment-referrer', '/design-experiments')
+                }}
               >{experiment.title}</Link>
             </h2>
             <p className={styles.experimentDescription}>

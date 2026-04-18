@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 import CurtainLink from './CurtainLink'
 import type { Experiment } from '@/app/types/experiments'
@@ -23,10 +25,15 @@ interface Props {
 export default function HomeExperimentCard({ experiment, delay }: Props) {
   return (
     <CurtainLink
+      id={experiment.slug}
       href={`/design-experiments/${experiment.slug}`}
       className={styles.card}
       data-delay={delay}
       curtainTransition={true}
+      onClick={() => {
+        sessionStorage.setItem('experiment-referrer', '/')
+        sessionStorage.setItem('home-last-slug', experiment.slug)
+      }}
     >
       <div className={styles.imageWrapper}>
         <Image
