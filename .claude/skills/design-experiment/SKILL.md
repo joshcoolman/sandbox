@@ -60,11 +60,14 @@ export default function Page() {
      slug: '[name]',
      date: '[today in "Month Day, Year" format]',
      title: '[Title]',
-     description: '[2-3 sentence description]',
+     subtitle: '[one-sentence hook, ~10-15 words — shown on the home card under the title]',
+     description: '[2-3 sentence description — shown on the gallery and experiment layout]',
      screenshot: '/screenshots/[name].png',
      tags: ['Tag1', 'Tag2', 'Tag3', 'Tag4']
    }
    ```
+
+   `subtitle` is the short editorial one-liner that sits below the title on the home page cards. Keep it tight — think magazine subhead, not feature list. `description` is the longer 2-3 sentence blurb that appears on the gallery and inside the experiment's layout wrapper.
 3. Run `npm run build` to verify no errors
 4. Do NOT run `npm run dev` -- user will start the server
 5. Do NOT take screenshot or commit -- user will review first and use `/ship-experiment`

@@ -99,10 +99,84 @@
   margin-bottom: -2px;
 }
 
-/* Three-column recent content */
-.columns {
+/* Recent Work — card grid section */
+.recentWorkSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: var(--content-max);
+  pointer-events: auto;
+}
+
+.recentWorkHeader {
+  font-family: var(--font-bitter), 'Bitter', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #F2EFEB;
+  margin: 0;
+}
+
+.preamble {
+  font-family: var(--font-lora), 'Lora', serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 0.75rem;
+}
+
+.preambleLink {
+  color: #8FF7F9;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(143, 247, 249, 0.35);
+  transition: border-color 0.2s ease;
+}
+
+.preambleLink:hover {
+  border-bottom-color: #8FF7F9;
+}
+
+.cardGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.seeAllLink {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-lora), 'Lora', serif;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.seeAllLink svg {
+  opacity: 0.6;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.seeAllLink:hover {
+  color: #F2EFEB;
+}
+
+.seeAllLink:hover svg {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* Secondary section — Blog + Docs two columns */
+.secondarySection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   width: 100%;
   max-width: var(--content-max);
@@ -124,7 +198,6 @@
   background: rgba(0, 0, 0, 0.5);
 }
 
-
 .columnTitle {
   font-family: var(--font-bitter), 'Bitter', serif;
   font-size: 1rem;
@@ -142,7 +215,6 @@
   opacity: 0.5;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
 
 .columnItems {
   display: flex;
@@ -220,7 +292,19 @@
     font-size: 2rem;
   }
 
-  .columns {
+  .recentWorkHeader {
+    font-size: 1.5rem;
+  }
+
+  .preamble {
+    font-size: 0.9rem;
+  }
+
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .secondarySection {
     grid-template-columns: 1fr;
     max-width: 360px;
   }

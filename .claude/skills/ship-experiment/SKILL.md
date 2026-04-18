@@ -1,6 +1,6 @@
 ---
 name: ship-experiment
-description: Ship a design experiment with automated screenshot, gallery/homepage/README updates, git commit, and push. Triggers Vercel deploy.
+description: Ship a design experiment with automated screenshot, data/README updates, git commit, and push. Triggers Vercel deploy.
 ---
 
 # ship-experiment
@@ -18,11 +18,10 @@ Ship a design experiment with automated screenshot, updates, and commit workflow
 
 1. **Screenshot**: Take 1280x720 screenshot of experiment with agent-browser
 2. **Save screenshot**: To `public/screenshots/experiment-name.png`
-3. **Update gallery**: Move experiment to top of `app/design-experiments/page.tsx`
-4. **Update homepage**: Move experiment to top of `recentExperiments` in `app/page.tsx` (keep 3, drop oldest)
-5. **Update README**: Move experiment to top of README.md experiments list
-6. **Commit**: All changes with descriptive message
-7. **Push**: To GitHub (triggers Vercel deploy)
+3. **Update data**: Move experiment to top of the experiments array in `lib/experiments/data.ts`. This single file powers the gallery AND the home page's Recent Work grid (home auto-slices the first 6), so no separate homepage edit is needed.
+4. **Update README**: Move experiment to top of README.md experiments list
+5. **Commit**: All changes with descriptive message
+6. **Push**: To GitHub (triggers Vercel deploy)
 
 ## Workflow
 
@@ -36,20 +35,18 @@ agent-browser open "http://localhost:3000/experiment-name" --viewport 1280x720
 agent-browser screenshot ./public/screenshots/experiment-name.png
 # Close browser and stop server
 
-# 2. Update app/design-experiments/page.tsx
-#    Move this experiment's entry to top of experiments array
+# 2. Update lib/experiments/data.ts
+#    Move this experiment's entry to the top of the `experiments` array
 #    Update date to today's date
+#    This single edit updates both the /design-experiments gallery AND the
+#    home page Recent Work grid (home auto-slices the first 6 entries)
 
-# 3. Update app/page.tsx
-#    Move experiment to top of recentExperiments array
-#    Keep only 3 entries (drop the oldest)
-
-# 4. Update README.md
+# 3. Update README.md
 #    Move experiment section to top of list
 #    Update date if needed
 #    Ensure links point to /experiment-name
 
-# 5. Commit and push
+# 4. Commit and push
 git add -A
 git commit -m "Update Experiment Name"
 git push
@@ -61,31 +58,23 @@ git push
 - **Auto-deploys** on push to main branch
 - **Live URL**: Check Vercel dashboard or README for current deployment URL
 
-## Link Format
+## Entry Format
 
-Gallery (app/design-experiments/page.jsx):
-```jsx
+The experiment's single source of truth is the `experiments` array in `lib/experiments/data.ts`. The gallery and the home page's Recent Work grid both consume this array — no separate homepage manifest exists.
+
+```tsx
 {
   slug: 'experiment-name',
   date: 'February 8, 2026',
   title: 'Experiment Name',
-  description: '...',
+  subtitle: 'One-sentence hook shown on the home card under the title.',
+  description: '2-3 sentence description shown on the gallery and experiment layout.',
   screenshot: '/screenshots/experiment-name.png',
   tags: ['Tag1', 'Tag2']
 }
 ```
 
-Homepage (app/page.tsx):
-```jsx
-{
-  slug: 'experiment-name',
-  title: 'Experiment Name',
-  date: 'Feb 8, 2026',
-  screenshot: '/screenshots/experiment-name.png',
-}
-```
-
-README.md - relative paths:
+README.md — relative paths:
 ```markdown
 [![Experiment Name](./public/screenshots/experiment-name.png)](/experiment-name)
 **[View Live →](/experiment-name)**
