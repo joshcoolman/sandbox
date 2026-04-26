@@ -8,6 +8,7 @@ Source: https://github.com/joshcoolman-smc/sandbox
 
 ## Design Experiments
 
+- [ASCII Reveal](https://www.joshcoolman.com/design-experiments/ascii-reveal): Images materialize from ASCII art — pixel brightness mapped to characters that scramble and resolve before the photograph emerges. Click to replay.
 - [Monono](https://www.joshcoolman.com/design-experiments/monono): Chat with a sarcastic J-pop idol AI character -- deflects all serious questions with songs and nicknames you "dopey boy." Claude Haiku backend, per-session budget caps, abrupt in-character cutoff when session ends
 - [Camera Rig](https://www.joshcoolman.com/design-experiments/camera-rig): Virtual camera controller for image generation workflows -- orbit a virtual camera around a subject, adjusting rotation, elevation, and distance with interactive 3D viewport and real-time parameter sliders
 - [Moodboard](https://www.joshcoolman.com/design-experiments/moodboard): Infinite canvas for visual brainstorming -- paste, drop, or upload images, arrange freely, masonry batch layout, IndexedDB persistence, custom pan/zoom

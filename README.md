@@ -34,6 +34,18 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### ASCII Reveal
+
+**April 26, 2026**
+
+[![ASCII Reveal](./public/screenshots/ascii-reveal.png)](/design-experiments/ascii-reveal)
+
+Six portrait photos materialize from ASCII art — pixel brightness mapped to characters that scramble and resolve before the photograph fades in. Cards stagger on load; click any image to replay it, click the background to replay all. Idle-aware: a random card quietly re-animates every few seconds when the page is left alone.
+
+**[View Live →](/design-experiments/ascii-reveal)**
+
+---
+
 ### Monono
 
 **April 16, 2026**

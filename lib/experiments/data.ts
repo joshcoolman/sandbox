@@ -2,6 +2,17 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'ascii-reveal',
+    date: 'April 26, 2026',
+    title: 'ASCII Reveal',
+    subtitle: 'Images materialize from ASCII art before the photograph resolves.',
+    description:
+      'Images materialize from ASCII art — pixel brightness mapped to characters that scramble and resolve before the photograph emerges. Click to replay.',
+    screenshot: '/screenshots/ascii-reveal.png',
+    tags: ['ASCII', 'Animation', 'Canvas', 'Image Loading', 'Dark Theme'],
+    theme: 'dark',
+  },
+  {
     slug: 'monono',
     date: 'April 16, 2026',
     title: 'Monono',
