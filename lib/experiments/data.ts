@@ -7,7 +7,7 @@ export const experiments: Experiment[] = [
     title: 'Leaderboard',
     subtitle: 'Gamey leaderboard with cascading rank changes, character profiles, and award animations.',
     description:
-      'A playful leaderboard with eight runners, custom illustrated avatars, and gold/silver/bronze trophies for the top three. Click any avatar to open a profile modal with stats, a weekly bar chart, and recent badges. The "Award random points" button picks one to three players, animates each score pop, and lets the rows spring to their new positions. Built on Motion (formerly Framer Motion) — `layout` prop on each row handles the reorder choreography for free.',
+      'A playful leaderboard with eight runners, illustrated avatars, and gold/silver/bronze trophies for the top three. Hovering a row bubbles its avatar up with a rubber-band spring; clicking opens a profile modal with stats, a weekly bar chart, and badge pills — the modal avatar pops in with a heavier overshoot and the rank badge stamps in after. The single "Award random points" button picks one to three players, animates each score pop, and lets the rows spring to their new positions. Built on Motion (formerly Framer Motion) — the `layout` prop handles the reorder choreography for free.',
     screenshot: '/screenshots/leaderboard.png',
     tags: ['Motion', 'Leaderboard', 'Layout Animation', 'Profile Modal'],
   },

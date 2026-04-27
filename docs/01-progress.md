@@ -8,6 +8,24 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Leaderboard — Springy Avatars and Profile Modals
+
+**Date:** 2026-04-27
+
+A new playful leaderboard experiment with eight runners, illustrated avatars, and a profile modal — a showcase for Motion's `layout` prop and spring physics. Hovering a row makes its avatar bubble up to 1.55× scale with a rubber-band spring (low damping for visible overshoot); the row's z-index lifts on hover so the avatar can overlay neighbors. Clicking anywhere on the row (whole row is the click target) opens a profile modal with player stats, a weekly bar chart, and badge pills. The modal avatar pops in with an even more exaggerated spring (scale from 0.25, -22° rotation), and the rank badge stamps in after like a sticker landing. The single "Award random points" button picks 1–3 distinct players, awards each a random score, and staggers the score-pops 220ms apart so the row reorders cascade.
+
+Avatars are sourced from a hand-curated set in `public/design-experiments/avatars/` and pre-cropped to 512×512 squares via `sips`. The `Player` type has an optional `image?: string`, with initials over the gradient circle as the fallback — adding a player without an image just works.
+
+Also added the `gen-image` skill at `.claude/skills/gen-image/SKILL.md` for future avatar / icon / hero art generation: a procedural sheet that teaches Claude to call FAL via the FAL MCP (already installed in the user environment), upload reference images, batch-submit with prompt variation, and save to `public/<experiment>/<topic>/NN.png`. Zero credentials in the repo, no `@fal-ai/client` dependency.
+
+**Key files:**
+- `app/design-experiments/(experiments)/leaderboard/page.tsx` — the experiment
+- `app/design-experiments/(experiments)/leaderboard/styles.css`
+- `public/leaderboard/avatars/01.jpg` … `08.jpg` — cropped avatars
+- `.claude/skills/gen-image/SKILL.md` — image generation skill
+
+---
+
 ### Monono — First AI-Backed Experiment
 
 **Date:** 2026-04-16

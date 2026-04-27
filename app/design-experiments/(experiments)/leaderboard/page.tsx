@@ -179,16 +179,28 @@ function ProfileModal({ player, rank, onClose }: { player: Player; rank: number;
         </button>
 
         <div className="modal-header">
-          <div className="modal-avatar" style={{ background: player.gradient }}>
+          <motion.div
+            className="modal-avatar"
+            style={{ background: player.gradient }}
+            initial={{ scale: 0.25, rotate: -22 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 340, damping: 8, mass: 0.9, delay: 0.08 }}
+          >
             {player.image
               ? <img className="modal-avatar-img" src={player.image} alt="" />
               : initials(player.name)}
-            <div className="modal-avatar-rank" data-rank={rank}>
+            <motion.div
+              className="modal-avatar-rank"
+              data-rank={rank}
+              initial={{ scale: 0, rotate: -45 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 520, damping: 11, delay: 0.55 }}
+            >
               {rank === 1 ? <Trophy size={16} strokeWidth={2.5} fill="currentColor" /> :
                 rank <= 3 ? <Medal size={15} strokeWidth={2.5} fill="currentColor" /> :
                   <span>#{rank}</span>}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
           <div className="modal-name-block">
             <h2 className="modal-name">{player.name}</h2>
             <div className="modal-meta">
@@ -279,6 +291,7 @@ export default function LeaderboardSketch() {
   const [pops, setPops] = useState<Pop[]>([])
   const [sparkleFor, setSparkleFor] = useState<string[]>([])
   const [openId, setOpenId] = useState<string | null>(null)
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
 
   const sorted = [...players].sort((a, b) => b.score - a.score)
   const openPlayer = openId ? sorted.find(p => p.id === openId) : null
@@ -342,22 +355,36 @@ export default function LeaderboardSketch() {
                   transition={SPRING}
                   className="row"
                   data-rank={rank}
+                  data-hovered={hoveredId === player.id}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open ${player.name} profile`}
+                  onClick={() => setOpenId(player.id)}
+                  onMouseEnter={() => setHoveredId(player.id)}
+                  onMouseLeave={() => setHoveredId(prev => prev === player.id ? null : prev)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setOpenId(player.id)
+                    }
+                  }}
                 >
                   <RankBadge rank={rank} />
-                  <button
-                    className="avatar avatar-btn"
+                  <motion.div
+                    className="avatar"
                     style={{ background: player.gradient }}
-                    onClick={() => setOpenId(player.id)}
-                    aria-label={`Open ${player.name} profile`}
+                    animate={{
+                      scale: hoveredId === player.id ? 1.55 : 1,
+                      rotate: hoveredId === player.id ? -8 : 0,
+                    }}
+                    transition={{ type: 'spring', stiffness: 480, damping: 11, mass: 0.7 }}
                   >
                     {player.image
                       ? <img className="avatar-img" src={player.image} alt="" />
                       : initials(player.name)}
-                  </button>
+                  </motion.div>
                   <div className="row-name">
-                    <button className="row-name-btn" onClick={() => setOpenId(player.id)}>
-                      {player.name}
-                    </button>
+                    <span className="row-name-text">{player.name}</span>
                     <span className="row-streak">
                       <Flame size={11} strokeWidth={2.5} color="#ff7a59" fill="#ff7a59" fillOpacity={0.3} />
                       <strong>{player.streak}</strong> day streak
