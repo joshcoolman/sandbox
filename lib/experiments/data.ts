@@ -2,6 +2,16 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'leaderboard',
+    date: 'April 27, 2026',
+    title: 'Leaderboard',
+    subtitle: 'Gamey leaderboard with cascading rank changes, character profiles, and award animations.',
+    description:
+      'A playful leaderboard with eight runners, custom illustrated avatars, and gold/silver/bronze trophies for the top three. Click any avatar to open a profile modal with stats, a weekly bar chart, and recent badges. The "Award random points" button picks one to three players, animates each score pop, and lets the rows spring to their new positions. Built on Motion (formerly Framer Motion) — `layout` prop on each row handles the reorder choreography for free.',
+    screenshot: '/screenshots/leaderboard.png',
+    tags: ['Motion', 'Leaderboard', 'Layout Animation', 'Profile Modal'],
+  },
+  {
     slug: 'ascii-reveal',
     date: 'April 26, 2026',
     title: 'ASCII Reveal',

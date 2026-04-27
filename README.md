@@ -34,6 +34,20 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### Leaderboard
+
+**April 27, 2026**
+
+[![Leaderboard](./public/screenshots/leaderboard.png)](/design-experiments/leaderboard)
+
+A playful leaderboard with eight runners, illustrated avatars, and gold/silver/bronze trophies for the top three. Click any avatar to open a profile modal with stats, a weekly bar chart, and recent badges. The "Award random points" button picks one to three players, animates each score pop, and lets the rows spring to their new positions. Built on Motion's `layout` prop — the reorder choreography is essentially free.
+
+`Motion` `Leaderboard` `Layout Animation` `Profile Modal`
+
+**[View Live →](/design-experiments/leaderboard)**
+
+---
+
 ### ASCII Reveal
 
 **April 26, 2026**
