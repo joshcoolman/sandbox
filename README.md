@@ -44,7 +44,7 @@ A playful leaderboard with eight runners, illustrated avatars, and gold/silver/b
 
 `Motion` `Leaderboard` `Layout Animation` `Profile Modal`
 
-**[View Live →](/design-experiments/leaderboard)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/leaderboard) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/leaderboard)**
 
 ---
 

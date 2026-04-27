@@ -1,0 +1,13 @@
+.page {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(255, 184, 28, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(168, 85, 247, 0.10), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(34, 211, 238, 0.08), transparent 60%),
+    #0a0c1f;
+  color: #e8e9f3;
+  font-family: 'Sora', system-ui, sans-serif;
+  padding: 56px 24px 96px;
+  display: flex;
+  justify-content: center;
+}

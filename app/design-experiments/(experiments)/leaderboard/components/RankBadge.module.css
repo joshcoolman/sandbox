@@ -1,0 +1,30 @@
+.rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: #5a5f7a;
+  font-variant-numeric: tabular-nums;
+}
+
+.medal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.medal[data-rank="1"] {
+  color: #ffb81c;
+  filter: drop-shadow(0 0 8px rgba(255, 184, 28, 0.5));
+}
+
+.medal[data-rank="2"] {
+  color: #cbd5e1;
+  filter: drop-shadow(0 0 6px rgba(203, 213, 225, 0.3));
+}
+
+.medal[data-rank="3"] {
+  color: #f59e0b;
+  filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.4));
+}
