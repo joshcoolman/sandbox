@@ -1,18 +1,57 @@
 import { NextResponse } from "next/server";
+import { createHmac } from "node:crypto";
+import {
+	checkAndIncrementSession,
+	getClientIp,
+	getMonthlySpend,
+} from "@/lib/ai/rate-limit";
 
 /**
- * Phase 1: mint a fresh roomId per request and return the WSS URL of the
- * chatroom worker. No gates, no signed ticket — those land in Phase 3.
+ * Phase 3: gated entry. Two cost gates (per-IP session counter + global $
+ * cap) and a one-shot HMAC ticket that the Cloudflare worker validates on
+ * WS upgrade. Without a valid ticket, the WSS endpoint refuses upgrades —
+ * so nobody can bypass these gates by going around the Vercel route.
  *
- * The frontend can override the random roomId via ?roomId=<uuid> in the
- * request URL, which is how we exercise the milestone-1 multi-tab broadcast.
+ * Ticket format mirrors workers/chatroom/src/ticket.ts exactly:
+ *   <expMs>.<hexSig>   where sig = HMAC-SHA256(`${roomId}|${expMs}`, TICKET_SECRET)
  */
+
+const NAMESPACE = "chatroom";
+const SESSION_LIMIT = 4;
+const GLOBAL_SOFT_CAP_USD = 4;
+const TICKET_TTL_MS = 60_000;
+
 export async function GET(request: Request) {
 	const wssUrl = process.env.NEXT_PUBLIC_CHATROOM_WSS_URL;
 	if (!wssUrl) {
 		return NextResponse.json(
-			{ error: "NEXT_PUBLIC_CHATROOM_WSS_URL is not set" },
+			{ error: "config_missing", code: "config_missing" },
 			{ status: 500 },
+		);
+	}
+	const ticketSecret = process.env.TICKET_SECRET;
+	if (!ticketSecret) {
+		return NextResponse.json(
+			{ error: "config_missing", code: "config_missing" },
+			{ status: 500 },
+		);
+	}
+
+	const ip = getClientIp(request);
+
+	const globalSpend = await getMonthlySpend(NAMESPACE).catch(() => 0);
+	if (globalSpend >= GLOBAL_SOFT_CAP_USD) {
+		return NextResponse.json(
+			{ error: "global_cap", code: "global_cap" },
+			{ status: 429 },
+		);
+	}
+
+	const gate = await checkAndIncrementSession(ip, SESSION_LIMIT, NAMESPACE).catch(() => null);
+	if (gate && !gate.ok) {
+		return NextResponse.json(
+			{ error: "session_exhausted", code: "session_exhausted" },
+			{ status: 429 },
 		);
 	}
 
@@ -20,5 +59,16 @@ export async function GET(request: Request) {
 	const overrideRoomId = url.searchParams.get("roomId");
 	const roomId = overrideRoomId || crypto.randomUUID();
 
-	return NextResponse.json({ roomId, wssUrl });
+	const exp = Date.now() + TICKET_TTL_MS;
+	const sig = createHmac("sha256", ticketSecret)
+		.update(`${roomId}|${exp}`)
+		.digest("hex");
+	const ticket = `${exp}.${sig}`;
+
+	return NextResponse.json({
+		roomId,
+		wssUrl,
+		ticket,
+		remaining: gate?.ok ? gate.remaining : SESSION_LIMIT,
+	});
 }

@@ -33,7 +33,13 @@ type MessageEvent_ = { type: "message"; message: WireMessage };
 type EndedEvent = { type: "ended"; reason: "turn_cap" | "global_cap" };
 type ServerEvent = HelloEvent | MessageEvent_ | EndedEvent;
 
-type SessionResponse = { roomId: string; wssUrl: string };
+type EndedReason = EndedEvent["reason"] | "session_exhausted" | "config_missing" | "session_failed";
+
+type SessionResponse = { roomId: string; wssUrl: string; ticket: string };
+
+type SessionError = { code?: EndedReason; error?: string };
+
+const IS_DEV = process.env.NODE_ENV === "development";
 
 const PING_INTERVAL_MS = 25_000;
 
@@ -48,7 +54,7 @@ export function Chatroom() {
 	const [messages, setMessages] = useState<WireMessage[]>([]);
 	const [draft, setDraft] = useState("");
 	const [status, setStatus] = useState<"connecting" | "open" | "closed" | "error" | "ended">("connecting");
-	const [endedReason, setEndedReason] = useState<EndedEvent["reason"] | null>(null);
+	const [endedReason, setEndedReason] = useState<EndedReason | null>(null);
 	const [turnsUsed, setTurnsUsed] = useState(0);
 	const [maxTurns, setMaxTurns] = useState(20);
 	const wsRef = useRef<WebSocket | null>(null);
@@ -73,14 +79,20 @@ export function Chatroom() {
 
 			const sessionRes = await fetch(sessionUrl);
 			if (!sessionRes.ok) {
-				if (!cancelled) setStatus("error");
+				if (cancelled) return;
+				const body = (await sessionRes.json().catch(() => null)) as SessionError | null;
+				const code: EndedReason = body?.code ?? "session_failed";
+				setStatus("ended");
+				setEndedReason(code);
 				return;
 			}
 			const session = (await sessionRes.json()) as SessionResponse;
 			if (cancelled) return;
 			setRoomId(session.roomId);
 
-			ws = new WebSocket(`${session.wssUrl}/rooms/${session.roomId}/ws`);
+			ws = new WebSocket(
+				`${session.wssUrl}/rooms/${session.roomId}/ws?ticket=${encodeURIComponent(session.ticket)}`,
+			);
 			wsRef.current = ws;
 
 			ws.addEventListener("open", () => {
@@ -177,7 +189,7 @@ export function Chatroom() {
 				minHeight: "100vh",
 			}}
 		>
-			<h1 style={{ fontSize: 18, margin: 0, fontWeight: 600 }}>chatroom — phase 2</h1>
+			<h1 style={{ fontSize: 18, margin: 0, fontWeight: 600 }}>chatroom — phase 3</h1>
 			<p style={{ fontSize: 12, opacity: 0.6, margin: "4px 0 4px" }}>
 				you are <strong style={{ color: "#ffd24a" }}>{author ?? "—"}</strong> · status:{" "}
 				<span
@@ -233,9 +245,17 @@ export function Chatroom() {
 						borderRadius: 6,
 						background: "rgba(167,139,250,0.06)",
 						fontSize: 13,
+						display: "flex",
+						flexDirection: "column",
+						gap: 12,
 					}}
 				>
-					conversation ended ({endedReason ?? "unknown"}). refresh on the bare URL for a new room.
+					<div>{describeEndedReason(endedReason)}</div>
+					{IS_DEV && endedReason === "session_exhausted" && (
+						<button type="button" onClick={resetAndReload} style={resetBtnStyle}>
+							[dev] clear my session counter and reload
+						</button>
+					)}
 				</div>
 			) : (
 				<input
@@ -323,3 +343,41 @@ function formatTime(ts: number): string {
 	const d = new Date(ts);
 	return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
+
+function describeEndedReason(reason: EndedReason | null): string {
+	switch (reason) {
+		case "turn_cap":
+			return "conversation reached its turn cap. refresh on the bare URL for a new room.";
+		case "global_cap":
+			return "the global spend cap for this experiment has been reached. it'll reset at the start of the month.";
+		case "session_exhausted":
+			return "you've started the maximum number of chatroom sessions for this month from this IP.";
+		case "config_missing":
+			return "the chatroom server is not configured (missing env vars).";
+		case "session_failed":
+			return "couldn't start a session. check the dev console for details.";
+		default:
+			return "conversation ended.";
+	}
+}
+
+async function resetAndReload() {
+	try {
+		await fetch("/api/chatroom/reset", { method: "POST" });
+	} catch {
+		// ignore
+	}
+	window.location.href = window.location.pathname;
+}
+
+const resetBtnStyle: React.CSSProperties = {
+	padding: "8px 12px",
+	background: "rgba(255,255,255,0.06)",
+	border: "1px solid rgba(255,255,255,0.18)",
+	borderRadius: 6,
+	color: "inherit",
+	fontFamily: "inherit",
+	fontSize: 12,
+	cursor: "pointer",
+	alignSelf: "flex-start",
+};

@@ -1,6 +1,8 @@
 import { DurableObject } from "cloudflare:workers";
 import { getPersona, pickAgents, type Persona } from "./personas";
 import { getTopic, pickTopic, type Topic } from "./topics";
+import { addSpend, estimateCost, getMonthlySpend, type AnthropicUsage } from "./cost";
+import { verifyTicket } from "./ticket";
 
 /**
  * Phase 2 — three agents converse on a tick. The visitor can interject and
@@ -67,6 +69,7 @@ const FIRST_OPENER_DELAY_MS = 600;
 const RESPOND_TO_USER_DELAY_MS = 1_200;
 const DEATHWATCH_MS = 90_000;
 const LLM_RETRY_DELAY_MS = 8_000;
+const GLOBAL_SOFT_CAP_USD = 4;
 
 const VERCEL_GATEWAY_URL = "https://ai-gateway.vercel.sh/v1/messages";
 const HAIKU_MODEL = "anthropic/claude-haiku-4.5";
@@ -235,6 +238,14 @@ export class ChatroomDO extends DurableObject<Env> {
 			return; // no rescheduling — let it lie until the next WS opens.
 		}
 
+		// Global spend cap: re-check before every LLM call. Trips end the
+		// room mid-conversation cleanly. Failure to read Upstash falls open.
+		const spent = await getMonthlySpend(this.env).catch(() => 0);
+		if (spent >= GLOBAL_SOFT_CAP_USD) {
+			this.endRoom("global_cap");
+			return;
+		}
+
 		const messages = this.getRecentMessages();
 		const speakerId = pickSpeaker(room.agentIds, messages);
 		const persona = getPersona(speakerId);
@@ -250,6 +261,10 @@ export class ChatroomDO extends DurableObject<Env> {
 			await this.ctx.storage.setAlarm(Date.now() + LLM_RETRY_DELAY_MS);
 			return;
 		}
+
+		// Bill the call. Errors are swallowed — a failed Upstash write
+		// shouldn't kill the conversation, just slightly under-track spend.
+		addSpend(this.env, estimateCost(reply.usage)).catch(() => {});
 
 		const inserted = this.insertMessage({
 			role: "agent",
@@ -402,13 +417,6 @@ function pickSpeaker(agentIds: string[], messages: DBMessage[]): string {
 	return pick;
 }
 
-type AnthropicUsage = {
-	input_tokens: number;
-	output_tokens: number;
-	cache_read_input_tokens?: number;
-	cache_creation_input_tokens?: number;
-};
-
 type AnthropicResponse = {
 	content?: Array<{ type: string; text?: string }>;
 	usage?: AnthropicUsage;
@@ -504,6 +512,29 @@ export default {
 			if (request.headers.get("Upgrade") !== "websocket") {
 				return new Response("Expected WebSocket upgrade", {
 					status: 426,
+					headers: CORS_HEADERS,
+				});
+			}
+			// Ticket gate: only the Vercel session route mints these. Without
+			// this, anyone could hit the WSS endpoint directly and bypass the
+			// per-IP and global $ caps enforced on entry.
+			if (!env.TICKET_SECRET) {
+				return new Response("Server misconfigured: TICKET_SECRET unset", {
+					status: 500,
+					headers: CORS_HEADERS,
+				});
+			}
+			const ticket = url.searchParams.get("ticket");
+			if (!ticket) {
+				return new Response("Missing ticket", {
+					status: 401,
+					headers: CORS_HEADERS,
+				});
+			}
+			const valid = await verifyTicket(roomId, ticket, env.TICKET_SECRET);
+			if (!valid) {
+				return new Response("Invalid or expired ticket", {
+					status: 401,
 					headers: CORS_HEADERS,
 				});
 			}

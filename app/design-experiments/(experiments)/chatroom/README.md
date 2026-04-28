@@ -15,7 +15,7 @@ It is the most architecturally ambitious experiment in the sandbox to date — t
 | 0. Repo scaffold + this README | Folder structure exists, worker boots, `/healthz` returns ok | **Done** |
 | 1. Tutorial-shaped echo room | WS plumbing + hibernation works end-to-end (no LLM) | **Done** |
 | 2. Agents arrive | Three agents converse on a tick, user can interject | **Done** (cadence/voice still want tuning) |
-| 3. Cost gates + ticket auth | Per-IP and global $ caps, signed WS upgrade | Not started |
+| 3. Cost gates + ticket auth | Per-IP and global $ caps, signed WS upgrade | **Done** |
 | 4. Leaderboard look + motion | Visual sibling of Leaderboard, springy entrance | Not started |
 | 5. SEO + ship | Production build, worker deploy, gallery entry | Not started |
 
