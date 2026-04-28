@@ -1,0 +1,42 @@
+/**
+ * Chatroom Worker — Hibernatable Durable Object hosting the AI chatroom experiment.
+ * See app/design-experiments/(experiments)/chatroom/README.md in the parent repo
+ * for architecture, phases, and cost guardrails.
+ *
+ * Wrangler reference: https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "sandbox-chatroom",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-04-24",
+	"compatibility_flags": ["nodejs_compat"],
+
+	"durable_objects": {
+		"bindings": [
+			{
+				"class_name": "ChatroomDO",
+				"name": "CHATROOM"
+			}
+		]
+	},
+
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["ChatroomDO"]
+		}
+	],
+
+	"observability": {
+		"enabled": true
+	},
+
+	"upload_source_maps": true
+
+	// Secrets (set with `wrangler secret put`, never commit values):
+	//   VERCEL_AI_GATEWAY_KEY      — used in Phase 2 for Anthropic via Vercel Gateway
+	//   UPSTASH_REDIS_REST_URL     — used in Phase 3 for cost gates (shared with monono)
+	//   UPSTASH_REDIS_REST_TOKEN
+	//   TICKET_SECRET              — used in Phase 3 for HMAC ticket validation
+}
