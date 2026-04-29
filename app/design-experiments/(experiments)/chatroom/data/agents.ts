@@ -1,6 +1,9 @@
 /**
  * Display-only mirror of workers/chatroom/src/personas.ts.
  * System prompts live server-side and are never shipped to the browser.
+ *
+ * Avatars + gradients are reused from leaderboard data so Maya and Jordan
+ * are visually the same characters across both experiments.
  */
 
 export type AgentDisplay = {
@@ -8,26 +11,23 @@ export type AgentDisplay = {
 	name: string;
 	bio: string;
 	gradient: string;
+	image: string;
 };
 
 export const AGENTS: AgentDisplay[] = [
 	{
 		id: "optimist",
-		name: "Mira",
-		bio: "Sees the upside. Asks what could go right.",
-		gradient: "linear-gradient(135deg, #ffd24a 0%, #ff7a4d 100%)",
+		name: "Maya Chen",
+		bio: "AI enthusiast",
+		gradient: "linear-gradient(135deg, #ff6b9d, #c044ff)",
+		image: "/leaderboard/avatars/01.jpg",
 	},
 	{
 		id: "skeptic",
-		name: "Caleb",
-		bio: "Probes the second-order effects.",
-		gradient: "linear-gradient(135deg, #22d3ee 0%, #6366f1 100%)",
-	},
-	{
-		id: "philosopher",
-		name: "June",
-		bio: "Reframes the question.",
-		gradient: "linear-gradient(135deg, #a78bfa 0%, #6b7280 100%)",
+		name: "Jordan Park",
+		bio: "AI enthusiast",
+		gradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
+		image: "/leaderboard/avatars/02.jpg",
 	},
 ];
 

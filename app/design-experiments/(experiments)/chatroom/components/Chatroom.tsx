@@ -1,74 +1,65 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AGENTS, getAgent } from "../data/agents";
-
-/**
- * Phase 2 client. Three agents converse on a tick; you join as the fourth.
- * Still bare-bones styling (Phase 4 owns visuals) — the goal here is to
- * make the agent identities + topic + ended state visible enough to verify
- * the worker behavior end-to-end.
- */
-
-type WireMessage = {
-	id: number;
-	role: "user" | "agent";
-	agentId: string | null;
-	author: string;
-	content: string;
-	created_at: number;
-};
-
-type HelloEvent = {
-	type: "hello";
-	topic: { id: string; title: string };
-	agents: Array<{ id: string; name: string }>;
-	messages: WireMessage[];
-	status: "active" | "ended";
-	turnsUsed: number;
-	maxTurns: number;
-};
-
-type MessageEvent_ = { type: "message"; message: WireMessage };
-type EndedEvent = { type: "ended"; reason: "turn_cap" | "global_cap" };
-type ServerEvent = HelloEvent | MessageEvent_ | EndedEvent;
-
-type EndedReason = EndedEvent["reason"] | "session_exhausted" | "config_missing" | "session_failed";
-
-type SessionResponse = { roomId: string; wssUrl: string; ticket: string };
-
-type SessionError = { code?: EndedReason; error?: string };
+import { AGENTS } from "../data/agents";
+import { useIdentity, type Identity } from "../hooks/useIdentity";
+import type {
+	ClientEvent,
+	EndedReason,
+	PhaseEvent,
+	ServerEvent,
+	SessionError,
+	SessionResponse,
+	WireMessage,
+} from "../types";
+import { AgentAvatar } from "./AgentAvatar";
+import { Composer } from "./Composer";
+import { IdentityChip } from "./IdentityChip";
+import { IdentityModal } from "./IdentityModal";
+import { MessageRow, TypingRow } from "./MessageRow";
+import { TopicChangeModal } from "./TopicChangeModal";
+import styles from "../page.module.css";
 
 const IS_DEV = process.env.NODE_ENV === "development";
-
 const PING_INTERVAL_MS = 25_000;
 
-function generateAuthor(): string {
-	return `anon-${Math.random().toString(36).slice(2, 6)}`;
-}
-
 export function Chatroom() {
-	const [roomId, setRoomId] = useState<string | null>(null);
-	const [author, setAuthor] = useState<string | null>(null);
-	const [topic, setTopic] = useState<{ id: string; title: string } | null>(null);
+	const { identity, update: updateIdentity } = useIdentity();
+	const [editingIdentity, setEditingIdentity] = useState(false);
+	const [changingTopic, setChangingTopic] = useState(false);
+	const [topic, setTopic] = useState<{ id: string | null; title: string } | null>(null);
 	const [messages, setMessages] = useState<WireMessage[]>([]);
 	const [draft, setDraft] = useState("");
 	const [status, setStatus] = useState<"connecting" | "open" | "closed" | "error" | "ended">("connecting");
 	const [endedReason, setEndedReason] = useState<EndedReason | null>(null);
 	const [turnsUsed, setTurnsUsed] = useState(0);
 	const [maxTurns, setMaxTurns] = useState(20);
+	const [phase, setPhase] = useState<PhaseEvent["phase"]>("opening");
+	const [topicChangeError, setTopicChangeError] = useState<string | null>(null);
+	const [mode, setMode] = useState<"dev" | "prod">("prod");
+	const [typingAgent, setTypingAgent] = useState<{ agentId: string; name: string } | null>(null);
 	const wsRef = useRef<WebSocket | null>(null);
-	const authorRef = useRef<string | null>(null);
+	const identityRef = useRef<Identity | null>(null);
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		identityRef.current = identity;
+	}, [identity]);
+
+	// Resend identify whenever identity changes (after WS is open).
+	useEffect(() => {
+		if (!identity) return;
+		const ws = wsRef.current;
+		if (ws && ws.readyState === WebSocket.OPEN) {
+			sendClient(ws, { type: "identify", name: identity.name, avatarId: identity.avatarId });
+		}
+	}, [identity]);
 
 	useEffect(() => {
 		let cancelled = false;
 		let ws: WebSocket | null = null;
 		let pingTimer: ReturnType<typeof setInterval> | null = null;
-
-		const me = generateAuthor();
-		authorRef.current = me;
-		setAuthor(me);
 
 		async function connect() {
 			const url = new URL(window.location.href);
@@ -88,7 +79,6 @@ export function Chatroom() {
 			}
 			const session = (await sessionRes.json()) as SessionResponse;
 			if (cancelled) return;
-			setRoomId(session.roomId);
 
 			ws = new WebSocket(
 				`${session.wssUrl}/rooms/${session.roomId}/ws?ticket=${encodeURIComponent(session.ticket)}`,
@@ -96,8 +86,12 @@ export function Chatroom() {
 			wsRef.current = ws;
 
 			ws.addEventListener("open", () => {
-				if (cancelled) return;
+				if (cancelled || !ws) return;
 				setStatus("open");
+				const me = identityRef.current;
+				if (me) {
+					sendClient(ws, { type: "identify", name: me.name, avatarId: me.avatarId });
+				}
 				pingTimer = setInterval(() => {
 					if (ws && ws.readyState === WebSocket.OPEN) ws.send("ping");
 				}, PING_INTERVAL_MS);
@@ -118,12 +112,31 @@ export function Chatroom() {
 					setMessages(parsed.messages);
 					setTurnsUsed(parsed.turnsUsed);
 					setMaxTurns(parsed.maxTurns);
+					setPhase(parsed.phase);
+					if (parsed.mode) setMode(parsed.mode);
 					if (parsed.status === "ended") setStatus("ended");
 				} else if (parsed.type === "message") {
 					setMessages((prev) =>
 						prev.some((m) => m.id === parsed.message.id) ? prev : [...prev, parsed.message],
 					);
 					setTurnsUsed((prev) => (parsed.message.role === "agent" ? prev + 1 : prev));
+					// A message arriving implicitly clears the typing indicator
+					// (typing was for *this* turn; the message ends it).
+					setTypingAgent(null);
+				} else if (parsed.type === "typing") {
+					if (parsed.agentId) {
+						setTypingAgent({ agentId: parsed.agentId, name: parsed.name ?? "" });
+					} else {
+						setTypingAgent(null);
+					}
+				} else if (parsed.type === "phase") {
+					setPhase(parsed.phase);
+				} else if (parsed.type === "topic_change_rejected") {
+					setTopicChangeError(
+						parsed.reason === "limit"
+							? "You've reached the topic-change limit for this room."
+							: "That topic didn't go through. Try again.",
+					);
 				} else if (parsed.type === "ended") {
 					setStatus("ended");
 					setEndedReason(parsed.reason);
@@ -132,7 +145,6 @@ export function Chatroom() {
 
 			ws.addEventListener("close", () => {
 				if (cancelled) return;
-				// Don't downgrade an "ended" state to "closed" — ended is more specific.
 				setStatus((prev) => (prev === "ended" ? "ended" : "closed"));
 			});
 
@@ -154,210 +166,214 @@ export function Chatroom() {
 
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-	}, [messages]);
+	}, [messages, typingAgent]);
 
 	const send = useCallback(() => {
 		const ws = wsRef.current;
-		const me = authorRef.current;
+		const me = identityRef.current;
 		const trimmed = draft.trim();
 		if (!ws || ws.readyState !== WebSocket.OPEN || !trimmed || !me) return;
-		ws.send(JSON.stringify({ type: "say", author: me, content: trimmed }));
+		sendClient(ws, { type: "say", author: me.name, content: trimmed });
 		setDraft("");
 	}, [draft]);
 
-	const handleKey = useCallback(
-		(e: React.KeyboardEvent<HTMLInputElement>) => {
-			if (e.key === "Enter" && !e.shiftKey) {
-				e.preventDefault();
-				send();
-			}
+	const handleIdentitySave = useCallback(
+		(next: Identity) => {
+			updateIdentity(next);
+			setEditingIdentity(false);
 		},
-		[send],
+		[updateIdentity],
 	);
+
+	const handleTopicChange = useCallback((title: string) => {
+		const ws = wsRef.current;
+		if (!ws || ws.readyState !== WebSocket.OPEN) return;
+		setTopicChangeError(null);
+		sendClient(ws, { type: "change_topic", title });
+		setChangingTopic(false);
+	}, []);
+
+	const handleAskMeSomething = useCallback(() => {
+		const ws = wsRef.current;
+		if (!ws || ws.readyState !== WebSocket.OPEN) return;
+		sendClient(ws, { type: "ask_me_something" });
+	}, []);
 
 	const inputDisabled = status !== "open";
 	const turnsRemaining = Math.max(0, maxTurns - turnsUsed);
+	const myName = identity?.name ?? null;
+	const phaseHint = phaseToHint(phase, status);
+	const showAskButton = status === "open" && (phase === "awaiting_user" || phase === "idle");
 
 	return (
-		<main
-			style={{
-				maxWidth: 720,
-				margin: "0 auto",
-				padding: "48px 24px 96px",
-				fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
-				color: "#e8e9f3",
-				minHeight: "100vh",
-			}}
-		>
-			<h1 style={{ fontSize: 18, margin: 0, fontWeight: 600 }}>chatroom — phase 3</h1>
-			<p style={{ fontSize: 12, opacity: 0.6, margin: "4px 0 4px" }}>
-				you are <strong style={{ color: "#ffd24a" }}>{author ?? "—"}</strong> · status:{" "}
-				<span
-					style={{
-						color:
-							status === "open"
-								? "#7ee787"
-								: status === "ended"
-									? "#a78bfa"
-									: "#ff7b72",
-					}}
-				>
-					{status}
-				</span>{" "}
-				· {turnsRemaining}/{maxTurns} turns left
-			</p>
-			{topic && (
-				<p style={{ fontSize: 12, opacity: 0.7, margin: "0 0 4px" }}>
-					topic: <strong>{topic.title}</strong>
+		<div className={styles.shell}>
+			<header className={styles.header}>
+				<h1 className={styles.title}>chatroom</h1>
+				<p className={styles.subtitle}>
+					Two opinionated agents are mid-conversation. Join in as the third.
 				</p>
-			)}
-			{roomId && (
-				<p style={{ fontSize: 11, opacity: 0.45, margin: "0 0 24px", wordBreak: "break-all" }}>
-					room: <code>{roomId}</code>
-				</p>
-			)}
+				<div className={styles.topicRow}>
+					{topic && (
+						<span className={styles.topicGroup}>
+							<span className={styles.topicChip}>{topic.title}</span>
+							{status === "open" && (
+								<button
+									type="button"
+									className={styles.changeTopicBtn}
+									onClick={() => setChangingTopic(true)}
+									aria-label="Change topic"
+								>
+									change
+								</button>
+							)}
+						</span>
+					)}
+					<span className={styles.statusPill} data-state={status}>
+						<span className={styles.statusDot} />
+						{status}
+					</span>
+					{mode === "dev" && <span className={styles.devPill}>dev</span>}
+					{identity && (
+						<div className={styles.identitySlot}>
+							<IdentityChip identity={identity} onEdit={() => setEditingIdentity(true)} />
+						</div>
+					)}
+				</div>
+			</header>
 
-			<ul
-				style={{
-					listStyle: "none",
-					margin: 0,
-					padding: 0,
-					display: "flex",
-					flexDirection: "column",
-					gap: 8,
-					marginBottom: 24,
-				}}
-			>
-				{messages.map((m) => (
-					<MessageRow key={m.id} message={m} isMe={!!author && m.author === author} />
-				))}
+			<ul className={styles.messages}>
+				<AnimatePresence initial={false}>
+					{messages.map((m) => (
+						<MessageRow key={m.id} message={m} isMe={!!myName && m.author === myName} />
+					))}
+					{typingAgent && (
+						<TypingRow
+							key={`typing-${typingAgent.agentId}`}
+							agentId={typingAgent.agentId}
+							name={typingAgent.name}
+						/>
+					)}
+				</AnimatePresence>
 				{messages.length === 0 && status === "open" && (
-					<li style={{ fontSize: 12, opacity: 0.5 }}>waiting for the room to wake up…</li>
+					<li className={styles.idle}>waiting for the room to wake up…</li>
 				)}
 				<div ref={messagesEndRef} />
 			</ul>
 
 			{status === "ended" ? (
-				<div
-					style={{
-						padding: "16px",
-						border: "1px solid rgba(167,139,250,0.4)",
-						borderRadius: 6,
-						background: "rgba(167,139,250,0.06)",
-						fontSize: 13,
-						display: "flex",
-						flexDirection: "column",
-						gap: 12,
-					}}
-				>
-					<div>{describeEndedReason(endedReason)}</div>
+				<div className={styles.endedCard}>
+					<div className={styles.endedTitle}>{endedTitle(endedReason)}</div>
+					<div className={styles.endedBody}>{describeEndedReason(endedReason)}</div>
 					{IS_DEV && endedReason === "session_exhausted" && (
-						<button type="button" onClick={resetAndReload} style={resetBtnStyle}>
-							[dev] clear my session counter and reload
+						<button type="button" onClick={resetAndReload} className={styles.resetBtn}>
+							[dev] clear session counter and reload
 						</button>
 					)}
 				</div>
 			) : (
-				<input
-					type="text"
+				<Composer
 					value={draft}
-					onChange={(e) => setDraft(e.target.value)}
-					onKeyDown={handleKey}
-					placeholder={status === "open" ? "type a message and press enter" : "connecting…"}
 					disabled={inputDisabled}
-					maxLength={500}
-					style={{
-						width: "100%",
-						padding: "10px 12px",
-						background: "rgba(255,255,255,0.04)",
-						border: "1px solid rgba(255,255,255,0.12)",
-						borderRadius: 6,
-						color: "inherit",
-						fontFamily: "inherit",
-						fontSize: 14,
-					}}
+					turnsRemaining={turnsRemaining}
+					maxTurns={maxTurns}
+					phaseHint={phaseHint}
+					showAskButton={showAskButton}
+					onAskMeSomething={handleAskMeSomething}
+					onChange={setDraft}
+					onSubmit={send}
 				/>
 			)}
+			{topicChangeError && (
+				<div className={styles.topicError} role="alert">
+					{topicChangeError}
+				</div>
+			)}
 
-			<details style={{ marginTop: 32, fontSize: 11, opacity: 0.5 }}>
-				<summary style={{ cursor: "pointer" }}>agents in this room</summary>
-				<ul style={{ listStyle: "none", padding: 0, margin: "8px 0 0", display: "flex", flexDirection: "column", gap: 4 }}>
+			<div className={styles.roster}>
+				<div className={styles.rosterLabel}>In the room</div>
+				<ul className={styles.rosterList}>
 					{AGENTS.map((a) => (
-						<li key={a.id}>
-							<strong>{a.name}</strong> — {a.bio}
+						<li key={a.id} className={styles.rosterItem}>
+							<AgentAvatar name={a.name} gradient={a.gradient} image={a.image} size="sm" />
+							<div>
+								<span className={styles.rosterName}>{a.name}</span>
+								<span> · </span>
+								<span className={styles.rosterBio}>{a.bio}</span>
+							</div>
 						</li>
 					))}
 				</ul>
-			</details>
-		</main>
-	);
-}
-
-function MessageRow({ message, isMe }: { message: WireMessage; isMe: boolean }) {
-	const agent = message.agentId ? getAgent(message.agentId) : null;
-	const accent = agent?.gradient ?? (isMe ? "linear-gradient(135deg, #ffd24a 0%, #ff7a4d 100%)" : "linear-gradient(135deg, #6c7290 0%, #4b5063 100%)");
-	const labelColor = agent
-		? "#cbd5e1"
-		: isMe
-			? "#ffd24a"
-			: "#cbd5e1";
-
-	return (
-		<li
-			style={{
-				display: "grid",
-				gridTemplateColumns: "32px 1fr",
-				gap: 10,
-				padding: "8px 12px 8px 8px",
-				border: "1px solid rgba(255,255,255,0.08)",
-				borderRadius: 6,
-				background: isMe ? "rgba(255,210,74,0.04)" : "transparent",
-			}}
-		>
-			<div
-				style={{
-					width: 28,
-					height: 28,
-					borderRadius: 14,
-					background: accent,
-					alignSelf: "start",
-					boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.12)",
-				}}
-				aria-hidden
-			/>
-			<div>
-				<div style={{ fontSize: 11, opacity: 0.6, marginBottom: 2 }}>
-					<span style={{ color: labelColor, fontWeight: 600 }}>{message.author}</span>
-					{message.role === "agent" && agent && (
-						<span style={{ marginLeft: 6, opacity: 0.7 }}>· {agent.bio}</span>
-					)}
-					<span style={{ marginLeft: 8, opacity: 0.55 }}>{formatTime(message.created_at)}</span>
-				</div>
-				<div style={{ fontSize: 14, whiteSpace: "pre-wrap" }}>{message.content}</div>
 			</div>
-		</li>
+
+			{editingIdentity && identity && (
+				<IdentityModal
+					identity={identity}
+					onSave={handleIdentitySave}
+					onClose={() => setEditingIdentity(false)}
+				/>
+			)}
+
+			{changingTopic && (
+				<TopicChangeModal
+					onSubmit={handleTopicChange}
+					onClose={() => setChangingTopic(false)}
+				/>
+			)}
+		</div>
 	);
 }
 
-function formatTime(ts: number): string {
-	const d = new Date(ts);
-	return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+function sendClient(ws: WebSocket, event: ClientEvent) {
+	ws.send(JSON.stringify(event));
+}
+
+function phaseToHint(phase: PhaseEvent["phase"], status: string): string | null {
+	if (status !== "open") return null;
+	switch (phase) {
+		// opening + responding: the per-agent typing indicator in the message
+		// list carries the "thinking" signal — composer stays quiet.
+		case "opening":
+		case "responding":
+		case "awaiting_user":
+			return null;
+		case "nudging":
+			return "they're asking you something…";
+		case "idle":
+			return "the room is waiting on you — say something to keep it going.";
+	}
+}
+
+function endedTitle(reason: EndedReason | null): string {
+	switch (reason) {
+		case "turn_cap":
+			return "Conversation reached its turn cap.";
+		case "global_cap":
+			return "Spend cap reached.";
+		case "session_exhausted":
+			return "Session limit reached.";
+		case "config_missing":
+			return "Server not configured.";
+		case "session_failed":
+			return "Couldn't start a session.";
+		default:
+			return "Conversation ended.";
+	}
 }
 
 function describeEndedReason(reason: EndedReason | null): string {
 	switch (reason) {
 		case "turn_cap":
-			return "conversation reached its turn cap. refresh on the bare URL for a new room.";
+			return "Refresh the page for a brand-new room with a new topic.";
 		case "global_cap":
-			return "the global spend cap for this experiment has been reached. it'll reset at the start of the month.";
+			return "The global spend cap for this experiment has been reached. It'll reset at the start of the month.";
 		case "session_exhausted":
-			return "you've started the maximum number of chatroom sessions for this month from this IP.";
+			return "You've started the maximum number of chatroom sessions for this month from this IP.";
 		case "config_missing":
-			return "the chatroom server is not configured (missing env vars).";
+			return "The chatroom server is missing required environment variables.";
 		case "session_failed":
-			return "couldn't start a session. check the dev console for details.";
+			return "Something went wrong starting a session. Check the dev console for details.";
 		default:
-			return "conversation ended.";
+			return "The room is closed.";
 	}
 }
 
@@ -369,15 +385,3 @@ async function resetAndReload() {
 	}
 	window.location.href = window.location.pathname;
 }
-
-const resetBtnStyle: React.CSSProperties = {
-	padding: "8px 12px",
-	background: "rgba(255,255,255,0.06)",
-	border: "1px solid rgba(255,255,255,0.18)",
-	borderRadius: 6,
-	color: "inherit",
-	fontFamily: "inherit",
-	fontSize: 12,
-	cursor: "pointer",
-	alignSelf: "flex-start",
-};

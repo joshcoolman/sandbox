@@ -1,0 +1,51 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: #e8e9f3;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.chip:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 184, 28, 0.30);
+}
+
+.chip:focus-visible {
+  outline: 2px solid #ffb81c;
+  outline-offset: 2px;
+}
+
+.name {
+  letter-spacing: -0.01em;
+}
+
+.label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6c7290;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-right: 2px;
+}
+
+.pencil {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+  color: #6c7290;
+  transition: color 140ms ease;
+}
+
+.chip:hover .pencil {
+  color: #ffd24a;
+}

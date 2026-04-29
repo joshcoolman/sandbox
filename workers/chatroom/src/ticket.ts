@@ -1,34 +1,52 @@
 /**
  * One-shot HMAC ticket for WS upgrade gating.
  *
- * Format:  <expMs>.<hexSig>
- * Payload: roomId | expMs              (no IP — local Vercel dev calls the
+ * Format:  <expMs>.<mode>.<hexSig>
+ * Payload: roomId | expMs | mode      (no IP — local Vercel dev calls the
  *                                       deployed Worker, IPs would mismatch)
  *
- * The 60s TTL is the main protection; IP-binding gave marginal value at
- * the cost of breaking local dev. Phase 3 trade-off accepted.
+ * `mode` is signed in so a dev-mode ticket can only be minted by a session
+ * route that actually saw NODE_ENV === "development". Without this, any
+ * client could request dev privileges and bypass production caps.
+ *
+ * The 60s TTL is the main protection against replay; IP-binding gave
+ * marginal value at the cost of breaking local dev. Phase 3 trade-off.
  */
 
 const TTL_MS = 60_000;
 
-export async function signTicket(roomId: string, secret: string): Promise<string> {
-	const exp = Date.now() + TTL_MS;
-	const payload = `${roomId}|${exp}`;
-	const sig = await hmacHex(payload, secret);
-	return `${exp}.${sig}`;
+export type TicketMode = "dev" | "prod";
+
+export type TicketVerification =
+	| { valid: true; mode: TicketMode }
+	| { valid: false };
+
+function normalizeMode(raw: string): TicketMode {
+	return raw === "dev" ? "dev" : "prod";
 }
 
-export async function verifyTicket(roomId: string, ticket: string, secret: string): Promise<boolean> {
-	const dot = ticket.indexOf(".");
-	if (dot < 0) return false;
-	const expStr = ticket.slice(0, dot);
-	const sig = ticket.slice(dot + 1);
-	const exp = Number(expStr);
-	if (!Number.isFinite(exp) || exp < Date.now()) return false;
+export async function signTicket(roomId: string, mode: TicketMode, secret: string): Promise<string> {
+	const exp = Date.now() + TTL_MS;
+	const safeMode: TicketMode = mode === "dev" ? "dev" : "prod";
+	const payload = `${roomId}|${exp}|${safeMode}`;
+	const sig = await hmacHex(payload, secret);
+	return `${exp}.${safeMode}.${sig}`;
+}
 
-	const payload = `${roomId}|${exp}`;
+export async function verifyTicket(roomId: string, ticket: string, secret: string): Promise<TicketVerification> {
+	const parts = ticket.split(".");
+	if (parts.length !== 3) return { valid: false };
+	const [expStr, modeStr, sig] = parts;
+
+	const exp = Number(expStr);
+	if (!Number.isFinite(exp) || exp < Date.now()) return { valid: false };
+
+	const mode = normalizeMode(modeStr);
+	const payload = `${roomId}|${exp}|${mode}`;
 	const expected = await hmacHex(payload, secret);
-	return timingSafeEq(expected, sig);
+	if (!timingSafeEq(expected, sig)) return { valid: false };
+
+	return { valid: true, mode };
 }
 
 async function hmacHex(payload: string, secret: string): Promise<string> {
