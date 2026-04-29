@@ -6,15 +6,15 @@ import { verifyTicket } from "./ticket";
 import { NUDGE_TEMPLATES, pickTemplate } from "./voice";
 
 /**
- * The chatroom DO. Two AI agents (Maya, Jordan) plus the visitor. The
- * conversation runs on a phase state machine that paces itself around the
- * visitor — see Phase.
+ * The chatroom DO. Two AI agents (Maya, Jordan) plus the human who joined.
+ * The conversation runs on a phase state machine — see Phase.
  *
  *   opening          → produces 2 agent turns, transitions to awaiting_user
  *   awaiting_user    → silence allowance; alarm fire → nudging
- *   nudging          → 1 turn addressing the visitor by name; alarm fire → picking_back_up
- *   picking_back_up  → 2 turns acknowledging silence + pivoting; → awaiting_user
- *   responding       → 2 turns reacting to the visitor; → awaiting_user
+ *   nudging          → 1 turn addressing the user by name; alarm fire → idle
+ *   responding       → 2 turns reacting to the user; → awaiting_user
+ *                      (or 1 turn if the user addressed an agent by name)
+ *   idle             → terminal until user types or button click
  *
  * Any user `say` event collapses whatever phase we're in into `responding`
  * and overrides the pending alarm.
@@ -113,14 +113,14 @@ const RESPONDING_PAIR_DELAY_MS = 3_000;
 const TOPIC_PIVOT_DELAY_MS = 600;
 const DEATHWATCH_MS = 90_000;
 const LLM_RETRY_DELAY_MS = 8_000;
-const GLOBAL_SOFT_CAP_USD = 8;
+const GLOBAL_SOFT_CAP_USD = 16;
 const MAX_TOPIC_CHANGES = 3;
 const MAX_TOPIC_TITLE_LEN = 60;
 const MAX_NAME_LEN = 32;
 const MAX_AVATAR_LEN = 16;
 
 const VERCEL_GATEWAY_URL = "https://ai-gateway.vercel.sh/v1/messages";
-const HAIKU_MODEL = "anthropic/claude-haiku-4.5";
+const MODEL = "anthropic/claude-sonnet-4.6";
 
 export class ChatroomDO extends DurableObject<Env> {
 	constructor(ctx: DurableObjectState, env: Env) {
@@ -539,14 +539,36 @@ export class ChatroomDO extends DurableObject<Env> {
 	private async advancePhase(room: RoomState) {
 		const newTurn = room.phaseTurn + 1;
 
-		if (room.phase === "opening" || room.phase === "responding") {
+		if (room.phase === "responding") {
+			// If the user addressed exactly one agent by name, that agent has
+			// already spoken (pickSpeaker biases first turn to the addressed
+			// agent) and the other should hold back — like a real group chat
+			// where you don't chime in when a question wasn't pointed at you.
+			if (newTurn === 1) {
+				const messages = this.getRecentMessages();
+				const addressed = detectAddressedAgents(messages, room.agentIds);
+				if (addressed.length === 1) {
+					this.setPhase("awaiting_user", 0);
+					await this.ctx.storage.setAlarm(Date.now() + WAIT_FOR_USER_MS);
+					return;
+				}
+			}
 			if (newTurn < 2) {
 				this.setPhaseTurn(newTurn);
-				const delay = room.phase === "responding" ? RESPONDING_PAIR_DELAY_MS : OPENING_BEAT_MS;
-				await this.ctx.storage.setAlarm(Date.now() + delay);
+				await this.ctx.storage.setAlarm(Date.now() + RESPONDING_PAIR_DELAY_MS);
 				return;
 			}
-			// Two turns done — pause for the user.
+			this.setPhase("awaiting_user", 0);
+			await this.ctx.storage.setAlarm(Date.now() + WAIT_FOR_USER_MS);
+			return;
+		}
+
+		if (room.phase === "opening") {
+			if (newTurn < 2) {
+				this.setPhaseTurn(newTurn);
+				await this.ctx.storage.setAlarm(Date.now() + OPENING_BEAT_MS);
+				return;
+			}
 			this.setPhase("awaiting_user", 0);
 			await this.ctx.storage.setAlarm(Date.now() + WAIT_FOR_USER_MS);
 			return;
@@ -712,6 +734,30 @@ function kindForPhase(phase: Phase, isFirstAgentTurn: boolean): TurnKind {
 	return "normal";
 }
 
+/**
+ * Returns the list of agent ids whose names appear in the most recent user
+ * message. Used to detect "Jordan, what do you think?" — the case where the
+ * user is addressing one specific agent and the other should hold back.
+ *
+ *   []           → user didn't address anyone (or no user message yet)
+ *   [id]         → user addressed exactly that agent specifically
+ *   [id, id, …]  → user named multiple agents (treat as group address)
+ */
+function detectAddressedAgents(messages: DBMessage[], agentIds: string[]): string[] {
+	for (let i = messages.length - 1; i >= 0; i--) {
+		const m = messages[i];
+		if (m.role !== "user") continue;
+		const lower = m.content.toLowerCase();
+		const matched: string[] = [];
+		for (const id of agentIds) {
+			const p = getPersona(id);
+			if (p && lower.includes(p.name.toLowerCase())) matched.push(id);
+		}
+		return matched;
+	}
+	return [];
+}
+
 function pickSpeaker(agentIds: string[], messages: DBMessage[]): string {
 	if (messages.length === 0) {
 		return agentIds[Math.floor(Math.random() * agentIds.length)];
@@ -769,7 +815,7 @@ async function callLLM(
 			"anthropic-version": "2023-06-01",
 		},
 		body: JSON.stringify({
-			model: HAIKU_MODEL,
+			model: MODEL,
 			max_tokens: maxTokens,
 			system: [
 				{
@@ -812,7 +858,7 @@ function buildUserMessage(ctx: CallContext): string {
 		if (m.role === "system") activeSystem = m;
 	}
 	const conversation = ctx.transcript.filter((m) => m.role !== "system");
-	const me = ctx.userName?.trim() || "the visitor";
+	const me = ctx.userName?.trim() || "the person who joined";
 
 	// Opener kind: this agent IS the conversation's opening voice. No prior
 	// agent context exists since the most recent prompt boundary.
@@ -830,7 +876,7 @@ function buildUserMessage(ctx: CallContext): string {
 						.map((m) => `[${m.author}]: ${m.content}`)
 						.join("\n")}`
 				: "";
-		return `${headline}${inspiration}${recentLines}\n\nYou (${ctx.persona.name}) are opening this conversation. Pick a hook a stranger reading along can follow. Don't preface or stage-set — just dive in with your take.`;
+		return `${headline}${inspiration}${recentLines}\n\nYou (${ctx.persona.name}) are opening this conversation. Pick a hook anyone reading along can follow. Don't preface or stage-set — just dive in with your take.`;
 	}
 
 	const promptLine = activeSystem
@@ -840,7 +886,7 @@ function buildUserMessage(ctx: CallContext): string {
 
 	let instruction: string;
 	if (ctx.kind === "nudge") {
-		instruction = `${me} is in the chat reading along but hasn't said anything yet. Address ${me} directly by name (or as "you" if that's what's natural) and ask what they think — be specific about something just said. Keep it natural, like you're inviting them in. One short sentence.`;
+		instruction = `${me} is in the chat reading along but hasn't said anything yet. Address ${me} directly by name (or as "you" if that's natural) and ask what they think — be specific about something just said. Keep it natural, like you're inviting them in. One short sentence.`;
 	} else {
 		instruction = `Your turn (${ctx.persona.name}).`;
 	}

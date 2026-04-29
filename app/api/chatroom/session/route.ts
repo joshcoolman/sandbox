@@ -24,7 +24,7 @@ import {
 
 const NAMESPACE = "chatroom";
 const SESSION_LIMIT = 6;
-const GLOBAL_SOFT_CAP_USD = 8;
+const GLOBAL_SOFT_CAP_USD = 16;
 const TICKET_TTL_MS = 60_000;
 const DEV = process.env.NODE_ENV === "development";
 
