@@ -15,6 +15,8 @@ import type {
 } from "../types";
 import { AgentAvatar } from "./AgentAvatar";
 import { Composer } from "./Composer";
+import { BookOpen } from "lucide-react";
+import { HowItWorksModal } from "./HowItWorksModal";
 import { IdentityChip } from "./IdentityChip";
 import { IdentityModal } from "./IdentityModal";
 import { MessageRow, TypingRow } from "./MessageRow";
@@ -28,6 +30,7 @@ export function Chatroom() {
 	const { identity, update: updateIdentity } = useIdentity();
 	const [editingIdentity, setEditingIdentity] = useState(false);
 	const [changingTopic, setChangingTopic] = useState(false);
+	const [showingHow, setShowingHow] = useState(false);
 	const [topic, setTopic] = useState<{ id: string | null; title: string } | null>(null);
 	const [messages, setMessages] = useState<WireMessage[]>([]);
 	const [draft, setDraft] = useState("");
@@ -208,7 +211,18 @@ export function Chatroom() {
 	return (
 		<div className={styles.shell}>
 			<header className={styles.header}>
-				<h1 className={styles.title}>chatroom</h1>
+				<div className={styles.titleRow}>
+					<h1 className={styles.title}>chatroom</h1>
+					<button
+						type="button"
+						className={styles.howItWorksBtn}
+						onClick={() => setShowingHow(true)}
+						aria-label="How this experiment works"
+					>
+						<BookOpen size={11} strokeWidth={2.5} />
+						how it works
+					</button>
+				</div>
 				<p className={styles.subtitle}>
 					Two opinionated agents are mid-conversation. Join in as the third.
 				</p>
@@ -319,6 +333,8 @@ export function Chatroom() {
 					onClose={() => setChangingTopic(false)}
 				/>
 			)}
+
+			{showingHow && <HowItWorksModal onClose={() => setShowingHow(false)} />}
 		</div>
 	);
 }
