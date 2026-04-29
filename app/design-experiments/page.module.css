@@ -222,3 +222,89 @@
     font-size: 24px;
   }
 }
+
+/* Placeholder card — shown when an experiment requires env vars that aren't set
+   in the local environment. Same row layout as a real experiment so the gallery
+   shape stays consistent; just visually muted to signal "requires setup." */
+
+.placeholder {
+  opacity: 0.65;
+}
+
+.placeholderThumb {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  border: 1px dashed #4a4a4a;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.015) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholderThumbLabel {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6a6a6a;
+}
+
+.placeholderTitle {
+  color: #999;
+}
+
+.placeholderRequires {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.placeholderRequiresLabel {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6a6a6a;
+}
+
+.placeholderEnv {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  font-family: var(--font-space-mono), monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: #b8b8b8;
+  letter-spacing: 0.02em;
+}
+
+.placeholderHelp {
+  margin-top: 12px;
+  font-size: 13px;
+  font-style: italic;
+  color: #888;
+  line-height: 1.5;
+}
+
+.placeholderHelp code {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 12px;
+  font-style: normal;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #c8c8c8;
+}

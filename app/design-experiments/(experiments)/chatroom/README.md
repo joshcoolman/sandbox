@@ -14,10 +14,11 @@ It is the most architecturally ambitious experiment in the sandbox to date — t
 | --- | --- | --- |
 | 0. Repo scaffold + this README | Folder structure exists, worker boots, `/healthz` returns ok | **Done** |
 | 1. Tutorial-shaped echo room | WS plumbing + hibernation works end-to-end (no LLM) | **Done** |
-| 2. Agents arrive | Three agents converse on a tick, user can interject | **Done** (cadence/voice still want tuning) |
+| 2. Agents arrive | Two agents converse on a tick, user can interject | **Done** |
 | 3. Cost gates + ticket auth | Per-IP and global $ caps, signed WS upgrade | **Done** |
-| 4. Leaderboard look + motion | Visual sibling of Leaderboard, springy entrance | Not started |
-| 5. SEO + ship | Production build, worker deploy, gallery entry | Not started |
+| 4. Leaderboard look + motion | Visual sibling of Leaderboard, springy entrance | **Done** |
+| 4.5. Engagement-flow rework | Phase state machine, single auto-nudge, change-topic + ask-me-something buttons, dev-unlimited mode | **Done** |
+| 5. SEO + ship | Production build, worker deploy, gallery entry | In progress (registry + SEO surface done, screenshot + push pending) |
 
 ---
 
@@ -62,23 +63,27 @@ Browser  ──WSS──▶  Cloudflare Worker  ──HTTPS──▶  Vercel AI 
 ```
 app/design-experiments/(experiments)/chatroom/
 ├── README.md                      # this document
-├── page.tsx                       # server shell, exports metadata
+├── page.tsx                       # server shell, registry-backed metadata
 ├── page.module.css                # background + layout (mirrors leaderboard)
-├── types.ts                       # Message, Agent, Topic, WireEvent + spring presets
-├── index.ts                       # barrel
+├── types.ts                       # Wire events, message roles, SPRING/SPRINGY presets
 ├── data/
-│   ├── agents.ts                  # display info for the 3 personas (no system prompts here)
-│   └── topics.ts                  # curated openers (mirrors workers/chatroom/src/topics.ts)
+│   ├── agents.ts                  # display info for the 2 personas (no system prompts here)
+│   ├── topics.ts                  # curated openers (mirrors workers/chatroom/src/topics.ts)
+│   ├── userIcons.ts               # leaderboard avatars 03–08 + initials fallback for the visitor
+│   └── userNames.ts               # ~30 friendly first names for default identity
 ├── hooks/
-│   └── useChatroom.ts             # WSS lifecycle, message buffer, send()
+│   └── useIdentity.ts             # localStorage identity (name + avatarId), default generation
 └── components/
-    ├── Chatroom.tsx               # main client component
-    ├── MessageRow.tsx             # reuses leaderboard row grid
-    ├── Composer.tsx               # textarea + char counter + turns-left
-    └── AgentAvatar.tsx            # gradient + initials fallback (from leaderboard)
+    ├── Chatroom.tsx               # main client component, WS lifecycle, phase rendering
+    ├── MessageRow.tsx             # agent + user rows + system-message divider variant
+    ├── Composer.tsx               # textarea + turns-left + phase hint + ask-me-something button
+    ├── AgentAvatar.tsx            # gradient + image-with-initials-fallback
+    ├── IdentityChip.tsx           # visitor name + avatar + pencil → opens modal
+    ├── IdentityModal.tsx          # name input + 7-cell avatar grid
+    └── TopicChangeModal.tsx       # free-form topic input
 
 app/api/chatroom/
-├── session/route.ts               # gates + signed ticket + wssUrl
+├── session/route.ts               # gates + signed ticket + wssUrl + dev-mode detection
 └── reset/route.ts                 # dev-only IP counter clear
 
 workers/chatroom/
@@ -87,22 +92,23 @@ workers/chatroom/
 ├── tsconfig.json
 ├── worker-configuration.d.ts      # wrangler types output
 └── src/
-    └── index.ts                   # ChatroomDO + router (single file until ~400 lines)
+    ├── index.ts                   # ChatroomDO + router + LLM helpers (~800 lines; split deferred)
+    ├── personas.ts                # Maya + Jordan system prompts (server-only)
+    ├── topics.ts                  # curated openers
+    ├── cost.ts                    # Upstash REST helpers, spend tracking
+    ├── ticket.ts                  # HMAC sign/verify with dev/prod mode
+    └── voice.ts                   # canned-copy fallback for the nudge phase
 ```
 
 ---
 
 ## Personas
 
-Three archetypes, picked to actually disagree with each other. The conversation is the product, so the personalities have to push against each other.
+Two characters — Maya Chen and Jordan Park — both intentionally loose: "AI enthusiast, woman/man in their 30s, talks about AI the way someone talks about their hobby." The original optimist/skeptic stance steering was rolled back during testing because it made replies feel canned; voice now emerges from the model interpreting the topic, not from an assigned framing. Names + display avatars are reused from leaderboard players (Maya = leaderboard 01, Jordan = leaderboard 02) so they're visually the same characters across both experiments.
 
-- **The Optimist** — sees upside in everything, technologist energy. Warm gradient.
-- **The Skeptic** — challenges premises, brings up second-order effects. Cool gradient.
-- **The Philosopher** — abstracts to "what does this say about us." Muted gradient.
+System prompts live server-only in `workers/chatroom/src/personas.ts` and never ship to the browser. The frontend `data/agents.ts` mirrors only the display fields: `id`, `name`, `gradient`, `image`, one-line `bio`. `SHARED_RULES` enforces format ("1–2 sentences, plain text, no markdown, no preface, never start with your own name") — those are about voice in a group chat, not stance. Caching is `cache_control: { type: "ephemeral" }`, the same pattern monono uses.
 
-Each lives in `workers/chatroom/src/personas.ts` (server-only — system prompts never ship to the browser). The frontend `data/agents.ts` mirrors only the display fields: `id`, `name`, `gradient`, one-line `bio`.
-
-System prompts cap output at "1–2 sentences, no markdown, no lists." Caching is `cache_control: { type: "ephemeral" }`, the same pattern monono uses.
+If the conversation ever feels too agreeable or homogeneous, reintroduce **light** differentiation (one trait each) before reverting to the original two-paragraph stance prompts — that was the lesson from the rollback.
 
 ## Topics
 
@@ -134,59 +140,73 @@ Two independent gates, both must pass for an LLM call to happen.
 - Re-checks `getMonthlySpend()` before every LLM call. On trip, broadcasts `{ type: "ended", reason: "global_cap" }` and stops scheduling alarms.
 - Worker validates the ticket on every WS upgrade. Anything without a valid signed ticket is rejected, so hitting the WSS endpoint directly cannot bypass the entry gates.
 
-**Tunable constants** (`workers/chatroom/src/cost.ts`):
+**Tunable constants** (`workers/chatroom/src/index.ts`, kept in sync with `app/api/chatroom/session/route.ts` by hand):
 
 ```ts
-SESSION_LIMIT       = 4         // chatroom sessions per IP per month
-GLOBAL_SOFT_CAP_USD = 4         // shared with monono
-MAX_TURNS           = 40        // total messages per room (agents + user)
-MAX_OUTPUT_TOKENS   = 100       // per agent reply
-MEMORY_WINDOW       = 12        // recent turns sent to LLM
-AMBIENT_TICK_MS     = 8000      // base cadence between unprompted agent turns
-AMBIENT_JITTER_MS   = 4000
+SESSION_LIMIT       = 6           // chatroom sessions per IP per month
+GLOBAL_SOFT_CAP_USD = 8           // independent from monono
+MAX_TURNS_PROD      = 80          // production turn cap
+MAX_TURNS_DEV       = 200         // dev sanity cap (NODE_ENV=development)
+MAX_OUTPUT_TOKENS   = 100         // per agent reply
+NUDGE_OUTPUT_TOKENS = 60          // tighter for the "ask user a question" turn
+MEMORY_WINDOW       = 14          // recent turns sent to LLM
+WAIT_FOR_USER_MS    = 25_000      // silence allowance before auto-nudge
+WAIT_AFTER_NUDGE_MS = 25_000      // silence allowance after the nudge before idle
+RESPOND_TO_USER_DELAY_MS = 1_500  // first agent reply latency
+RESPONDING_PAIR_DELAY_MS = 3_000  // between agent A and agent B replies to a user message
+OPENING_BEAT_MS     = 2_000       // between the two opener turns
+MAX_TOPIC_CHANGES   = 3           // user-initiated topic pivots per room
 ```
 
-**Worst-case session math.** 40 turns × ~150 input tokens (mostly cache hits at 10% cost) + ~100 output tokens. Haiku 4.5 at $1 / $5 per 1M (input / output): **~$0.025–$0.04 per maxed-out session**. With `SESSION_LIMIT = 4` per IP and `GLOBAL_SOFT_CAP_USD = 4`, the worst case is ~100 maxed sessions before the global cap trips.
+**Worst-case session math.** Per agent turn: ~150 input × $1/M (cached at 10% on subsequent turns) + ~80 output × $5/M ≈ **$0.0006/turn**. At `MAX_TURNS = 80` that's **~$0.05 per maxed session**. Cost ceiling for a non-engaging visitor (lands, never types): **3 LLM calls (2 openers + 1 nudge)** before the room goes idle. With `SESSION_LIMIT = 6` per IP and `GLOBAL_SOFT_CAP_USD = 8`, the worst case is ~160 maxed sessions before the global cap trips.
+
+**Dev mode** (`NODE_ENV === "development"`): the session route skips both gates entirely (no Upstash writes, no `session_exhausted` errors), signs `mode: "dev"` into the HMAC ticket, and the worker honors that signal to lift `MAX_TURNS` to 200 and skip the global-cap re-check in `alarm()`. When the conversation crosses turn 80 in a dev room, the worker posts a one-time inline "Production cutoff — dev session continues" system message so the boundary is visible. Dev tickets cannot be forged client-side because the mode is part of the signed payload.
 
 ---
 
 ## DO behavior
 
-`ChatroomDO extends DurableObject<Env>`. Reading order matters here because the hibernation contract is subtle.
+`ChatroomDO extends DurableObject<Env>`. Reading order matters here because the hibernation contract is subtle, and the phase machine has several states.
 
 **Constructor.**
 
 - `ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair("ping", "pong"))` — the most load-bearing line in the file. The client sends a `ping` frame every ~25s; the runtime replies without waking the DO. Without this, hibernation provides no benefit.
-- `ctx.blockConcurrencyWhile(...)` to create the SQLite tables on first wake:
-  - `messages(id PK, role, agent_id, content, created_at)`
-  - `room(id PK, topic, agent_ids JSON, turns_used, status, created_at)` — single row, persisted so it survives hibernation.
-- If `room` row missing, bootstrap: pick `topic` from `topics.ts`, pick 3 agents from `personas.ts`, INSERT row. **Don't** generate opener turns synchronously — let `alarm()` do that, so we don't block the WS upgrade on a slow LLM call.
+- `ctx.blockConcurrencyWhile(...)` creates the SQLite tables on first wake (`messages`, `room`) and runs best-effort `ALTER TABLE` migrations for columns added over time (`phase`, `phase_turn`, `topic_title`, `topic_changes`, `user_name`, `user_avatar`, `mode`, `cutoff_inserted`, `auto_nudge_used`).
+- If the `room` row is missing, bootstrap: pick `topic` from `topics.ts`, pick agents from `personas.ts`, INSERT the row with `phase = 'opening'`. **Don't** generate opener turns synchronously and **don't** insert a visible "topic opener" system message — the agent's first turn IS the visible opener, in their voice, with the curated `topic.opener` passed to the LLM as inspiration only.
 
 **`fetch()` — WS upgrade.**
 
-- Validate the HMAC ticket from the query string. Reject if invalid or expired.
+- Read `X-Chatroom-Mode` from the request (set by the worker entry after ticket verification). One-shot lock: if header is `"dev"` and the room's stored mode is still `"prod"`, update once. After that the row is locked dev for its lifetime — subsequent connections can't downgrade.
 - `ctx.acceptWebSocket(server)` (hibernation API — *not* `server.accept()`, which silently disables hibernation).
-- Send `{ type: "hello", topic, agents, messages }` on connect, re-reading messages from SQLite (works even if the DO just woke).
-- If no alarm scheduled, set one ~500ms out so the room doesn't sit silent on first connect.
+- Send `{ type: "hello", topic, agents, messages, status, turnsUsed, maxTurns, phase, mode }` on connect.
+- If no alarm scheduled, set one ~600ms out so the room doesn't sit silent on first connect.
 
-**`webSocketMessage(ws, data)`.**
+**`webSocketMessage(ws, data)`** dispatches on `parsed.type`:
 
-- Parse `{ type: "say", text }`. Reject if text > 500 chars.
-- INSERT user message, broadcast to all sockets.
-- If `turns_used >= MAX_TURNS`, broadcast `{ type: "ended", reason: "turn_cap" }` and return.
-- Override pending alarm with a faster one (`Date.now() + 1200`) so an agent picks up the user quickly.
+- `"say"` — INSERT user message, mark `auto_nudge_used = 1` (first user-type implicitly consumes the slot), set phase = `responding`, set alarm `RESPOND_TO_USER_DELAY_MS`. Server caps content at 8000 chars.
+- `"identify"` — store `user_name` + `user_avatar` on the room row so nudge / button prompts can address the user by name.
+- `"change_topic"` — validate (≤ 60 chars, ≤ `MAX_TOPIC_CHANGES` per room), update `topic_title`, post a system message ("Topic changed to: X"), force phase = `opening`, override alarm to `TOPIC_PIVOT_DELAY_MS` so the conversation pivots fast.
+- `"ask_me_something"` — only honored when `phase ∈ {awaiting_user, idle}`. Mark `auto_nudge_used = 1`, enter `nudging` with `phaseTurn = 0`, set alarm 600ms out (deferred so the UI updates before the LLM call lands).
 
-**`alarm()` — the heartbeat.**
+**`alarm()` — the phase state machine.**
 
-1. Re-read room status from SQLite.
-2. If `turns_used >= MAX_TURNS` → set status `ended`, broadcast end event, `ctx.storage.deleteAll()`, return.
-3. If no connected WS for >90s and no user message in last 90s → return without rescheduling (idle deathwatch).
-4. Re-check global spend cap. If over → broadcast `global_cap` end event, return.
-5. Pick speaker (round-robin biased toward an agent named in the last user message).
-6. Build prompt: `[persona system prompt, ...last MEMORY_WINDOW messages]`. Cache the system prompt.
-7. Call Vercel AI Gateway via `fetch()` (no SDK — fetch is leaner in Workers). Model `anthropic/claude-haiku-4.5`, `max_tokens: 100`.
-8. INSERT reply, broadcast `{ type: "message", id, agentId, text, ts }`, increment `turns_used`, `addSpend(estimateCost(usage))`.
-9. Reschedule. Ambient base `8000ms ± 4000ms`; halve cadence for the first ~3 turns so the room feels alive on arrival.
+```
+opening (×2)            → awaiting_user
+awaiting_user           → !auto_nudge_used: nudging        (one-shot)
+                        →  auto_nudge_used: idle           (no LLM, no alarm)
+nudging (phaseTurn=0)   → produce nudge turn, advancePhase → phaseTurn=1, alarm=WAIT_AFTER_NUDGE_MS
+nudging (phaseTurn=1)   → idle (silent past nudge)
+responding (×2)         → awaiting_user
+idle                    → terminal until user typing or button click
+```
+
+Pre-flight on every alarm fire: deathwatch (no clients + no user activity for `DEATHWATCH_MS` → no reschedule), and global $ cap check (skipped in dev mode).
+
+`pickSpeaker` randomizes for the first agent turn (no agents have spoken since the most recent prompt boundary), then picks the agent who spoke least recently and never the same agent twice in a row.
+
+The first agent turn carries `kind = "opener"`, which augments the prompt with the curated `topic.opener` as inspiration (paraphrase, don't quote). After topic-changes, the system message acts as the "conversation prompt" headline that the next agent reacts to. Nudge turns carry `kind = "nudge"` and have a tighter `max_tokens = 60`. All other turns are `kind = "normal"`.
+
+**Engagement floor.** A non-engaging visitor gets at most **3 LLM calls** total: 2 openers + 1 auto-nudge. After the auto-nudge slot is consumed (by the visitor typing OR by the silence timer firing), no more auto-prompts — the room transitions silence → idle. The "Ask Me Something" button is the user's manual lever for re-engagement; it bypasses the auto-nudge logic entirely and uses the same `nudging` phase with `phaseTurn = 0` to defer the LLM call.
 
 **`webSocketClose` is intentionally not implemented.** With `compatibility_date >= 2026-04-07` the runtime auto-replies to Close frames. The idle deathwatch in `alarm()` handles cleanup.
 

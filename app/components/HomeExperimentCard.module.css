@@ -115,3 +115,72 @@
     font-size: 12px;
   }
 }
+
+/* Placeholder variant — shown when an experiment requires env vars not set
+   in the local environment. Same dimensions as a real card, but with a
+   dashed thumbnail panel and a "needs setup" callout. */
+
+.cardPlaceholder {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.cardPlaceholder:hover {
+  transform: none;
+  border-color: rgba(143, 247, 249, 0.1);
+}
+
+.placeholderThumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.015),
+    rgba(255, 255, 255, 0.015) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  border-bottom: 1px dashed rgba(143, 247, 249, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholderThumbLabel {
+  font-family: var(--font-space-mono), 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.placeholderEnvList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.placeholderEnv {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  font-family: var(--font-space-mono), 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.02em;
+}
+
+.placeholderHint {
+  margin: 10px 0 0;
+  font-family: var(--font-lora), 'Lora', serif;
+  font-size: 11px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.45;
+}

@@ -8,6 +8,20 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Chatroom — Two AI Agents and a Visitor on a Cloudflare Durable Object
+
+**Date:** 2026-04-28
+
+A new design experiment that pulls together threads from monono (cost-protected LLM personas) and leaderboard (visual language) into a realtime, server-driven chat. Two AI characters — Maya Chen and Jordan Park — open a conversation on a curated topic, then pause for the visitor to join as the third participant. The defining design choice is pacing: the room waits whenever it's the visitor's turn rather than racing to a turn cap. After the openers there's a single auto-nudge ("hey [name], what do you think?"); if the visitor still doesn't engage, the room goes idle and never auto-prompts again. Two user-controlled buttons replace nagging: "change topic" pivots the conversation mid-flight (with a free-form prompt and a 3-change-per-room cap), and "ask me something" lets the visitor summon a fresh question from an agent. Cost ceiling for a non-engaging visitor is 3 LLM calls; an engaged one trades replies as long as they want.
+
+This is the most architecturally ambitious experiment in the sandbox to date — two deploy targets (Vercel for the session route + Cloudflare Workers for the chat actor), a Hibernatable Durable Object that stays alive on a $-cheap idle WebSocket, SQLite-backed conversation state that survives hibernation, and a phase state machine in the DO's `alarm()` heartbeat (`opening → awaiting_user → nudging → idle`, with `responding` interleaved when the user types). Cost is gated in two places: a per-IP session counter and a global monthly $ cap (both via Upstash, namespace `chatroom`), and signed HMAC tickets gate every WS upgrade — the worker can't be hit directly to bypass the entry checks. The ticket signs the dev/prod mode into its payload, so a `NODE_ENV === "development"` session route mints dev tickets that lift caps locally and trigger an inline "production cutoff" divider when the conversation crosses the prod limit (80 turns). Worker secrets live in Cloudflare; the same `TICKET_SECRET` mirrors to Vercel.
+
+Visual language ports cleanly from leaderboard: Sora typography, the radial-gradient page background, the 56/44/1fr/auto row grid, SPRING and SPRINGY presets for `motion/react` entrances, and the gradient-with-inset-border avatar treatment. Maya and Jordan reuse leaderboard avatars 01 and 02 by reference (no duplication); the visitor picks from 03–08 plus an initials fallback via a pencil-icon → modal-grid edit path, with their identity persisted to localStorage. System messages (topic-change pivots, the dev cutoff divider) render as italic centered dividers — visually distinct from agent and user messages. The persona system prompts are intentionally loose ("AI enthusiast, woman/man in their 30s") rather than the original optimist/skeptic stance steering — voice emerges from the model interpreting the topic, not from canned framing.
+
+Lots of fine-tuning landed during the build: dropping the visible "topic opener" system message in favor of letting whichever agent goes first deliver the opener in their voice; lifting the 500-char input cap to 8000 server-side and removing the visible char counter; raising production caps to MAX_TURNS=80 / GLOBAL_SOFT_CAP_USD=$8 / SESSION_LIMIT=6 with worst-case math at ~$0.05 per maxed session; and the "Ask Me Something" button as the user-driven replacement for the auto-pick-back-up cycle that was making the room feel naggy.
+
+---
+
 ### Leaderboard — Springy Avatars and Profile Modals
 
 **Date:** 2026-04-27

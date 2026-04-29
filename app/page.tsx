@@ -4,10 +4,12 @@ import HeroVideo from "./components/HeroVideo";
 import CurtainLink from "./components/CurtainLink";
 import SiteFooter from "./components/SiteFooter";
 import HomeExperimentCard from "./components/HomeExperimentCard";
+import HomeExperimentPlaceholderCard from "./components/HomeExperimentPlaceholderCard";
 import HomeScrollRestore from "./components/HomeScrollRestore";
 import { getAllPosts } from "@/lib/blog/loadBlog";
 import { getRecentDocs } from "@/lib/docs/loadDocs";
 import { experiments } from "@/lib/experiments/data";
+import { getRequiredEnv, isRunnable } from "@/lib/experiments/runnable";
 
 import styles from "./page.module.css";
 
@@ -43,13 +45,26 @@ export default function Home() {
               .
             </p>
             <div className={styles.cardGrid}>
-              {recentExperiments.map((exp, index) => (
-                <HomeExperimentCard
-                  key={exp.slug}
-                  experiment={exp}
-                  delay={Math.min(index + 1, 6)}
-                />
-              ))}
+              {recentExperiments.map((exp, index) => {
+                const delay = Math.min(index + 1, 6);
+                if (!isRunnable(exp.slug)) {
+                  return (
+                    <HomeExperimentPlaceholderCard
+                      key={exp.slug}
+                      experiment={exp}
+                      required={getRequiredEnv(exp.slug)}
+                      delay={delay}
+                    />
+                  );
+                }
+                return (
+                  <HomeExperimentCard
+                    key={exp.slug}
+                    experiment={exp}
+                    delay={delay}
+                  />
+                );
+              })}
             </div>
             <CurtainLink
               href="/design-experiments"

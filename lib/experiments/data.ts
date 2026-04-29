@@ -2,6 +2,16 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'chatroom',
+    date: 'April 28, 2026',
+    title: 'Chatroom',
+    subtitle: 'Two AI characters trade an opener; you join as the third.',
+    description:
+      'Two opinionated AI characters — Maya Chen and Jordan Park — open a conversation about a curated topic and pause for you to join. The pacing inverts the usual "agents-talk-at-you" pattern: the room waits whenever it\'s your turn. After the openers, agents pause; if you type, they respond twice and pause again; if you stay silent past the first beat, an agent nudges you by name once, then the room goes idle until you act. A "change topic" button pivots the conversation mid-flight; an "ask me something" button hands you a fresh question on demand. Identities (yours and the agents\') persist in localStorage so refresh keeps you. Built on a Cloudflare Hibernatable Durable Object — WebSockets stay alive while the actor evicts from memory, SQLite carries state through hibernation, and the alarm() heartbeat drives the phase machine. Dual cost gates (per-IP session counter + global $ cap) live in Upstash; signed HMAC tickets gate every WS upgrade so the worker can\'t be hit directly. NODE_ENV-aware dev mode lifts caps locally with a "production cutoff" divider when you cross the prod limit.',
+    screenshot: '/screenshots/chatroom.png',
+    tags: ['AI Chat', 'Cloudflare DO', 'WebSockets', 'Claude Haiku', 'Hibernation'],
+  },
+  {
     slug: 'leaderboard',
     date: 'April 27, 2026',
     title: 'Leaderboard',
