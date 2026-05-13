@@ -2,6 +2,16 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'ripple-cycle',
+    date: 'May 13, 2026',
+    title: 'Ripple Cycle',
+    subtitle: 'Click anywhere — a wave radiates from your finger and pulls the next frame through.',
+    description: 'Six black-and-white photographs sit on black. Click anywhere and a circular ripple radiates from that exact point, distorting the surface while the next image cross-fades through. Vanilla WebGL2 + GSAP — a fragment shader displaces UVs along a radial sine wave with a sin(π·t) falloff so the surface returns clean every cycle.',
+    screenshot: '/screenshots/ripple-cycle.png',
+    tags: ['WebGL', 'Shader', 'GLSL', 'Interactive'],
+    theme: 'dark',
+  },
+  {
     slug: 'kobold-blaster',
     date: 'May 13, 2026',
     title: 'Kobold Blaster',

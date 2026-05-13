@@ -34,6 +34,20 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### Ripple Cycle
+
+**May 13, 2026**
+
+[![Ripple Cycle](./public/screenshots/ripple-cycle.png)](/design-experiments/ripple-cycle)
+
+Six black-and-white photographs sit on black. Click anywhere and a circular ripple radiates from that exact point, distorting the surface while the next image cross-fades through. Vanilla WebGL2 + GSAP — a fragment shader displaces UVs along a radial sine wave with a sin(π·t) falloff so the surface returns clean every cycle. Click coordinates flow into a `uOrigin` uniform so every ripple emanates from your finger, not a fixed center.
+
+`WebGL` `Shader` `GLSL` `Interactive`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/ripple-cycle) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/ripple-cycle)**
+
+---
+
 ### Kobold Blaster
 
 **May 13, 2026**
