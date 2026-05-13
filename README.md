@@ -427,6 +427,21 @@ Design and architecture plans worked out in conversation with Claude Code, rende
 
 ---
 
+## Security Scanning
+
+`.deepsec/` contains a [deepsec](https://github.com/vercel/deepsec) workspace configured to scan this repo. Scan output is gitignored — only the config and `data/sandbox/INFO.md` (project context for the AI) are committed.
+
+```bash
+cd .deepsec
+pnpm deepsec scan    --project-id sandbox   # run matchers, find candidates
+pnpm deepsec process --project-id sandbox   # AI investigates candidates
+pnpm deepsec report  --project-id sandbox   # print findings summary
+```
+
+`process` is slow (AI reads code in batches) — run it in the background or expect ~45 min for a full pass.
+
+---
+
 ## Claude Code Skills
 
 This repo includes custom skills for [Claude Code](https://claude.ai/code) that streamline common development workflows. While not all skills are specific to this sandbox project, they're general-purpose utilities I use across different projects.

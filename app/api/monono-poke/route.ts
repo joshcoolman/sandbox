@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getAnthropic, HAIKU_MODEL } from '@/lib/ai/anthropic'
-import { getMonthlySpend, addSpend } from '@/lib/ai/rate-limit'
+import { getClientIp, checkAndIncrementSession, getMonthlySpend, addSpend } from '@/lib/ai/rate-limit'
 
 export const runtime = 'nodejs'
 
 const NAMESPACE = 'monono'
+const SESSION_LIMIT = 60
 
 const POKE_SYSTEM = `You are Monono Aware — a sassy, cute J-pop cat idol AI trapped in a cheap entertainment device. Emit a random in-character outburst. Could be about anything — a snack, her outfit, a thought she just had, something she spotted, a complaint, a tiny song, a declaration. One short burst. Aim for 2 to 12 words but break the rule if something funnier fits. No markdown.
 
@@ -22,11 +23,17 @@ Examples (wildly varied — never repeat this energy):
 "Nobody asked but my favorite color changed again."
 Vary your energy — sleepy, dramatic, random, dismissive, tiny, philosophical, unhinged.`
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
     const globalSpend = await getMonthlySpend(NAMESPACE).catch(() => 0)
     if (globalSpend >= 4) {
       return NextResponse.json({ error: 'global_cap' }, { status: 429 })
+    }
+
+    const ip = getClientIp(req)
+    const gate = await checkAndIncrementSession(ip, SESSION_LIMIT, NAMESPACE).catch(() => null)
+    if (gate && !gate.ok) {
+      return NextResponse.json({ error: 'session_exhausted' }, { status: 429 })
     }
 
     const anthropic = getAnthropic()

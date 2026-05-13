@@ -1,0 +1,13 @@
+{
+  "tags": [
+    "nextjs",
+    "node",
+    "react"
+  ],
+  "sentinels": [
+    "next.config.js",
+    "package.json"
+  ],
+  "detectedAt": "2026-05-13T13:56:36.470Z",
+  "rootPath": "/Users/joshcoolman/repos/sandbox"
+}
