@@ -132,7 +132,10 @@ function chromaKey(img: HTMLImageElement, fuzz = 60): HTMLCanvasElement {
   return oc
 }
 
-// Draws a sprite frame using absolute source crop coords, centered on (cx, cy)
+// Draws a sprite frame using absolute source crop coords, centered on (cx, cy).
+// `pad` extends the source rect outward (into the transparent gutter) to catch
+// artwork that reaches past the tight crop box on action frames (throwing arms,
+// attack swings). On-screen sprite size is unchanged — only the visible halo grows.
 function drawSprite(
   ctx: CanvasRenderingContext2D,
   img: CanvasImageSource,
@@ -142,17 +145,22 @@ function drawSprite(
   cx: number, cy: number,
   renderH: number,
   flipX: boolean,
+  pad = 0,
 ) {
   const def  = anims[anim.name]
   const col  = def.cols[anim.frame]
   const crop = crops[def.row][col]
   if (!crop) return
   const [sx, sy, sw, sh] = crop
-  const rw = renderH * (sw / sh)
+  const psx = sx - pad, psy = sy - pad
+  const psw = sw + pad * 2, psh = sh + pad * 2
+  const scale = renderH / sh
+  const drw = psw * scale
+  const drh = psh * scale
   ctx.save()
   ctx.translate(cx, cy)
   if (flipX) ctx.scale(-1, 1)
-  ctx.drawImage(img, sx, sy, sw, sh, -rw / 2, -renderH / 2, rw, renderH)
+  ctx.drawImage(img, psx, psy, psw, psh, -drw / 2, -drh / 2, drw, drh)
   ctx.restore()
 }
 
@@ -435,10 +443,10 @@ function draw(g: G, ctx: CanvasRenderingContext2D, imgs: Record<string, CanvasIm
     }
   }
 
-  // Kobolds
+  // Kobolds (small pad — cell gutters are only ~20px)
   for (const k of g.kobolds) {
     if (imgs['kobold-sprite-t']) {
-      drawSprite(ctx, imgs['kobold-sprite-t'], KOBOLD_ANIMS, KOBOLD_CROPS, k.anim, k.pos.x, k.pos.y, 80, k.flipX)
+      drawSprite(ctx, imgs['kobold-sprite-t'], KOBOLD_ANIMS, KOBOLD_CROPS, k.anim, k.pos.x, k.pos.y, 80, k.flipX, 10)
     } else {
       ctx.fillStyle = '#338833'; ctx.fillRect(k.pos.x - 20, k.pos.y - 20, 40, 40)
     }
@@ -446,13 +454,13 @@ function draw(g: G, ctx: CanvasRenderingContext2D, imgs: Record<string, CanvasIm
 
   // Donut
   if (g.state !== 'idle' && imgs['princess-sprite-v2-t']) {
-    drawSprite(ctx, imgs['princess-sprite-v2-t'], DONUT_ANIMS, DONUT_CROPS, g.donut.anim, g.donut.pos.x, g.donut.pos.y, 80, g.donut.flipX)
+    drawSprite(ctx, imgs['princess-sprite-v2-t'], DONUT_ANIMS, DONUT_CROPS, g.donut.anim, g.donut.pos.x, g.donut.pos.y, 80, g.donut.flipX, 30)
   }
 
   // Carl (flash when hurt)
   const flash = g.carl.hurtCd > 0 && Math.floor(g.carl.hurtCd * 10) % 2 === 0
   if (g.state !== 'idle' && !flash && imgs['carl-sprite-v2-t']) {
-    drawSprite(ctx, imgs['carl-sprite-v2-t'], CARL_ANIMS, CARL_CROPS, g.carl.anim, g.carl.pos.x, g.carl.pos.y, 100, g.carl.flipX)
+    drawSprite(ctx, imgs['carl-sprite-v2-t'], CARL_ANIMS, CARL_CROPS, g.carl.anim, g.carl.pos.x, g.carl.pos.y, 100, g.carl.flipX, 30)
   } else if (g.state !== 'idle' && !flash) {
     if (imgs.carl) ctx.drawImage(imgs.carl, g.carl.pos.x - 24, g.carl.pos.y - 24, 48, 48)
     else { ctx.fillStyle = '#4488ff'; ctx.fillRect(g.carl.pos.x - 20, g.carl.pos.y - 20, 40, 40) }
@@ -605,10 +613,11 @@ function drawIdle(ctx: CanvasRenderingContext2D, vw: number, vh: number, imgs: R
 
   ctx.fillStyle = '#fff'; ctx.font = '13px system-ui, -apple-system, sans-serif'
   const cheatLines = [
-    "Honestly? Hold left click and make a tight circle",
-    "around your character. Everything dies. This is",
-    "more a sprite experiment than a game — closer in",
-    "spirit to bubble wrap. Have fun.",
+    "OK, let's be real here. This isn't really a game.",
+    "It's more like bubble wrap. Maybe 30 seconds of fun.",
+    "If you want max damage, just hold your mouse down",
+    "and draw a circle around the guy. Kills everything",
+    "in sight. It's a sprite experiment, more or less.",
   ]
   cheatLines.forEach((line, i) => {
     ctx.fillText(line, rcx, cheatY + 22 + i * 18)
@@ -621,7 +630,7 @@ function drawGameOver(g: G, ctx: CanvasRenderingContext2D, vw: number, vh: numbe
   ctx.fillStyle = 'rgba(0,0,0,0.82)'; ctx.fillRect(0, 0, vw, vh)
   ctx.textAlign = 'center'
   ctx.fillStyle = '#ff2222'; ctx.font = '22px "Press Start 2P", monospace'
-  ctx.fillText('YOU HAVE DIED', vw/2, vh/2 - 90)
+  ctx.fillText('YOU DIED, DUMMY.', vw/2, vh/2 - 90)
   ctx.fillStyle = '#ffdd44'; ctx.font = '8px "Press Start 2P", monospace'
   ctx.fillText('SYSTEM NOTIFICATION', vw/2, vh/2 - 48)
   ctx.fillStyle = '#ccc'; ctx.font = '9px "Press Start 2P", monospace'
