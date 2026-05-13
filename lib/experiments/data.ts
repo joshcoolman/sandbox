@@ -5,7 +5,7 @@ export const experiments: Experiment[] = [
     slug: 'kobold-blaster',
     date: 'May 13, 2026',
     title: 'Kobold Blaster',
-    subtitle: 'Carl & Princess Donut vs. The Dungeon',
+    subtitle: 'A horde shooter where Claude Code wrote the game and GPT-image-1 painted the sprites.',
     description: 'An 80s/90s horde shooter starring Carl & Princess Donut. Waves of kobolds, chain explosions, animated skull death sequences, combo scoring. The real experiment: Claude Code wrote every line of game logic; GPT-image-1 generated every sprite sheet from natural-language prompts. Two AI systems, completely decoupled — the code pipeline and the art pipeline never touched. Based on the Dungeon Crawler Carl book series.',
     screenshot: '/screenshots/kobold-blaster.png',
     tags: ['game', 'canvas', 'pixel-art', 'retro'],
