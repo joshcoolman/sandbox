@@ -18,7 +18,7 @@ Each plan has a status — `exploratory`, `in-progress`, `implemented`, or `arch
 
 The renderer adds three small conventions on top of plain markdown: H2 headings starting with `Move N —` become numbered "move" cards with a blue chip and a stronger title treatment; paragraphs that open with `**Label.**` become eyebrow-labeled subsections automatically; and `<Callout type="note|decision|caveat|tldr">` blocks render as colored callouts for the meta-content that doesn't fit the main flow. Everything else is just markdown.
 
-First plan in there: "Sandbox Skills — Top 3 Moves From Reviewing Matt Pocock's Skills Repo." Move 0 (this viewer) is implemented; the rest are still in-progress as the plan's status reflects.
+First plan in there: "Sandbox Skills — Top 3 Moves From Reviewing Matt Pocock's Skills Repo." All four moves shipped: Move 0 (this viewer), Move 3 (`grill-me` ported verbatim — interview-style plan stress-testing), Move 1 (`supabase` split via progressive disclosure — 773-line SKILL.md became a 74-line router plus seven reference files, ~10x smaller trigger payload), and Move 2 (`write-a-skill` adapted for sandbox conventions — single-file default, no emojis, `name`+`description` frontmatter).
 
 ---
 

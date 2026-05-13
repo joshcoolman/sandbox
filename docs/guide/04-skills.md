@@ -113,3 +113,15 @@ Wraps the Supabase CLI for database operations: schema migrations, TypeScript ty
 ### /vercel-react-best-practices
 
 A reference skill rather than a workflow skill -- a packaged copy of Vercel Engineering's React and Next.js performance guidelines (MIT-licensed). Auto-triggers when writing, reviewing, or refactoring React/Next.js code: data fetching, bundle optimization, server vs client components, performance patterns. Acts as a domain glossary rather than a command.
+
+## Process
+
+These skills operate on the workflow itself rather than on site content -- one stress-tests a plan, the other scaffolds new skills.
+
+### /grill-me
+
+Interviews you about a plan one question at a time, with a recommended answer attached to each question. Walks the decision tree of a design until ambiguity is resolved. Use before `/sketch` or `/design-experiment` when the brief is vague enough that prototyping would burn iterations on resolvable questions. Ported verbatim from Matt Pocock's skills repo.
+
+### /write-a-skill
+
+Scaffolds a new sandbox skill. Asks what the skill does and what should trigger it, then drafts a single-file `SKILL.md` with sandbox conventions baked in: terse voice, no emojis, `name` + `description` frontmatter only. Splits into progressive-disclosure reference files when the skill grows past ~150 lines (see `supabase/` for the working example). Adapted from Matt Pocock's `write-a-skill` with his glossary/ADR assumptions removed.

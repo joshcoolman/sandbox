@@ -1,11 +1,11 @@
 ---
 title: Sandbox Skills — Top 3 Moves From Reviewing Matt Pocock's Skills Repo
 description: Comparing sandbox's skills against Matt Pocock's repo, with a strict filter on what's worth porting or refactoring.
-status: in-progress
+status: complete
 ---
 
 <Callout type="tldr">
-After auditing both repos, three skill-level moves are worth doing — plus a viewer (Move 0) so future plans like this are easier to read. Move 0 is shipped; Moves 1–3 are still on the table.
+All four moves shipped (2026-05-13). See "What landed" at the bottom for what went where.
 </Callout>
 
 ## Context
@@ -151,3 +151,16 @@ The vertical-slice and glossary patterns don't transplant — sandbox's experime
 2. **Move 3** — port `grill-me` (cheapest, 10 lines, immediate value).
 3. **Move 1** — split `supabase` (biggest single token-cost reduction).
 4. **Move 2** — port `write-a-skill` adapted (compounds with Move 1 going forward).
+
+---
+
+## What landed
+
+All four moves shipped 2026-05-13.
+
+- **Move 0 — `/plans` route.** Live at `app/(plans)/plans/[[...slug]]/page.tsx` with content under `sandbox/plans/`. This page rendered via that route.
+- **Move 3 — `grill-me` ported verbatim.** Lives at `sandbox/.claude/skills/grill-me/SKILL.md` (10 lines). No adaptation needed; Pocock's frontmatter matches sandbox conventions.
+- **Move 1 — `supabase` split via progressive disclosure.** `SKILL.md` is now 74 lines (down from 773) and routes to seven reference files: `MIGRATIONS.md`, `TYPES.md`, `EDGE-FUNCTIONS.md`, `SETUP.md`, `INSPECTION.md`, `TROUBLESHOOTING.md`, `ADVANCED.md`. The trigger-context payload shrank ~10x. Reference files only load when the relevant workflow is active. Emojis stripped throughout per sandbox CLAUDE.md.
+- **Move 2 — `write-a-skill` adapted.** Lives at `sandbox/.claude/skills/write-a-skill/SKILL.md` (130 lines). Drops Pocock's glossary/ADR assumptions. Defaults to single-file SKILL.md until ~150 lines, then prompts for splits. Matches sandbox frontmatter (`name` + `description` only), forbids emojis, and uses the sandbox skills (`note`, `link`, `design-experiment`, `promote`) as the voice reference.
+
+The "nice-to-have" `/save-plan-to-sandbox` automation skill mentioned under Move 0 was not built — copying a markdown file from `~/.claude/plans/` is still a one-line manual step.
