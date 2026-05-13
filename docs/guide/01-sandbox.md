@@ -4,7 +4,7 @@ description: What this site is and how its parts fit together
 
 # The Sandbox
 
-This is a design playground that doubles as a portfolio. It's built with Next.js and evolved through conversation -- most of the code, content, and tooling was made by talking to Claude and iterating on what came back. The site has four main sections, each with its own conventions and workflow.
+This is a design playground that doubles as a portfolio. It's built with Next.js and evolved through conversation -- most of the code, content, and tooling was made by talking to Claude and iterating on what came back. The site has five main sections, each with its own conventions and workflow.
 
 ## The Sections
 
@@ -15,6 +15,8 @@ This is a design playground that doubles as a portfolio. It's built with Next.js
 **Sticky Notes** are quick captures -- single thoughts written in a handwritten typeface on colored cards. They stack in the corner of the blog index like Post-its on a desk. No titles, no categories, just a thought and a date.
 
 **Link Worthy** is a curated link collection with auto-fetched thumbnails and source badges. Drop a URL and a comment in a markdown file, and the build system handles the rest -- pulling titles from Open Graph, downloading thumbnails, detecting whether it's a YouTube video, GitHub repo, or web page.
+
+**Plans** are design and architecture conversations with Claude rendered as HTML at `/plans` -- the comparisons, rationale, tradeoffs, and decisions behind the work, not just the resulting code. Each plan carries a status (exploratory, in-progress, implemented, archived) and gets custom rendering conventions: numbered "Move N" cards, eyebrow labels for inline subsection headers, and colored callouts for notes, decisions, caveats, and TL;DRs. Part of the "coding in public" ethos -- the thinking is the artifact.
 
 ## How It's Made
 

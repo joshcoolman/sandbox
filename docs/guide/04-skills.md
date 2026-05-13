@@ -28,7 +28,7 @@ Saves a link with a comment to the Link Worthy collection.
 /link https://github.com/anthropics/claude-code A CLI for Claude to write code directly
 ```
 
-Creates a markdown file in `app/(blog)/linked/items/`. For YouTube and GitHub links, thumbnails are auto-fetched at build time. For generic web links, the command takes a screenshot (1200x630) and saves it to `public/screenshots/linked/`. Titles are pulled from Open Graph metadata if not provided.
+Creates a markdown file in `app/(blog)/recommended/items/`. For YouTube and GitHub links, thumbnails are auto-fetched at build time. For generic web links, the command takes a screenshot (1200x630) and saves it to `public/screenshots/linked/`. Titles are pulled from Open Graph metadata if not provided.
 
 ### /blog-post
 
@@ -89,3 +89,27 @@ Updates a blog post's hero image. Find a post by name, provide a source image, a
 ### /bitmap-to-vector
 
 Converts raster images (PNG, JPG) to clean SVG vectors using potrace-based tracing. Output uses `fill="currentColor"` for theme-aware coloring. Useful for logos, icons, and illustrations that need to work at any size.
+
+## Asset Generation
+
+These skills create visual assets directly into an experiment's folder.
+
+### /gen-image
+
+Generates raster images via FAL.ai -- avatars, icons, illustrations, hero art. Takes a text description (and optionally a reference image), produces N PNG outputs into the current experiment's `public/` folder. Replaces the workflow of cropping from Unsplash or commissioning art for prototypes. Requires the FAL MCP to be installed in the user's Claude environment.
+
+### /gen-sprite
+
+Generates NES-style pixel-art game assets via GenZen (gpt-image-1.5). Auto-detects layout from the description: `character` (4×4 animated sprite sheet), `strip` (N×1 sequential states like walk/attack frames), or `single` (one standalone image). Useful for any game asset -- enemies, items, effects, tiles, pickups, UI elements.
+
+## Infrastructure
+
+### /supabase
+
+Wraps the Supabase CLI for database operations: schema migrations, TypeScript type generation, edge function deployment, and postgres best practices. Provides opinionated, safe workflows for common Supabase tasks so the CLI's surface area doesn't have to live in working memory.
+
+## References
+
+### /vercel-react-best-practices
+
+A reference skill rather than a workflow skill -- a packaged copy of Vercel Engineering's React and Next.js performance guidelines (MIT-licensed). Auto-triggers when writing, reviewing, or refactoring React/Next.js code: data fetching, bundle optimization, server vs client components, performance patterns. Acts as a domain glossary rather than a command.
