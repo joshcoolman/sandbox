@@ -2,6 +2,16 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'kobold-blaster',
+    date: 'May 13, 2026',
+    title: 'Kobold Blaster',
+    subtitle: 'Carl & Princess Donut vs. The Dungeon',
+    description: 'An 80s/90s horde shooter. Carl throws bombs. Donut judges everyone. Waves of kobolds swarm from all sides — chain explosions, gore particles, animated skull death sequences, LitRPG system notifications between waves. Chroma-keyed pixel-art sprites, custom crosshair, combo scoring, and CRT scanline overlay. Based on the Dungeon Crawler Carl book series.',
+    screenshot: '/screenshots/kobold-blaster.png',
+    tags: ['game', 'canvas', 'pixel-art', 'retro'],
+    theme: 'dark',
+  },
+  {
     slug: 'chatroom',
     date: 'April 28, 2026',
     title: 'Chatroom',

@@ -34,6 +34,20 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### Kobold Blaster
+
+**May 13, 2026**
+
+[![Kobold Blaster](./public/screenshots/kobold-blaster.png)](/design-experiments/kobold-blaster)
+
+An 80s/90s horde shooter starring Carl and Princess Donut from the Dungeon Crawler Carl book series. Carl throws bombs, Donut judges everyone. Waves of kobolds swarm from all edges — chain explosions, gore particles, animated skull death sequences, and LitRPG system notifications between waves. Chroma-keyed pixel-art sprites with per-frame tight crops, custom gap-cross crosshair, combo scoring, and CRT scanline overlay. Hold left click to blast toward the cursor; move while clicking to auto-fire in your direction.
+
+`Game` `Canvas` `Pixel Art` `Retro`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/kobold-blaster) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/kobold-blaster)**
+
+---
+
 ### Leaderboard
 
 **April 27, 2026**
