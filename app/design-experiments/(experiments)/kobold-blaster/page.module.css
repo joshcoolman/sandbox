@@ -1,0 +1,27 @@
+.demo {
+  width: 100%;
+  height: calc(100vh - 130px);
+}
+
+.credits {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 16px;
+  height: 36px;
+  background: #060606;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: #333;
+  letter-spacing: 0.02em;
+  flex-wrap: wrap;
+}
+
+.credits strong {
+  color: #555;
+}
+
+.divider {
+  color: #1e1e1e;
+}

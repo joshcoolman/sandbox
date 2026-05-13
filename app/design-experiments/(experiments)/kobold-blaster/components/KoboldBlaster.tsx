@@ -1,5 +1,6 @@
 'use client'
 import { useRef, useEffect } from 'react'
+import styles from './KoboldBlaster.module.css'
 
 // ─── Vec2 ────────────────────────────────────────────────────────
 type V2 = { x: number; y: number }
@@ -483,7 +484,7 @@ function draw(g: G, ctx: CanvasRenderingContext2D, imgs: Record<string, CanvasIm
     ctx.globalAlpha = 1
   }
 
-  if (g.state !== 'idle') drawHUD(g, ctx, vw, vh)
+  if (g.state !== 'idle') drawHUD(g, ctx, vw)
   if (g.state === 'idle') drawIdle(ctx, vw, vh, imgs)
   else if (g.state === 'game_over') drawGameOver(g, ctx, vw, vh)
   if (g.notif && g.notifT > 0) drawNotif(g.notif, g.notifT, ctx, vw, vh)
@@ -504,7 +505,7 @@ function draw(g: G, ctx: CanvasRenderingContext2D, imgs: Record<string, CanvasIm
   ctx.restore()
 }
 
-function drawHUD(g: G, ctx: CanvasRenderingContext2D, vw: number, vh: number) {
+function drawHUD(g: G, ctx: CanvasRenderingContext2D, vw: number) {
   for (let i = 0; i < CARL_MAX_HP; i++) {
     ctx.fillStyle = i < g.carl.hp ? '#ff4444' : '#333'
     ctx.font = '18px "Press Start 2P", monospace'
@@ -597,6 +598,22 @@ function drawIdle(ctx: CanvasRenderingContext2D, vw: number, vh: number, imgs: R
   ctx.fillStyle = '#333'; ctx.font = '6px "Press Start 2P", monospace'
   ctx.fillText('or press ENTER', rcx, btnY + btnH + 18)
 
+  // Cheat code — dropping the act
+  const cheatY = btnY + btnH + 58
+  ctx.fillStyle = '#fff'; ctx.font = '8px "Press Start 2P", monospace'
+  ctx.fillText('CHEAT CODE', rcx, cheatY)
+
+  ctx.fillStyle = '#fff'; ctx.font = '13px system-ui, -apple-system, sans-serif'
+  const cheatLines = [
+    "Honestly? Hold left click and make a tight circle",
+    "around your character. Everything dies. This is",
+    "more a sprite experiment than a game — closer in",
+    "spirit to bubble wrap. Have fun.",
+  ]
+  cheatLines.forEach((line, i) => {
+    ctx.fillText(line, rcx, cheatY + 22 + i * 18)
+  })
+
   ctx.textAlign = 'left'
 }
 
@@ -638,7 +655,11 @@ function drawNotif(notif: string, notifT: number, ctx: CanvasRenderingContext2D,
 }
 
 // ─── Component ───────────────────────────────────────────────────
-export function KoboldBlaster() {
+interface KoboldBlasterProps {
+  className?: string
+}
+
+export function KoboldBlaster({ className }: KoboldBlasterProps = {}) {
   const wrapRef   = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const gRef      = useRef<G | null>(null)
@@ -697,7 +718,7 @@ export function KoboldBlaster() {
       }
     }
     function onMouseMove(e: MouseEvent) { if (gRef.current) gRef.current.mouse = screenToWorld(e) }
-    function onMouseDown(e: MouseEvent) {
+    function onMouseDown() {
       const g = gRef.current!
       if (g.state === 'idle' || g.state === 'game_over') { startGame(); return }
       g.mouseDown = true
@@ -731,7 +752,7 @@ export function KoboldBlaster() {
   }, [])
 
   return (
-    <div ref={wrapRef} className="kobold-blaster-wrap">
+    <div ref={wrapRef} className={className ? `${styles.wrap} ${className}` : styles.wrap}>
       <canvas ref={canvasRef} style={{ cursor: 'none' }} />
     </div>
   )
