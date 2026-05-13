@@ -92,6 +92,13 @@ Source: https://github.com/joshcoolman-smc/sandbox
 
 - [Design Test Page Prompt](https://www.joshcoolman.com/docs/prompts/design-test-page): Reusable prompt template for generating design experiment pages. Describes the expected structure, styling conventions, and patterns that new experiments should follow.
 
+## Plans
+
+Design and architecture plans worked out in conversation with Claude Code, rendered as HTML for review. The plans surface the thinking behind the work — comparisons, rationale, decisions, tradeoffs — not just the resulting code. Each plan has a status: exploratory (still thinking), in-progress (some moves shipped, others pending), implemented (all moves shipped), or archived. Authored as markdown files in `plans/` with custom rendering: numbered "Move" cards, eyebrow labels for inline subsection headers, and colored callouts for notes, decisions, caveats, and TL;DRs. Part of the "coding in public" ethos — the conversation is the artifact.
+
+- [Plans Index](https://www.joshcoolman.com/plans): All plans, sorted by recency, each tagged with status (exploratory, in-progress, implemented, archived). Sidebar navigation between plans.
+- [Sandbox Skills — Top 3 Moves From Reviewing Matt Pocock's Skills Repo](https://www.joshcoolman.com/plans/skills-it-is-a-dynamic-robin): In-progress plan from May 2026. Surveys 16 sandbox Claude skills against Matt Pocock's published skills repo. Identifies three high-leverage moves: (1) progressive disclosure refactor for the largest skills (supabase at 773 lines is the standout), (2) port Pocock's write-a-skill scaffolder adapted for sandbox conventions, (3) port grill-me verbatim as a 10-line interview skill to front-end the design pipeline. Explicitly rejects Pocock skills that don't fit sandbox's character (TDD, issue-tracker workflow, git-guardrails, pre-commit hooks). Move 0 (the /plans HTML viewer this page itself uses) is implemented; Moves 1-3 are still on the table.
+
 ## Recommended
 
 - [Recommended Links](https://www.joshcoolman.com/recommended): A curated collection of links Josh finds valuable -- YouTube videos, GitHub repos, and web tools related to AI, design, and development. Each link includes a personal comment and an auto-fetched thumbnail (via oEmbed for YouTube, OG images for GitHub, and manual screenshots for web links). New links are added via the `/link` Claude Code skill.

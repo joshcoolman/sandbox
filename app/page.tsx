@@ -8,6 +8,7 @@ import HomeExperimentPlaceholderCard from "./components/HomeExperimentPlaceholde
 import HomeScrollRestore from "./components/HomeScrollRestore";
 import { getAllPosts } from "@/lib/blog/loadBlog";
 import { getRecentDocs } from "@/lib/docs/loadDocs";
+import { getAllPlans, type PlanStatus } from "@/lib/plans/loadPlans";
 import { experiments } from "@/lib/experiments/data";
 import { getRequiredEnv, isRunnable } from "@/lib/experiments/runnable";
 
@@ -17,6 +18,14 @@ export default function Home() {
   const recentExperiments = experiments.slice(0, 9);
   const posts = getAllPosts().slice(0, 4);
   const recentDocs = getRecentDocs(4);
+  const recentPlans = getAllPlans().slice(0, 4);
+
+  const statusLabel: Record<PlanStatus, string> = {
+    exploratory: "Exploratory",
+    "in-progress": "In progress",
+    implemented: "Implemented",
+    archived: "Archived",
+  };
 
   return (
     <main className={styles.mainContainer}>
@@ -142,6 +151,26 @@ export default function Home() {
                           })}
                         </span>
                       )}
+                    </div>
+                  </CurtainLink>
+                ))}
+              </div>
+            </div>
+
+            {/* Plans */}
+            <div className={styles.column}>
+              <CurtainLink href="/plans" className={styles.columnTitle} curtainTransition={true}>
+                Plans
+                <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                  <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </CurtainLink>
+              <div className={styles.columnItems}>
+                {recentPlans.map((plan) => (
+                  <CurtainLink key={plan.slug} href={`/plans/${plan.slug}`} className={styles.columnItem} curtainTransition={true}>
+                    <div className={styles.itemText}>
+                      <span className={styles.itemTitle}>{plan.title}</span>
+                      <span className={styles.itemDate}>{statusLabel[plan.status]}</span>
                     </div>
                   </CurtainLink>
                 ))}

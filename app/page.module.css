@@ -173,10 +173,10 @@
   transform: translateX(2px);
 }
 
-/* Secondary section — Blog + Docs two columns */
+/* Secondary section — Blog + Docs + Plans three columns */
 .secondarySection {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
   width: 100%;
   max-width: var(--content-max);

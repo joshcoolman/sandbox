@@ -366,6 +366,14 @@ Internal documentation and reference material rendered at [joshcoolman.com/docs]
 
 ---
 
+## Plans
+
+Design and architecture plans worked out in conversation with Claude Code, rendered as HTML at [joshcoolman.com/plans](https://www.joshcoolman.com/plans). Each plan has a status (exploratory, in-progress, implemented, archived) and is authored as markdown in `plans/` with custom conventions for numbered moves, eyebrow labels, and colored callouts. Part of the "coding in public" ethos — the thinking, not just the result.
+
+**[View Plans →](https://www.joshcoolman.com/plans)**
+
+---
+
 ## Structure
 
 ```
@@ -381,13 +389,16 @@ Internal documentation and reference material rendered at [joshcoolman.com/docs]
 │   ├── (blog)/blog/              # Blog index and post pages
 │   ├── (blog)/recommended/       # Recommended links page
 │   ├── (blog)/notes/             # Sticky note markdown files
-│   └── (docs)/docs/              # Docs viewer with sidebar nav
+│   ├── (docs)/docs/              # Docs viewer with sidebar nav
+│   └── (plans)/plans/            # Plans viewer with sidebar nav
 ├── lib/
 │   ├── experiments/data.ts       # Shared experiments metadata
 │   ├── blog/                     # Blog loader and types
-│   └── docs/                     # Docs loader and utilities
+│   ├── docs/                     # Docs loader and utilities
+│   └── plans/                    # Plans loader and types
 ├── blog/                         # Markdown blog posts
 ├── docs/                         # Markdown documentation
+├── plans/                        # Markdown plans (with status frontmatter)
 ├── public/
 │   └── screenshots/              # Preview images for README
 └── CLAUDE.md                     # Development workflow

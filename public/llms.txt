@@ -53,6 +53,13 @@ Source: https://github.com/joshcoolman-smc/sandbox
 - [Stack Overview](https://www.joshcoolman.com/docs/stack/stack-overview): Full technology stack reference
 - [Design Test Page Prompt](https://www.joshcoolman.com/docs/prompts/design-test-page): Prompt template for design experiments
 
+## Plans
+
+Design and architecture plans worked out in conversation with Claude, rendered for review. Coding in public — the thinking behind the work, not just the result.
+
+- [Plans Index](https://www.joshcoolman.com/plans): All plans, with status (exploratory, in-progress, implemented, archived)
+- [Sandbox Skills — Top 3 Moves From Reviewing Matt Pocock's Skills Repo](https://www.joshcoolman.com/plans/skills-it-is-a-dynamic-robin): Comparing sandbox's Claude skills against Matt Pocock's repo, with a strict filter on what's worth porting or refactoring
+
 ## Recommended
 
 - [Recommended Links](https://www.joshcoolman.com/recommended): Curated links to YouTube videos, GitHub repos, and web tools with auto-fetched thumbnails

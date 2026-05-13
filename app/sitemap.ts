@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { experiments } from '@/lib/experiments/data'
 import { getAllPosts } from '@/lib/blog/loadBlog'
 import { getNavCategories } from '@/lib/docs/loadDocs'
+import { getAllPlans } from '@/lib/plans/loadPlans'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.joshcoolman.com'
@@ -10,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${baseUrl}/design-experiments`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${baseUrl}/plans`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
     { url: `${baseUrl}/recommended`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.6 },
   ]
 
@@ -35,5 +37,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
   )
 
-  return [...staticRoutes, ...blogRoutes, ...experimentRoutes, ...docRoutes]
+  const planRoutes: MetadataRoute.Sitemap = getAllPlans().map((plan) => ({
+    url: `${baseUrl}/plans/${plan.slug}`,
+    lastModified: plan.modified,
+    changeFrequency: 'monthly' as const,
+    priority: 0.5,
+  }))
+
+  return [...staticRoutes, ...blogRoutes, ...experimentRoutes, ...docRoutes, ...planRoutes]
 }

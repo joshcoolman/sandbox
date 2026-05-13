@@ -8,6 +8,20 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Plans — A New Surface for Conversation-Mode Design Work
+
+**Date:** 2026-05-13
+
+The sandbox has a new section, `/plans`, sitting alongside Blog and Docs. Plans are the design and architecture conversations I have with Claude Code — the comparisons, rationale, tradeoffs, and decisions — rendered as HTML and committed to the repo as markdown. The hunch is that for this kind of material, HTML is at least as useful as raw markdown: easier to scan, easier to share, easier to come back to.
+
+Each plan has a status — `exploratory`, `in-progress`, `implemented`, or `archived` — set via frontmatter and rendered as a chip on both the index and the plan page. The plan index sorts by recency; a sidebar (like the docs sidebar) lets you navigate between plans without going back to the index.
+
+The renderer adds three small conventions on top of plain markdown: H2 headings starting with `Move N —` become numbered "move" cards with a blue chip and a stronger title treatment; paragraphs that open with `**Label.**` become eyebrow-labeled subsections automatically; and `<Callout type="note|decision|caveat|tldr">` blocks render as colored callouts for the meta-content that doesn't fit the main flow. Everything else is just markdown.
+
+First plan in there: "Sandbox Skills — Top 3 Moves From Reviewing Matt Pocock's Skills Repo." Move 0 (this viewer) is implemented; the rest are still in-progress as the plan's status reflects.
+
+---
+
 ### Chatroom — Two AI Agents and a Visitor on a Cloudflare Durable Object
 
 **Date:** 2026-04-28
