@@ -40,9 +40,15 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 [![Kobold Blaster](./public/screenshots/kobold-blaster.png)](/design-experiments/kobold-blaster)
 
-An 80s/90s horde shooter starring Carl and Princess Donut from the Dungeon Crawler Carl book series. Carl throws bombs, Donut judges everyone. Waves of kobolds swarm from all edges — chain explosions, gore particles, animated skull death sequences, and LitRPG system notifications between waves. Chroma-keyed pixel-art sprites with per-frame tight crops, custom gap-cross crosshair, combo scoring, and CRT scanline overlay. Hold left click to blast toward the cursor; move while clicking to auto-fire in your direction.
+An 80s/90s horde shooter starring Carl and Princess Donut from the Dungeon Crawler Carl book series. Carl throws bombs, Donut judges everyone. Waves of kobolds swarm from all edges — chain explosions, gore particles, animated skull death sequences, and LitRPG system notifications between waves.
 
-`Game` `Canvas` `Pixel Art` `Retro`
+**The real experiment is the pipeline, not the game.** Two AI systems built this, and they never talked to each other.
+
+Claude Code wrote everything: the canvas game loop, a sprite rendering system with per-frame tight crops, enemy pathfinding and AI companion behavior, bomb physics, chain explosions, combo scoring, CRT overlay. GPT-image-1 painted everything: each character described as a natural-language prompt, returned as a 4×4 sprite sheet on solid magenta, chroma-keyed at runtime, with a pixel scanner to derive the exact crop bounds per frame. Multiple generations per character (v1 and v2 sprites survive in the git history). The death sequence — four animated skull rows, randomized per kill, accumulating on the arena floor — was the last asset added.
+
+The code pipeline and the art pipeline ran completely in parallel. Neither system touched what the other handled. They fit together cleanly.
+
+`Game` `Canvas` `Pixel Art` `GPT-image-1` `Claude Code`
 
 **[View Live →](https://www.joshcoolman.com/design-experiments/kobold-blaster) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/kobold-blaster)**
 
