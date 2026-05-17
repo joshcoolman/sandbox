@@ -15,7 +15,28 @@ Rapid visual prototyping. Paint with code — no architecture, no data layer, no
 /sketch A music player card with progress bar and album art
 /sketch [pasted image]
 /sketch [pasted image] "Make it dark mode with rounder corners"
+/sketch Based on the Monono experiment — new idea here is a writing coach
 ```
+
+## Starting From a Previous Experiment
+
+When the user references a previous experiment ("based on X", "like X", "we did X"), read its visual signals before building — not its architecture.
+
+**Read only:**
+1. The styles file (`styles.css` or `page.module.css`) — extract CSS custom properties: palette, radius, spacing scale, any animation keyframes
+2. `page.tsx` — font imports only
+
+**Extract:** color palette, border radius feel, spacing density, type choices, animation character.
+
+**Do NOT read:** `types.ts`, `components/`, hooks, barrel exports — that's architecture, not relevant here.
+
+**Then:** note it in one line and start building immediately. No questions, no plan.
+
+```
+Pulling the visual language from [X] — [palette note], [type/spacing note]. Starting the sketch.
+```
+
+The reference is a starting point, not a constraint. Drift from it freely as the new idea takes shape.
 
 ## Starting From an Image
 
