@@ -44,7 +44,7 @@ export default function Home() {
             <p className={styles.preamble}>
               These are experiments in agentic coding. Have a look around. All code available on{' '}
               <a
-                href="https://github.com/joshcoolman-smc/sandbox"
+                href="https://github.com/joshcoolman/sandbox"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.preambleLink}

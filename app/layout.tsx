@@ -58,7 +58,7 @@ const jsonLd = [
     name: 'Josh Coolman',
     url: 'https://www.joshcoolman.com',
     sameAs: [
-      'https://github.com/joshcoolman-smc',
+      'https://github.com/joshcoolman',
     ],
   },
   {

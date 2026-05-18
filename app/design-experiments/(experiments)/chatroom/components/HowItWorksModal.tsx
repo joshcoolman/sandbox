@@ -99,7 +99,7 @@ export function HowItWorksModal({ onClose }: HowItWorksModalProps) {
 
 				<a
 					className={styles.sourceLink}
-					href="https://github.com/joshcoolman-smc/sandbox"
+					href="https://github.com/joshcoolman/sandbox"
 					target="_blank"
 					rel="noopener noreferrer"
 				>

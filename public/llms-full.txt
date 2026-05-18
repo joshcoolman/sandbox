@@ -8,7 +8,7 @@ The project demonstrates a particular approach to AI-assisted development: worki
 
 Typography system: Bitter (headings), Lora (item titles/subtitles), Space Mono (meta/dates), Karla (body). Blog uses Cormorant Garamond and DM Sans.
 
-Source: https://github.com/joshcoolman-smc/sandbox
+Source: https://github.com/joshcoolman/sandbox
 
 ## Design Experiments
 
@@ -105,6 +105,6 @@ Design and architecture plans worked out in conversation with Claude Code, rende
 
 ## Optional
 
-- [Screenshots](https://github.com/joshcoolman-smc/sandbox/tree/main/public/screenshots): Preview images for all 11 design experiments, used in the gallery and for social sharing
-- [Source Code](https://github.com/joshcoolman-smc/sandbox): Full repository on GitHub with all experiments, blog posts, docs, and configuration
+- [Screenshots](https://github.com/joshcoolman/sandbox/tree/main/public/screenshots): Preview images for all 11 design experiments, used in the gallery and for social sharing
+- [Source Code](https://github.com/joshcoolman/sandbox): Full repository on GitHub with all experiments, blog posts, docs, and configuration
 - [Sticky Notes Content](https://www.joshcoolman.com/blog): Short-form notes displayed as sticky notes on the blog page, written in markdown with ISO timestamps for ordering

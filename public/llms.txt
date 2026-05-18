@@ -4,7 +4,7 @@
 
 This is a personal design lab where Josh Coolman explores visual design, typography, layout systems, and agentic AI workflows. Built with Next.js, TypeScript, and CSS Modules. Each experiment is self-contained. The blog covers the experience of designing and building software collaboratively with AI agents.
 
-Source: https://github.com/joshcoolman-smc/sandbox
+Source: https://github.com/joshcoolman/sandbox
 
 ## Design Experiments
 
@@ -66,5 +66,5 @@ Design and architecture plans worked out in conversation with Claude, rendered f
 
 ## Optional
 
-- [Screenshots](https://github.com/joshcoolman-smc/sandbox/tree/main/public/screenshots): Preview images for all design experiments
-- [Source Code](https://github.com/joshcoolman-smc/sandbox): Full repository on GitHub
+- [Screenshots](https://github.com/joshcoolman/sandbox/tree/main/public/screenshots): Preview images for all design experiments
+- [Source Code](https://github.com/joshcoolman/sandbox): Full repository on GitHub

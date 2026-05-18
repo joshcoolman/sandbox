@@ -44,7 +44,7 @@ Six black-and-white photographs sit on black. Click anywhere and a circular ripp
 
 `WebGL` `Shader` `GLSL` `Interactive`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/ripple-cycle) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/ripple-cycle)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/ripple-cycle) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/ripple-cycle)**
 
 ---
 
@@ -64,7 +64,7 @@ The code pipeline and the art pipeline ran completely in parallel. Neither syste
 
 `Game` `Canvas` `Pixel Art` `GPT-image-1` `Claude Code`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/kobold-blaster) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/kobold-blaster)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/kobold-blaster) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/kobold-blaster)**
 
 ---
 
@@ -78,7 +78,7 @@ A playful leaderboard with eight runners, illustrated avatars, and gold/silver/b
 
 `Motion` `Leaderboard` `Layout Animation` `Profile Modal`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/leaderboard) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/leaderboard)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/leaderboard) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/leaderboard)**
 
 ---
 
@@ -104,7 +104,7 @@ A sparkly J-pop idol AI trapped inside a cheap entertainment device. Chat with M
 
 `AI Chat` `Character` `Claude Haiku` `Interactive`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/monono) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/monono)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/monono) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/monono)**
 
 ---
 
@@ -118,7 +118,7 @@ Virtual camera controller for image generation workflows. Upload a source image 
 
 `3D` `Camera Controls` `Image Generation` `Interactive` `Dark Theme`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/camera-rig) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/camera-rig)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/camera-rig) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/camera-rig)**
 
 ---
 
@@ -132,7 +132,7 @@ Infinite canvas for visual brainstorming. Paste, drop, or upload images and arra
 
 `Infinite Canvas` `Local-First` `Interactive` `Dark Theme`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/moodboard) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/moodboard)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/moodboard) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/moodboard)**
 
 ---
 
@@ -146,7 +146,7 @@ Interactive components reverse-engineered from screenshots of a video generation
 
 `Components` `Interactive` `Dark UI` `Animation`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/image-to-ui) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/image-to-ui)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/image-to-ui) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/image-to-ui)**
 
 ---
 
@@ -160,7 +160,7 @@ Five 3D app icons crafted from pure CSS and SVG. Each squircle shell uses a four
 
 `SVG` `CSS Gradients` `Specular` `3D Icons`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/candy-icons) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/candy-icons)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/candy-icons) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/candy-icons)**
 
 ---
 
@@ -174,7 +174,7 @@ Scroll-driven card stack with seven colored cards. Scroll peels cards off the to
 
 `GSAP` `Scroll Animation` `Cards` `Interactive`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/card-stack) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/card-stack)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/card-stack) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/card-stack)**
 
 ---
 
@@ -188,7 +188,7 @@ What if CrossFit Bento and Retro Tech had a baby? The interactive widget layout 
 
 `Bento Grid` `Hardware UI` `CRT Display` `SVG Animation`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/retro-bento) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/(experiments)/retro-bento)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/retro-bento) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/retro-bento)**
 
 ---
 
@@ -202,7 +202,7 @@ Hardware-inspired control panel rendered in CSS. Aluminum chassis with corner sc
 
 **Tags:** Hardware UI - Neumorphic - Interactive Controls - CSS Animation
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/retro-tech) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/retro-tech)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/retro-tech) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/retro-tech)**
 
 ---
 
@@ -216,7 +216,7 @@ Dark bento grid dashboard for CrossFit training data. Nine widget cards covering
 
 **Tags:** Bento Grid - Dashboard - Geist Pixel - Dark Theme
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/crossfit-bento) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/crossfit-bento)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/crossfit-bento) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/crossfit-bento)**
 
 ---
 
@@ -230,7 +230,7 @@ Interactive sticky note stack component. Post-it notes rendered from markdown fi
 
 **Tags:** Component - CSS Animation - Markdown Content - Portable
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/sticky-notes) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/sticky-notes)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/sticky-notes) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/sticky-notes)**
 
 ---
 
@@ -244,7 +244,7 @@ Image folder browser for building file lists to share with LLMs. Pick a folder, 
 
 **Tags:** Utility - File API - Client-Side - Dark Theme
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/contact-sheet) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/contact-sheet)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/contact-sheet) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/contact-sheet)**
 
 ---
 
@@ -258,7 +258,7 @@ A collection of 40 curated Google Font pairings, each displayed on its own color
 
 **Tags:** Typography - Font Pairings - Static HTML - Copy-to-Clipboard
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/font-pairings) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/font-pairings)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/font-pairings) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/font-pairings)**
 
 ---
 
@@ -272,7 +272,7 @@ Swiss-inspired modular grid system for digital surfaces. 8px base unit, 4-column
 
 **Tags:** Grid System - Swiss Design - Dark Mode - Typography
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/modular-grid) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/modular-grid)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/modular-grid) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/modular-grid)**
 
 ---
 
@@ -286,7 +286,7 @@ Time-aware workday timeline with a dynamic now-line that tracks real time. Featu
 
 **Tags:** CSS Grid - Timeline - Dynamic State - Dark Theme
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/day-at-a-glance) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/day-at-a-glance)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/day-at-a-glance) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/day-at-a-glance)**
 
 ---
 
@@ -300,7 +300,7 @@ Four AI personas -- brutal/industrial, minimal/refined, editorial/magazine, and 
 
 **Tags:** Dark Mode - CSS Animation - Data Viz - Agent Teams
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/crossfit-challenge) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/crossfit-challenge)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/crossfit-challenge) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/crossfit-challenge)**
 
 ---
 
@@ -314,7 +314,7 @@ Interactive terminal-style text scramble effect with two-phase animation. Enter 
 
 **Tags:** Text Animation - Terminal UI - Interactive - Split-Flap Effect
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/terminator) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/terminator)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/terminator) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/terminator)**
 
 ---
 
@@ -328,7 +328,7 @@ Interactive brand guidelines with live color and typography customization. Featu
 
 **Tags:** React Components - Animated Charts - Color Systems - Typography
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/brand-guidelines) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/brand-guidelines)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/brand-guidelines) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/brand-guidelines)**
 
 ---
 
@@ -342,7 +342,7 @@ Swiss modernist gradient specimen system featuring organic mesh gradients via SV
 
 **Tags:** Gradients - SVG Mesh - Swiss Design - Scroll Animation
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/blend) | [View Code →](https://github.com/joshcoolman-smc/sandbox/tree/main/app/design-experiments/blend)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/blend) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/blend)**
 
 ---
 
