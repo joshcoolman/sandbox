@@ -64,6 +64,10 @@ Design and architecture plans worked out in conversation with Claude, rendered f
 
 - [Recommended Links](https://www.joshcoolman.com/recommended): Curated links to YouTube videos, GitHub repos, and web tools with auto-fetched thumbnails
 
+## About
+
+- [About this repo](https://www.joshcoolman.com/about): Architectural review of the sandbox — shape of the app, gallery and experiment patterns, frontend conventions, cross-cutting concerns, file map. Regenerated from the /explore-repo Claude skill.
+
 ## Optional
 
 - [Screenshots](https://github.com/joshcoolman/sandbox/tree/main/public/screenshots): Preview images for all design experiments
