@@ -8,6 +8,16 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### /yt-review — Reviewing Watch History as a Capture Surface
+
+**Date:** 2026-05-22
+
+A new capture skill, `/yt-review`, batch-adds YouTube videos to Link Worthy straight from watch history. It drives a logged-in Chrome via the claude-in-chrome MCP, scrapes the day's history, and injects a full-screen overlay — a checklist of videos with thumbnails and how much of each was watched — that you toggle and submit. On confirmation it dedupes against existing links, writes one markdown file per pick to `app/(blog)/recommended/items/`, builds once to fetch thumbnails, and pushes.
+
+It's owner-specific personal tooling (documented as such in the skills guide), but the build of it surfaced two patterns worth keeping: using an injected in-page overlay as the interactive UI when the chat-native multi-select couldn't show thumbnails, and a no-polling handshake where Claude reads selection state out of the DOM when the user says "done" rather than holding a live connection. The scrape/inject logic lives in `.claude/skills/yt-review/overlay.js` and `read-selection.js` so the brittle YouTube-DOM selectors are easy to update in isolation.
+
+---
+
 ### About Page — Architectural Review Lives in the Repo
 
 **Date:** 2026-05-21

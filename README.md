@@ -491,6 +491,9 @@ Draft a blog post from conversation context. Creates markdown with a placeholder
 **`/note`**
 Quick-fire a sticky note from the command line. Everything after `/note` becomes a new markdown file with auto-derived filename and rotating color.
 
+**`/yt-review`**
+Personal tooling -- safe to ignore. Reviews recent YouTube watch history in an in-browser overlay (thumbnails + how much you watched) and batch-adds the ones you pick to the Recommended page. Needs the claude-in-chrome MCP and a logged-in YouTube session. See the [skills guide](docs/guide/04-skills.md) for how to run it yourself.
+
 **Asset Generation:**
 
 **`/gen-image`**

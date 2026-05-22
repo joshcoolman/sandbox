@@ -30,6 +30,12 @@ Saves a link with a comment to the Link Worthy collection.
 
 Creates a markdown file in `app/(blog)/recommended/items/`. For YouTube and GitHub links, thumbnails are auto-fetched at build time. For generic web links, the command takes a screenshot (1200x630) and saves it to `public/screenshots/linked/`. Titles are pulled from Open Graph metadata if not provided.
 
+### /yt-review
+
+Reviews recent YouTube watch history and batch-adds the keepers to Link Worthy. Run it with no arguments -- it connects to your logged-in Chrome (via the claude-in-chrome MCP), opens your watch history, and injects a full-screen overlay: today's videos as a checklist with thumbnails and how much of each you watched. Toggle the ones worth saving (click, Space, or arrow keys), type "done", and it dedupes against existing links, writes one markdown file per pick to `app/(blog)/recommended/items/`, builds once to fetch thumbnails, and pushes. The overlay is the interesting bit -- when chat-native multi-select couldn't show thumbnails, the UI moved into the page itself, and the selection comes back by reading the DOM on your word rather than polling.
+
+This one is personal tooling and **can safely be ignored** -- it's how the repo owner curates Link Worthy from what he watches, not a feature of the site. To run it yourself you need two things: the [claude-in-chrome](https://www.anthropic.com/news/claude-for-chrome) MCP connected to a Chrome where you're logged into YouTube, and the Link Worthy structure this repo already has (it writes to `app/(blog)/recommended/items/`). With those in place it works as-is. Two caveats: it's scrape-based, so the YouTube DOM selectors in `overlay.js` will eventually need updating, and the output is coupled to this repo's link format -- point the file-write step elsewhere to reuse it in another project.
+
 ### /blog-post
 
 Drafts a longer post from conversation context. Reads existing posts to match the site's voice, creates markdown with frontmatter at `blog/{slug}.md`, and copies a placeholder hero image. Not auto-committed -- there's always a review step before publishing.
