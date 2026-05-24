@@ -16,7 +16,7 @@ Ship a design experiment with automated screenshot, updates, and commit workflow
 
 ## What It Does
 
-1. **Screenshot**: Take 1280x720 screenshot of experiment with agent-browser
+1. **Screenshot**: Capture a clean 1280x720 screenshot with agent-browser — confirm the dev server is up (don't start it), settle the page, check the dev-overlay issue count, hide the overlay, then shoot (see Screenshot below)
 2. **Save screenshot**: To `public/screenshots/experiment-name.png`
 3. **Update data**: Move experiment to top of the experiments array in `lib/experiments/data.ts`. This single file powers the gallery AND the home page's Recent Work grid (home auto-slices the first 6), so no separate homepage edit is needed.
 4. **Update README**: Move experiment to top of README.md experiments list
@@ -28,12 +28,19 @@ Ship a design experiment with automated screenshot, updates, and commit workflow
 ```bash
 # From sandbox root directory
 
-# 1. Start dev server and take screenshot
-npm run dev &
-sleep 3
+# 1. Take a clean screenshot
+#    The USER runs the dev server — never `npm run dev` here. Confirm it's up:
+curl -s -o /dev/null -w "%{http_code}" http://localhost:3000   # expect 200; if not, ask the user to start it
 agent-browser open "http://localhost:3000/experiment-name" --viewport 1280x720
+agent-browser wait 1500   # let content/animations settle; hover/click to a specific state if you want one
+#    Check for a real bug before shipping it: the Next.js dev "Issue" badge is
+#    almost always a hydration mismatch, NOT cosmetic (see Notes). If count > 0,
+#    investigate the console and fix the cause rather than shipping it.
+agent-browser eval "(() => { const sr=document.querySelector('nextjs-portal')?.shadowRoot; const t=sr&&sr.querySelector('[data-nextjs-toast]'); return t ? t.innerText.replace(/\s+/g,' ').trim() : 'none'; })()"
+#    Hide the dev overlay so the badge never lands in the shot (production never shows it):
+agent-browser eval "(() => { const s=document.createElement('style'); s.textContent='nextjs-portal{display:none!important}'; document.head.appendChild(s); })()"
 agent-browser screenshot ./public/screenshots/experiment-name.png
-# Close browser and stop server
+#    View the saved PNG to confirm composition before committing.
 
 # 2. Update lib/experiments/data.ts
 #    Move this experiment's entry to the top of the `experiments` array
@@ -83,11 +90,12 @@ README.md — relative paths:
 ## Requirements
 
 - agent-browser skill must be available
-- Dev server must be running on localhost:3000
+- Dev server must already be running on localhost:3000 — the user starts it; do **not** run `npm run dev`. If :3000 isn't up, ask the user to start it.
 
 ## Notes
 
 - Screenshot size: 1280x720 (16:9 aspect ratio)
+- **Dev "Issue" badge = real bug, not cosmetic.** A non-zero count on `nextjs-portal`'s toast is usually a React hydration mismatch — commonly `Math.random()` / `Date.now()` in a `'use client'` experiment's initial render (it's still SSR'd). Fix the cause (seed a deterministic first frame, move randomness into `useEffect`), don't just hide it. Hiding the overlay is only to keep the badge out of the screenshot once the count is zero.
 - Move experiment to top of both gallery and README (most recently updated first)
 - Date should be today's date in format: "Month Day, Year"
 - Routes are `/experiment-name` (no dated folders)
