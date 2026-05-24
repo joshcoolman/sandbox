@@ -34,6 +34,20 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### Slide Gallery
+
+**May 24, 2026**
+
+[![Slide Gallery](./public/screenshots/slide-gallery.png)](/design-experiments/slide-gallery)
+
+An expanding-panel gallery on black. A row of thin vertical slivers — each a center slice of a black-and-white photograph — opens as you move across it. Hover (or tap, on mobile) and the focused panel widens to the full frame while the whole strip slides to keep it centered, and a white spotlight frame snaps over it with beams shooting to the top and bottom of the stage. The focused panel then decodes a made-up special-ops dossier in its lower third: every field churns through random glyphs and locks in top-to-bottom, like a Mission Impossible terminal readout. Pure layout math and a slow cubic-bezier ease; no animation library. Reproduced from a video, screenshot by screenshot.
+
+`Gallery` `Hover` `CSS Transition` `Interactive`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/slide-gallery) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/slide-gallery)**
+
+---
+
 ### Ripple Cycle
 
 **May 13, 2026**

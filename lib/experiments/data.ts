@@ -2,6 +2,16 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'slide-gallery',
+    date: 'May 24, 2026',
+    title: 'Slide Gallery',
+    subtitle: 'A row of slivers; hover one and it opens while the strip glides to keep it centered.',
+    description: 'An expanding-panel gallery on black. A row of thin vertical slivers — each a center slice of a black-and-white photograph — opens as you move across it. Hover (or tap, on mobile) and the focused panel widens to the full frame while the whole strip slides to keep it centered, and a white spotlight frame snaps over it with beams shooting to the top and bottom of the stage. Pure layout math and a slow cubic-bezier ease; no animation library. Reproduced from a video, screenshot by screenshot.',
+    screenshot: '/screenshots/slide-gallery.png',
+    tags: ['Gallery', 'Hover', 'CSS Transition', 'Interactive'],
+    theme: 'dark',
+  },
+  {
     slug: 'ripple-cycle',
     date: 'May 13, 2026',
     title: 'Ripple Cycle',
