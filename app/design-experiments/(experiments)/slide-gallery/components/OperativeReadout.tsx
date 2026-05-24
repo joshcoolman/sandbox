@@ -18,6 +18,17 @@ function scramble(text: string, resolved: number): string {
   return out
 }
 
+// Deterministic first frame — no Math.random, so the server-rendered markup
+// matches the client's first paint (avoids a hydration mismatch). The random
+// churn takes over in useEffect, client-side only.
+function staticScramble(text: string): string {
+  let out = ''
+  for (let i = 0; i < text.length; i++) {
+    out += text[i] === ' ' ? ' ' : GLYPHS[(i * 31 + text.length * 7) % GLYPHS.length]
+  }
+  return out
+}
+
 // One line that churns through random glyphs, then locks in left-to-right
 // once its `delay` elapses. Length-stable so the layout never reflows.
 function DecodeLine({
@@ -29,7 +40,7 @@ function DecodeLine({
   delay?: number
   className?: string
 }) {
-  const [display, setDisplay] = useState(() => scramble(text, 0))
+  const [display, setDisplay] = useState(() => staticScramble(text))
 
   useEffect(() => {
     let resolved = 0
