@@ -8,6 +8,16 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Step Sequencer — A 16×8 Grid for Building Tunes Without Theory
+
+**Date:** 2026-05-27
+
+A new design experiment, `/design-experiments/step-sequencer`, lands as a Tenori-on / ToneMatrix-flavored grid: sixteen 16th-note steps across, eight pentatonic pitches down. The Monono chiptune work (square-wave oscillator + lookahead scheduler) carried over cleanly — the data model is just `boolean[8][16]` + bpm, and the scheduler reads a grid ref each tick so toggling cells while playing takes effect on the next sweep with no glitches. UI lives in `app/design-experiments/(experiments)/step-sequencer/components/Sequencer.tsx`; audio engine in `hooks/useStepSequencer.ts`. C major pentatonic across the rows means any combination of toggled cells sounds musical — the constraint that makes the toy beginner-friendly.
+
+Considered abstracting a shared audio-engine lib between Monono and the sequencer but punted: ~30 lines of duplication for two independently-evolving experiments. YAGNI on premature extraction.
+
+---
+
 ### /yt-review — Reviewing Watch History as a Capture Surface
 
 **Date:** 2026-05-22

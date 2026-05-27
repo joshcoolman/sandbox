@@ -34,6 +34,20 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### Step Sequencer
+
+**May 27, 2026**
+
+[![Step Sequencer](./public/screenshots/step-sequencer.png)](/design-experiments/step-sequencer)
+
+A Tenori-on / ToneMatrix-flavored grid sequencer. Sixteen 16th-note steps wide, eight pads tall, with each row tuned to a note in the C major pentatonic — meaning any combination of toggled cells sounds musical, no piano skills required. The playhead sweeps left to right and lit pads fire chiptune square-wave notes; rows are color-coded warm-to-cool top-to-bottom so the grid reads like a rainbow when filled. Pure Web Audio API — lazy AudioContext, oscillator + gain envelope per note, setInterval lookahead scheduler. No deps, no audio assets. Variable tempo from 60 to 180 BPM.
+
+`Audio` `Web Audio API` `Sequencer` `Interactive` `Chiptune`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/step-sequencer) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/step-sequencer)**
+
+---
+
 ### Slide Gallery
 
 **May 24, 2026**
