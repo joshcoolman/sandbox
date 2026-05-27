@@ -167,7 +167,8 @@
   outline-offset: 3px;
 }
 
-.seq-clear {
+.seq-clear,
+.seq-generate {
   font-family: 'DM Mono', ui-monospace, monospace;
   font-size: 10px;
   letter-spacing: 0.18em;
@@ -177,7 +178,7 @@
   border-radius: 999px;
   padding: 8px 14px;
   cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
 }
 
 .seq-clear:hover {
@@ -186,9 +187,35 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.seq-clear:focus-visible {
+.seq-clear:focus-visible,
+.seq-generate:focus-visible {
   outline: 2px solid #6aa9ff;
   outline-offset: 2px;
+}
+
+.seq-generate {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #c5b6e8;
+  border-color: rgba(170, 130, 240, 0.32);
+  background: rgba(120, 90, 210, 0.08);
+}
+
+.seq-generate:hover {
+  color: #e6d8ff;
+  border-color: rgba(170, 130, 240, 0.55);
+  background: rgba(140, 110, 230, 0.18);
+}
+
+.seq-generate:active {
+  transform: scale(0.97);
+}
+
+.seq-generate-glyph {
+  font-size: 11px;
+  color: #c8a8ff;
+  text-shadow: 0 0 6px rgba(180, 130, 255, 0.6);
 }
 
 .seq-bpm {

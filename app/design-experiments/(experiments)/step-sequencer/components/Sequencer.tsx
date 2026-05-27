@@ -6,7 +6,7 @@ const ROW_HUES = [340, 320, 295, 270, 250, 230, 215, 200]
 const ROW_LABELS = ['E5', 'D5', 'C5', 'A4', 'G4', 'E4', 'D4', 'C4']
 
 export function Sequencer() {
-  const { grid, toggleCell, clearAll, playing, setPlaying, bpm, setBpm, currentStep } =
+  const { grid, toggleCell, clearAll, randomize, playing, setPlaying, bpm, setBpm, currentStep } =
     useStepSequencer()
 
   return (
@@ -44,6 +44,16 @@ export function Sequencer() {
             aria-label={playing ? 'Pause' : 'Play'}
           >
             <span aria-hidden>{playing ? '⏸' : '▶'}</span>
+          </button>
+
+          <button
+            type="button"
+            className="seq-generate"
+            onClick={randomize}
+            aria-label="Generate random pattern"
+          >
+            <span className="seq-generate-glyph" aria-hidden>✦</span>
+            GENERATE
           </button>
 
           <button
