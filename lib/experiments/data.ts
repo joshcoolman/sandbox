@@ -6,7 +6,7 @@ export const experiments: Experiment[] = [
     date: 'May 27, 2026',
     title: 'Step Sequencer',
     subtitle: 'A 16×8 grid of pads — toggle cells, hit play, build a tune without knowing music.',
-    description: 'A Tenori-on / ToneMatrix-flavored grid sequencer. Sixteen 16th-note steps wide, eight pads tall, with each row tuned to a note in the C major pentatonic — meaning any combination of toggled cells sounds musical, no piano skills required. The playhead sweeps left to right and lit pads fire chiptune square-wave notes; rows are color-coded warm-to-cool top-to-bottom so the grid reads like a rainbow when filled. Pure Web Audio API: lazy AudioContext, oscillator + gain envelope per note, setInterval lookahead scheduler. No deps. Variable tempo from 60 to 180 BPM.',
+    description: 'A Tenori-on / ToneMatrix-flavored grid sequencer. Sixteen 16th-note steps wide, eight pads tall, with each row tuned to a note in the C major pentatonic — meaning any combination of toggled cells sounds musical, no piano skills required. The playhead sweeps left to right and lit pads fire chiptune square-wave notes; rows are color-coded warm-to-cool top-to-bottom so the grid reads like a rainbow when filled. Pure Web Audio API: lazy AudioContext, oscillator + gain envelope per note, setInterval lookahead scheduler. No deps. Variable tempo from 60 to 180 BPM. Promoted to an importable component with barrel export — Monono embeds it as its background-music editor.',
     screenshot: '/screenshots/step-sequencer.png',
     tags: ['Audio', 'Web Audio API', 'Sequencer', 'Interactive', 'Chiptune'],
     theme: 'dark',

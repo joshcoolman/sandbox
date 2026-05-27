@@ -8,6 +8,20 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Cross-Pollination — Step Sequencer Becomes Monono's Music Engine
+
+**Date:** 2026-05-27
+
+The Step Sequencer experiment got promoted to an importable component and immediately consumed by Monono — the chat device's hard-coded chiptune got replaced by an embedded `<Sequencer />` driven by a hard-coded starter pattern. A new edit-pencil button next to the music switch opens a native `<dialog>` modal containing the full sequencer; the music switch and the modal's PLAY button both bind to one shared `controller.playing` state, so toggling either visually flips the other.
+
+The promotion meant: convert `styles.css` → `Sequencer.module.css` (scoped class names like `padOn`, `playOn`, `barStart` replacing the global `.is-on` modifiers), split a tiny `page.module.css` for the standalone stage wrapper, add a `controller?: SequencerController` prop so consumers can hoist the hook, add `initialGrid` / `initialBpm` options to `useStepSequencer`, and add a barrel `index.ts`. Monono imports via `import { Sequencer, useStepSequencer } from '../../step-sequencer'`.
+
+Starter pattern is a 13-cell pentatonic groove (kick on 1 & 9, mid-melody on offbeats, sparkle on E5 step 15). Session-only — refresh resets to starter. `useChiptune.ts` deleted; that hook served only as proof-of-concept for the sequencer's audio engine, and is now fully superseded.
+
+The shape of the dependency is worth noting: an experiment importing directly from another experiment's source. That's only possible because of the barrel export and the CSS Module migration — the global styles.css would have leaked into Monono's CSS scope otherwise.
+
+---
+
 ### Step Sequencer — A 16×8 Grid for Building Tunes Without Theory
 
 **Date:** 2026-05-27

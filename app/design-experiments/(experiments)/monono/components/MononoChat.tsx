@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MononoSprite, type Mood, type SpriteStatus } from './MononoSprite'
 import { MusicSwitch } from './MusicSwitch'
-import { useChiptune } from '../hooks/useChiptune'
+import { MusicEditModal } from './MusicEditModal'
+import { useStepSequencer } from '../../step-sequencer'
+import { MONONO_STARTER_PATTERN } from '../data/starter-pattern'
 import { voice, pick } from '../data/voice'
 
 type Turn = {
@@ -75,7 +77,8 @@ export function MononoChat() {
   const lastActivityRef = useRef<number>(Date.now())
   const wokenTimerRef = useRef<number | null>(null)
 
-  const { enabled: musicEnabled, setEnabled: setMusicEnabled, resume: resumeMusic } = useChiptune()
+  const music = useStepSequencer({ initialGrid: MONONO_STARTER_PATTERN, initialBpm: 116 })
+  const [musicModalOpen, setMusicModalOpen] = useState(false)
 
   const speaking = phase === 'speaking'
   const pending = phase === 'waiting'
@@ -324,12 +327,20 @@ export function MononoChat() {
 
   return (
     <div className="monono-stage">
-      <div className="monono-device" onPointerDown={resumeMusic}>
+      <div className="monono-device">
         <div className="monono-device-top">
           <span className="monono-dot monono-dot--power" />
           <span className="monono-label">ENTERTAINMENT CORE v1</span>
           <div className="monono-device-top__right">
-            <MusicSwitch enabled={musicEnabled} onToggle={() => setMusicEnabled(!musicEnabled)} />
+            <MusicSwitch enabled={music.playing} onToggle={() => music.setPlaying(!music.playing)} />
+            <button
+              type="button"
+              className="monono-music-edit"
+              onClick={() => setMusicModalOpen(true)}
+              aria-label="Edit background music"
+            >
+              <span aria-hidden>✎</span>
+            </button>
             <span className={`monono-dot monono-dot--live ${speaking ? 'is-on' : ''}`} />
           </div>
         </div>
@@ -400,6 +411,12 @@ export function MononoChat() {
           <span className="monono-label">MONONO AWARE · IDOL MODEL 2049</span>
         </div>
       </div>
+
+      <MusicEditModal
+        open={musicModalOpen}
+        onClose={() => setMusicModalOpen(false)}
+        controller={music}
+      />
     </div>
   )
 }

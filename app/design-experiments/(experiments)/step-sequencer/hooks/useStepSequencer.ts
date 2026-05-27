@@ -5,6 +5,23 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 const ROWS = 8
 const STEPS = 16
 
+export interface SequencerController {
+  grid: boolean[][]
+  toggleCell: (row: number, col: number) => void
+  clearAll: () => void
+  randomize: () => void
+  playing: boolean
+  setPlaying: (b: boolean) => void
+  bpm: number
+  setBpm: (n: number) => void
+  currentStep: number | null
+}
+
+export interface UseStepSequencerOptions {
+  initialGrid?: boolean[][]
+  initialBpm?: number
+}
+
 // C major pentatonic, top-of-UI = highest pitch
 export const NOTE_FREQS = [
   659.25, // E5
@@ -86,10 +103,12 @@ function makeRandomGrid(): boolean[][] {
   return makeEmptyGrid()
 }
 
-export function useStepSequencer() {
-  const [grid, setGrid] = useState<boolean[][]>(makeEmptyGrid)
+export function useStepSequencer(options?: UseStepSequencerOptions): SequencerController {
+  const [grid, setGrid] = useState<boolean[][]>(() =>
+    options?.initialGrid ? options.initialGrid.map(r => r.slice()) : makeEmptyGrid()
+  )
   const [playing, setPlaying] = useState(false)
-  const [bpm, setBpm] = useState(110)
+  const [bpm, setBpm] = useState(options?.initialBpm ?? 110)
   const [currentStep, setCurrentStep] = useState<number | null>(null)
 
   const gridRef = useRef(grid)
