@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MononoSprite, type Mood, type SpriteStatus } from './MononoSprite'
+import { MusicSwitch } from './MusicSwitch'
+import { useChiptune } from '../hooks/useChiptune'
 import { voice, pick } from '../data/voice'
 
 type Turn = {
@@ -72,6 +74,8 @@ export function MononoChat() {
   const scrollRef = useRef<HTMLDivElement>(null)
   const lastActivityRef = useRef<number>(Date.now())
   const wokenTimerRef = useRef<number | null>(null)
+
+  const { enabled: musicEnabled, setEnabled: setMusicEnabled, resume: resumeMusic } = useChiptune()
 
   const speaking = phase === 'speaking'
   const pending = phase === 'waiting'
@@ -320,11 +324,14 @@ export function MononoChat() {
 
   return (
     <div className="monono-stage">
-      <div className="monono-device">
+      <div className="monono-device" onPointerDown={resumeMusic}>
         <div className="monono-device-top">
           <span className="monono-dot monono-dot--power" />
           <span className="monono-label">ENTERTAINMENT CORE v1</span>
-          <span className={`monono-dot monono-dot--live ${speaking ? 'is-on' : ''}`} />
+          <div className="monono-device-top__right">
+            <MusicSwitch enabled={musicEnabled} onToggle={() => setMusicEnabled(!musicEnabled)} />
+            <span className={`monono-dot monono-dot--live ${speaking ? 'is-on' : ''}`} />
+          </div>
         </div>
 
         <div className="monono-screen">
