@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Blog post: Shadcn has an AI problem
+
+**Date:** 2026-05-28
+
+New essay arguing that shadcn — the Radix + Tailwind + React formula — was a perfect fit for the human-coded era but is misaligned with agentic development. Tailwind megastrings are dense for agents to re-parse on every read; the recently-shipped shadcn "skill" of don't-rules reads as a confession that the abstraction makes the wrong move easy. Proposes building agent-first component libraries with flat code, CSS modules, and per-component markdown docs.
+
+---
+
 ### Cross-Pollination — Step Sequencer Becomes Monono's Music Engine
 
 **Date:** 2026-05-27

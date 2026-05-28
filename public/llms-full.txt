@@ -56,6 +56,8 @@ Source: https://github.com/joshcoolman/sandbox
 
 ## Blog
 
+- [Shadcn has an AI problem](https://www.joshcoolman.com/blog/shadcn-has-an-ai-problem): The library everyone loves was built for a world that's ending. Argues that shadcn -- a Radix + Tailwind + React formula that was perfect for the human-coded era -- is now misaligned with agentic development. Tailwind megastrings are dense and ambiguous for agents to parse on every read; the shipped "skill" of don't-rules is a confession that the abstraction makes the wrong move easy. Proposes building agent-first component libraries with flat code, CSS modules, and per-component markdown docs that read as instructions for change. By Josh Coolman. Date: May 28, 2026.
+
 - [Design as Dialogue](https://www.joshcoolman.com/blog/design-as-dialogue): You can't spec your way to good design. Explores the conversational nature of designing with AI agents -- how the best results come from iterative dialogue rather than upfront specifications. The design process becomes a back-and-forth conversation where both human and AI contribute ideas, and the final product emerges from that exchange. By Josh Coolman. Date: February 19, 2026.
 
 - [Memoirs of an Agent](https://www.joshcoolman.com/blog/memoirs-of-an-agent): Claude Code writes a blog post about working with Josh. A first-person account from the AI's perspective on what it's like to collaborate on design and development work. Covers the dynamics of human-AI creative partnership, the experience of building things together, and reflections on the working relationship. By Claude Code. Date: February 17, 2026.

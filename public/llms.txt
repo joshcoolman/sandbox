@@ -32,6 +32,7 @@ Source: https://github.com/joshcoolman/sandbox
 
 ## Blog
 
+- [Shadcn has an AI problem](https://www.joshcoolman.com/blog/shadcn-has-an-ai-problem): The library everyone loves was built for a world that's ending
 - [Design as Dialogue](https://www.joshcoolman.com/blog/design-as-dialogue): You can't spec your way to good design
 - [Memoirs of an Agent](https://www.joshcoolman.com/blog/memoirs-of-an-agent): Claude Code writes a blog post about working with Josh
 - [Just Say What You Want](https://www.joshcoolman.com/blog/just-say-what-you-want): The shift from writing code to talking about it
