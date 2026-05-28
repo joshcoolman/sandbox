@@ -79,3 +79,5 @@ Markup. Style. Instructions. Three files an agent can read without guessing.
 Because that's the quiet shift. We spent fifteen years optimizing code for how fast a human could write it. The bottleneck moved. Now the question is how cheaply a machine can understand it. And on that test, all our beautiful abstractions are starting to look expensive.
 
 Shadcn won the last era. I just don't think it's built for this one.
+
+P.S. This site you're reading? No Shadcn. No Tailwind. No Radix. Just CSS modules and markdown. It was easier than you'd think.
