@@ -4,6 +4,12 @@ title: "AI News"
 
 ## May 29, 2026
 
+**The New Claude Code Feature Going Viral Right Now** — Ray Amjad (May 29)
+A walkthrough of the Claude Code feature everyone's talking about this week and how to actually fold it into your workflow.\
+Resources:
+https://x.com/_catwu/status/2060054180379689074
+[![](https://img.youtube.com/vi/kJ8FTPykawU/mqdefault.jpg)](https://youtube.com/watch?v=kJ8FTPykawU)
+
 **The 5-Tool Fix for Claude Code's Worst Habits** — Sean Kochel (May 29)
 Five concrete tools/config changes to curb Claude Code's most annoying failure modes instead of fighting them by hand.
 [![](https://img.youtube.com/vi/hqcZZuvBUSY/mqdefault.jpg)](https://youtube.com/watch?v=hqcZZuvBUSY)

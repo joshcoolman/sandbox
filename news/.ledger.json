@@ -1,39 +1,510 @@
 {
   "videos": [
-    { "id": "ulNsa0sD8N0", "title": "Harness Engineering: What Separates Top Agentic Engineers Right Now", "channel": "Cole Medin", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "posted" },
-    { "id": "mh5XZ-L5SFQ", "title": "Can Cursor's HARDCORE Review Skill Stop The Slop?", "channel": "Matt Pocock", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "posted" },
-    { "id": "zjkBMFhNj_g", "title": "Claude 4 API Deep Dive: New Capabilities and Pricing", "channel": "Anthropic Developers", "published": "2026-05-19", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "kCc8FmEb1nY", "title": "Gemini 2.5 Flash vs Claude Haiku 4.5: Speed Benchmark", "channel": "Fireship", "published": "2026-05-18", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "l8pRS7hTsko", "title": "Building Production-Ready Agents with Claude Tool Use", "channel": "Anthropic", "published": "2026-05-18", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "aircAruvnKk", "title": "LangGraph + Claude: Multi-Agent Research Pipeline", "channel": "LangChain", "published": "2026-05-17", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "PkZNo7MFNFg", "title": "Claude Code vs Cursor: Real-World Refactor Test", "channel": "Syntax", "published": "2026-05-19", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "9-RghMUmjxM", "title": "GitHub Copilot Agent Mode Full Demo", "channel": "GitHub", "published": "2026-05-17", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "VMj-3S1tku0", "title": "Chain-of-Thought vs Extended Thinking: What's Actually Different?", "channel": "Andrej Karpathy", "published": "2026-05-18", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "wjZofJX0v4M", "title": "Scaling Laws in 2026: What Changed", "channel": "AI Explained", "published": "2026-05-17", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "o0GTX1xFHmk", "title": "Flux 1.1 LoRA Training in 10 Minutes on Consumer Hardware", "channel": "Sebastian Kamph", "published": "2026-05-18", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "hTTGNgj4Yq4", "title": "Sora 2.0 vs Runway Gen-4: Honest Comparison", "channel": "Matt Wolfe", "published": "2026-05-17", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
-    { "id": "t3uBGhpii6w", "title": "Anthropic just dropped Opus 4.8... (WOAH)", "channel": "Matthew Berman", "published": "2026-05-29", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "Y0_DJJuFs9w", "title": "Google Omni vs Runway vs Seedance: Which AI Video Tool Wins?", "channel": "Theoretically Media", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "posted" },
-    { "id": "F_6go08nHv4", "title": "Claude Opus 4.8 Is Too Smart… and TOO HONEST", "channel": "Wes Roth", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "posted" },
-    { "id": "NbhNlpRsofY", "title": "Claude Opus 4.8: Here is Everything that Changed", "channel": "Prompt Engineering", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "q5lg3npxjAc", "title": "Opus 4.8 Just Dropped. Here's How To Actually Use It.", "channel": "Nate Herk | AI Automation", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "j-oiGiIEcws", "title": "Claude Opus 4.8 actually blew my mind...", "channel": "Alex Finn", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "-jKWH3TUMak", "title": "Anthropic Drops The Opus 4.8 BOMB", "channel": "Chase AI", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "kXYDUozZAhk", "title": "Why Opus 4.8 Pulled Me Back to Claude", "channel": "Every", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "n0nC1kmztSk", "title": "A Cursor Agent Wiped a Database in 9 Seconds. Agent Analytics Would Have Seen It Coming.", "channel": "AI News & Strategy Daily | Nate B Jones", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "BGqjbP7XaEs", "title": "Claude Mythos 1 Preview Leaked...", "channel": "WorldofAI", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "88mc1Rk7W6s", "title": "Everyone Is Sleeping on Composer 2.5", "channel": "Web Dev Cody", "published": "2026-05-27", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "utBeUmDPApk", "title": "Agentic Workflows Have Changed EVERYTHING in 2026 (DEATH Of The Senior Dev?)", "channel": "Modern Software Engineering", "published": "2026-05-27", "source": "discovery", "firstSeen": "2026-05-28", "status": "posted" },
-    { "id": "MFzxIT88zfg", "title": "I Built a Deck With AI, Then Made a Second AI Attack It.", "channel": "AI News & Strategy Daily | Nate B Jones", "published": "2026-05-27", "source": "subscription", "firstSeen": "2026-05-28", "status": "deleted" },
-    { "id": "ZSvcxjNZdxk", "title": "I Tried 100+ Claude Code Skills. These 6 Are The Best.", "channel": "Tech With Tim", "published": "2026-05-29", "source": "discovery", "firstSeen": "2026-05-29", "status": "deleted" },
-    { "id": "hqcZZuvBUSY", "title": "The 5-Tool Fix for Claude Code's Worst Habits", "channel": "Sean Kochel", "published": "2026-05-29", "source": "discovery", "firstSeen": "2026-05-29", "status": "posted" },
-    { "id": "QHS-CV0V7Do", "title": "Opus 4.8 (Fully Tested): Is IT ACTUALLY GOOD?", "channel": "AICodeKing", "published": "2026-05-29", "source": "discovery", "firstSeen": "2026-05-29", "status": "deleted" },
-    { "id": "_WXc3gA8K6E", "title": "The BEST Claude Code skills - /handoff and /codex", "channel": "Ben Holmes", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-29", "status": "deleted" },
-    { "id": "XZcNo9OFvl4", "title": "Connecting LLMs to Your Data With Python MCP Servers", "channel": "Real Python", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-29", "status": "deleted" },
-    { "id": "makkzw8s__s", "title": "AI DevOps Project #1 - Kubernetes AI Troubleshooting Agent", "channel": "Abhishek.Veeramalla", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-29", "status": "deleted" },
-    { "id": "ByDXLTHDp5A", "title": "Every Developer NEEDS To Be Running AI Agents in Parallel", "channel": "Eric Roby", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-29", "status": "deleted" },
-    { "id": "2omtxQ0dSFk", "title": "Claude Code Is Too Expensive. Use This Instead", "channel": "Leon van Zyl", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-29", "status": "deleted" },
-    { "id": "zPjd0CTcK0I", "title": "The 15-Second Test That Exposed Every AI Video Tool", "channel": "BlockChainWorld", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-29", "status": "deleted" },
-    { "id": "Frxsg02sqqo", "title": "The Year AI Videos Changed Everything", "channel": "Jeremy Carrasco", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-29", "status": "posted" }
+    {
+      "id": "ulNsa0sD8N0",
+      "title": "Harness Engineering: What Separates Top Agentic Engineers Right Now",
+      "channel": "Cole Medin",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-28",
+      "status": "posted"
+    },
+    {
+      "id": "mh5XZ-L5SFQ",
+      "title": "Can Cursor's HARDCORE Review Skill Stop The Slop?",
+      "channel": "Matt Pocock",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-28",
+      "status": "posted"
+    },
+    {
+      "id": "zjkBMFhNj_g",
+      "title": "Claude 4 API Deep Dive: New Capabilities and Pricing",
+      "channel": "Anthropic Developers",
+      "published": "2026-05-19",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "kCc8FmEb1nY",
+      "title": "Gemini 2.5 Flash vs Claude Haiku 4.5: Speed Benchmark",
+      "channel": "Fireship",
+      "published": "2026-05-18",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "l8pRS7hTsko",
+      "title": "Building Production-Ready Agents with Claude Tool Use",
+      "channel": "Anthropic",
+      "published": "2026-05-18",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "aircAruvnKk",
+      "title": "LangGraph + Claude: Multi-Agent Research Pipeline",
+      "channel": "LangChain",
+      "published": "2026-05-17",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "PkZNo7MFNFg",
+      "title": "Claude Code vs Cursor: Real-World Refactor Test",
+      "channel": "Syntax",
+      "published": "2026-05-19",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "9-RghMUmjxM",
+      "title": "GitHub Copilot Agent Mode Full Demo",
+      "channel": "GitHub",
+      "published": "2026-05-17",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "VMj-3S1tku0",
+      "title": "Chain-of-Thought vs Extended Thinking: What's Actually Different?",
+      "channel": "Andrej Karpathy",
+      "published": "2026-05-18",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "wjZofJX0v4M",
+      "title": "Scaling Laws in 2026: What Changed",
+      "channel": "AI Explained",
+      "published": "2026-05-17",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "o0GTX1xFHmk",
+      "title": "Flux 1.1 LoRA Training in 10 Minutes on Consumer Hardware",
+      "channel": "Sebastian Kamph",
+      "published": "2026-05-18",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "hTTGNgj4Yq4",
+      "title": "Sora 2.0 vs Runway Gen-4: Honest Comparison",
+      "channel": "Matt Wolfe",
+      "published": "2026-05-17",
+      "source": "legacy",
+      "firstSeen": "2026-05-19",
+      "status": "deleted"
+    },
+    {
+      "id": "t3uBGhpii6w",
+      "title": "Anthropic just dropped Opus 4.8... (WOAH)",
+      "channel": "Matthew Berman",
+      "published": "2026-05-29",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "Y0_DJJuFs9w",
+      "title": "Google Omni vs Runway vs Seedance: Which AI Video Tool Wins?",
+      "channel": "Theoretically Media",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-28",
+      "status": "posted"
+    },
+    {
+      "id": "F_6go08nHv4",
+      "title": "Claude Opus 4.8 Is Too Smart… and TOO HONEST",
+      "channel": "Wes Roth",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "posted"
+    },
+    {
+      "id": "NbhNlpRsofY",
+      "title": "Claude Opus 4.8: Here is Everything that Changed",
+      "channel": "Prompt Engineering",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "q5lg3npxjAc",
+      "title": "Opus 4.8 Just Dropped. Here's How To Actually Use It.",
+      "channel": "Nate Herk | AI Automation",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "j-oiGiIEcws",
+      "title": "Claude Opus 4.8 actually blew my mind...",
+      "channel": "Alex Finn",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "-jKWH3TUMak",
+      "title": "Anthropic Drops The Opus 4.8 BOMB",
+      "channel": "Chase AI",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "kXYDUozZAhk",
+      "title": "Why Opus 4.8 Pulled Me Back to Claude",
+      "channel": "Every",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "n0nC1kmztSk",
+      "title": "A Cursor Agent Wiped a Database in 9 Seconds. Agent Analytics Would Have Seen It Coming.",
+      "channel": "AI News & Strategy Daily | Nate B Jones",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "BGqjbP7XaEs",
+      "title": "Claude Mythos 1 Preview Leaked...",
+      "channel": "WorldofAI",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "88mc1Rk7W6s",
+      "title": "Everyone Is Sleeping on Composer 2.5",
+      "channel": "Web Dev Cody",
+      "published": "2026-05-27",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "utBeUmDPApk",
+      "title": "Agentic Workflows Have Changed EVERYTHING in 2026 (DEATH Of The Senior Dev?)",
+      "channel": "Modern Software Engineering",
+      "published": "2026-05-27",
+      "source": "discovery",
+      "firstSeen": "2026-05-28",
+      "status": "posted"
+    },
+    {
+      "id": "MFzxIT88zfg",
+      "title": "I Built a Deck With AI, Then Made a Second AI Attack It.",
+      "channel": "AI News & Strategy Daily | Nate B Jones",
+      "published": "2026-05-27",
+      "source": "subscription",
+      "firstSeen": "2026-05-28",
+      "status": "deleted"
+    },
+    {
+      "id": "ZSvcxjNZdxk",
+      "title": "I Tried 100+ Claude Code Skills. These 6 Are The Best.",
+      "channel": "Tech With Tim",
+      "published": "2026-05-29",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "hqcZZuvBUSY",
+      "title": "The 5-Tool Fix for Claude Code's Worst Habits",
+      "channel": "Sean Kochel",
+      "published": "2026-05-29",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "posted"
+    },
+    {
+      "id": "QHS-CV0V7Do",
+      "title": "Opus 4.8 (Fully Tested): Is IT ACTUALLY GOOD?",
+      "channel": "AICodeKing",
+      "published": "2026-05-29",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "_WXc3gA8K6E",
+      "title": "The BEST Claude Code skills - /handoff and /codex",
+      "channel": "Ben Holmes",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "XZcNo9OFvl4",
+      "title": "Connecting LLMs to Your Data With Python MCP Servers",
+      "channel": "Real Python",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "makkzw8s__s",
+      "title": "AI DevOps Project #1 - Kubernetes AI Troubleshooting Agent",
+      "channel": "Abhishek.Veeramalla",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "ByDXLTHDp5A",
+      "title": "Every Developer NEEDS To Be Running AI Agents in Parallel",
+      "channel": "Eric Roby",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "2omtxQ0dSFk",
+      "title": "Claude Code Is Too Expensive. Use This Instead",
+      "channel": "Leon van Zyl",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "zPjd0CTcK0I",
+      "title": "The 15-Second Test That Exposed Every AI Video Tool",
+      "channel": "BlockChainWorld",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "Frxsg02sqqo",
+      "title": "The Year AI Videos Changed Everything",
+      "channel": "Jeremy Carrasco",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "posted"
+    },
+    {
+      "id": "tK32trvj_b4",
+      "title": "Build Hour: Agents SDK",
+      "channel": "OpenAI",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "FXtjGGAazT0",
+      "title": "Claude's Workflows Actually Work Now | MCP Live Build",
+      "channel": "n8n",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "Xh1z23uBZo0",
+      "title": "Claude Plans, Gemini Designs: One Workflow for Beautiful Frontends (LIVE)",
+      "channel": "Cole Medin",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "V6OWlR099-A",
+      "title": "How Anthropic Engineers ACTUALLY Prompt Claude Code (Full Guide)",
+      "channel": "Frank Nillard",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "iJHJaTOwggs",
+      "title": "Claude New Dynamic Workflows | vs Subagents + Cost Tips",
+      "channel": "CloudYeti | Practical AI",
+      "published": "2026-05-29",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "zdeZGePZMuE",
+      "title": "My GitHub AI Workflow: Codex + Claude Code",
+      "channel": "Owain Lewis",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "fVPCbCH_c1c",
+      "title": "Turn Claude Code into a Design GENIUS",
+      "channel": "Kyle Skelly",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "oWkUwno6b0E",
+      "title": "Claude + Remotion Just RETIRED video editors... (ULTIMATE REMOTION TUTORIAL)",
+      "channel": "Chronixel",
+      "published": "2026-05-27",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "jABu3QzPk98",
+      "title": "3 Tips to Never Hit Claude Code Rate Limits Again",
+      "channel": "BridgeMind",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "9pS15oeoi1k",
+      "title": "The 3 Claude Cowork Features You Can't Ignore (master them)",
+      "channel": "Brock Mesarich | AI for Non Techies",
+      "published": "2026-05-27",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "b6J387xJvHg",
+      "title": "Cheap software made your PM job harder, not easier. Here's the new job.",
+      "channel": "AI News & Strategy Daily | Nate B Jones",
+      "published": "2026-05-29",
+      "source": "subscription",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "kJ8FTPykawU",
+      "title": "The New Claude Code Feature Going Viral Right Now",
+      "channel": "Ray Amjad",
+      "published": "2026-05-29",
+      "source": "subscription",
+      "firstSeen": "2026-05-29",
+      "status": "posted"
+    },
+    {
+      "id": "YXdBAaKC-Co",
+      "title": "Inside minions: how Stripe uses autonomous one-shot AI coding agents",
+      "channel": "Stripe Developers",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "0R06dgjkjmE",
+      "title": "Elite Software Engineers vs. AI Agents. Don't Lose Your Engineering Identity",
+      "channel": "Beyond Coding",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "VavUOR6InHY",
+      "title": "Claude Opus 4.8: They Barely Made It Smarter",
+      "channel": "Solo Swift Crafter",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "izTNjMBIsl8",
+      "title": "I directed an AI agent to make an AI commercial. No prompts. Just instructions.",
+      "channel": "Ľudovít Nastišin",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "t1VjWEvykcc",
+      "title": "Introducing the Artificial Analysis Coding Agent Index (product walkthrough)",
+      "channel": "Artificial Analysis",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "qjo6VSeA6b0",
+      "title": "Claude Skills explained simply in 13 minutes (massively underrated)",
+      "channel": "No Code MBA",
+      "published": "2026-05-28",
+      "source": "discovery",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "9AXHdhMyqWU",
+      "title": "Apple Quietly Solved The Worst Bug In Tool-Calling Agents. Here's The Architecture.",
+      "channel": "Solo Swift Crafter",
+      "published": "2026-05-28",
+      "source": "subscription",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    },
+    {
+      "id": "mSsd_hEMWHQ",
+      "title": "I Was Wrong About OpenClaw — Here's What I Missed as a Solo Dev",
+      "channel": "Solo Swift Crafter",
+      "published": "2026-05-27",
+      "source": "subscription",
+      "firstSeen": "2026-05-29",
+      "status": "deleted"
+    }
+  ],
+  "blockedChannels": [
+    {
+      "name": "n8n",
+      "since": "2026-05-29"
+    }
+  ],
+  "blockedLinks": [
+    "n8n.io",
+    "bit.ly",
+    "gumroad.com"
   ]
 }

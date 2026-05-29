@@ -29,10 +29,14 @@ First run opens a browser for one-time YouTube authorization (OAuth on `localhos
 
 ### 1. Read the ledger
 
-Read `news/.ledger.json` (`{videos:[{id,title,channel,...,status}]}`) — it does double duty:
+Read `news/.ledger.json` (`{videos:[{id,title,channel,...,status}], blockedChannels:[{name,channelId?,since}], blockedLinks:["domain", ...]}`) — it does double duty:
 
 - **Dedupe set:** collect every `id` (status `posted` *or* `deleted`). Anything already there is dropped later. This is what makes re-runs safe — trashed noise never resurfaces, nothing double-posts.
 - **Taste signal:** look at what's `posted` vs `deleted`. The channels and topics the user keeps tell you what to hunt for; the ones they delete tell you what to avoid. Let this shape your queries.
+
+`blockedChannels` is the **hard filter** — the fetch script reads the ledger itself and drops these channels (by name pre-enrichment, by `channelId` after) before you ever see them. You don't enforce it; just know that blocked channels won't appear in the output. Deletes remain the *soft* taste signal above.
+
+`blockedLinks` is a second hard filter — a list of domains (e.g. `"n8n.io"`, `"bit.ly"`, `"gumroad.com"`) that the script strips from every video's extracted `links`. Each entry blocks that domain and all subdomains, so `"n8n.io"` also removes `go.n8n.io`. These are link sources the user finds consistently useless/misleading; you don't enforce it — blocked URLs just won't be in the `links` arrays.
 
 ### 2. Author queries and fetch
 
@@ -47,7 +51,7 @@ python3 scripts/yt-ai-news.py --days 2 "query one" "query two" "query three" ...
 - Each search is ~100 API-quota units (enrichment is ~free) against a 10k/day budget — dozens of searches/day is fine.
 - **Iterate.** If a pass comes back thin or junky, refine the queries and run again. This is the whole point of the tool being in your hands.
 
-Output is a JSON array sorted by `views_per_day`, each video carrying: `id`, `title`, `channel`, `published`, `description`, `url`, `source`, `query`, and the signals `views`, `likes`, `comments`, `views_per_day`, `like_ratio`, `subs`, `duration_sec`, `language`, `age_hours`. Shorts (<90s) and non-English are pre-dropped.
+Output is a JSON array sorted by `views_per_day`, each video carrying: `id`, `title`, `channel`, `published`, `description`, `url`, `source`, `query`, the signals `views`, `likes`, `comments`, `views_per_day`, `like_ratio`, `subs`, `duration_sec`, `language`, `age_hours`, and `links` (resource candidates pulled from the video description — see step 4). Shorts (<90s) and non-English are pre-dropped.
 
 ### 3. Vet on signals, then curate generously
 
@@ -56,8 +60,11 @@ Drop everything already in the ledger (step 1). From what remains, vet for **pop
 - **Momentum** — `views_per_day` (velocity, not raw views — raw views punish recent videos). High velocity = real traction.
 - **Genuineness** — `like_ratio` (healthy ratio separates organic interest from inflated views).
 - **Credibility/context** — `subs` puts views in proportion (12k views from a 4k-sub channel beats 12k from a 3M-sub channel).
-- **Shape** — skip multi-hour livestreams unless clearly valuable; Shorts are already gone.
+- **Length** — keep videos **under ~20 minutes** (`duration_sec` < 1200). Short, dense videos are what the user actually keeps; longer ones get trimmed. Treat 20 min as the cap, with a little grace (a 21-min video is fine) — but drop anything meaningfully longer regardless of other signals.
+- **Shape** — skip multi-hour livestreams; Shorts are already gone.
 - **AI-slop heuristic** — the API can't flag synthetic content, so watch for brand-new tiny-sub channels + generic titles + robotic descriptions, and lean on the ledger (down-weight channels the user has deleted).
+
+**Resources (links).** Each kept video carries a `links` array — resource candidates the script pulled from its description (GitHub repos, tools, docs, plus social/sponsor noise). During this dev phase, pass through **essentially all** of them — the goal is to see the full set on the page and learn what's noise before pruning. GitHub repos (`kind: "github"`) are the high-signal ones; keep the rest visible too. They render as a `Resources:` line in step 4 (omitted when `links` is empty).
 
 You're vetting for legitimacy, not taste — once a video clears the signal bar, keep it; the user does the fine trim. Present the kept list in chat, newest first, flat (no themes):
 
@@ -83,15 +90,18 @@ Edit `news/feed.md` (frontmatter `title: "AI News"` then date sections). **Prepe
 - No `## <long date>` divider for today yet → add one, then the videos.
 - Today's divider already exists (same-day re-run) → merge the new videos into it.
 
-Each block uses a thumbnail link (`VIDEO_ID` = the `id` field):
+Each block uses a thumbnail link (`VIDEO_ID` = the `id` field). The **Resources** section is **optional** — include it only when the video's `links` is non-empty. When you include it: end the description line with a trailing backslash (`\`, a hard line break), add a `Resources:` line, then list the **bare full URLs** — one per line, no markdown link syntax, no labels (CSS renders them as a clickable list of full URLs so the user sees exactly where each goes):
 
 ```
 **[Title]** — [Channel] ([short date])
-[One-sentence description]
+[One-sentence description]\
+Resources:
+https://full-url-one
+https://full-url-two
 [![](https://img.youtube.com/vi/VIDEO_ID/mqdefault.jpg)](https://youtube.com/watch?v=VIDEO_ID)
 ```
 
-The only `##` headings in the file are date dividers — no theme groups.
+Use each link's `url` from the `links` array (ignore `label` — URLs are shown raw). Keep everything inside the same block (no blank lines) so the whole entry stays one paragraph and trims together. When a video has no links, omit the backslash and the whole Resources section. The only `##` headings in the file are date dividers — no theme groups.
 
 ### 5. Log to the ledger
 
