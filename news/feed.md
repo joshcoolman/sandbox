@@ -2,6 +2,16 @@
 title: "AI News"
 ---
 
+## May 29, 2026
+
+**The 5-Tool Fix for Claude Code's Worst Habits** — Sean Kochel (May 29)
+Five concrete tools/config changes to curb Claude Code's most annoying failure modes instead of fighting them by hand.
+[![](https://img.youtube.com/vi/hqcZZuvBUSY/mqdefault.jpg)](https://youtube.com/watch?v=hqcZZuvBUSY)
+
+**The Year AI Videos Changed Everything** — Jeremy Carrasco (May 28)
+A grounded retrospective on how generative video actually crossed from gimmick to usable over the past year.
+[![](https://img.youtube.com/vi/Frxsg02sqqo/mqdefault.jpg)](https://youtube.com/watch?v=Frxsg02sqqo)
+
 ## May 28, 2026
 
 **Google Omni vs Runway vs Seedance: Which AI Video Tool Wins?** — Theoretically Media (May 28)

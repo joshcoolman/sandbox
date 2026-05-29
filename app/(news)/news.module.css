@@ -205,7 +205,6 @@
   gap: var(--news-s-4);
   margin-bottom: var(--news-s-6);
   padding-bottom: var(--news-s-5);
-  border-bottom: 1px solid #1e1e1e;
 }
 
 .eyebrow {
@@ -253,7 +252,6 @@
   margin-top: var(--news-s-8);
   margin-bottom: var(--news-s-5);
   padding-top: var(--news-s-5);
-  border-top: 1px solid #242424;
 }
 
 .prose h2::after {
