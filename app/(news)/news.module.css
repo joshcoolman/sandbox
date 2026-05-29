@@ -21,7 +21,6 @@
 
 .main {
   flex: 1;
-  margin-left: 260px;
   min-width: 0;
   color: #aaa;
 }
@@ -91,6 +90,42 @@
 .sidebarItems {
   display: flex;
   flex-direction: column;
+}
+
+.sidebarItem {
+  position: relative;
+}
+
+.editToggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: var(--news-s-2);
+  padding: 5px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888;
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.editToggle:hover {
+  color: #e5e5e5;
+  background: #222;
+  border-color: #3a3a3a;
+}
+
+.editToggleActive,
+.editToggleActive:hover {
+  color: #6ba3f7;
+  background: #10203a;
+  border-color: #2f4d7a;
 }
 
 .sidebarLink {
@@ -164,7 +199,11 @@
 
 /* Page header */
 .newsHeader {
-  margin-bottom: var(--news-s-7);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--news-s-4);
+  margin-bottom: var(--news-s-6);
   padding-bottom: var(--news-s-5);
   border-bottom: 1px solid #1e1e1e;
 }
@@ -200,17 +239,34 @@
 }
 
 /* Prose */
+/* Date divider — the only h2 in the feed is a date line */
 .prose h2 {
-  font-family: 'Bitter', serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #e5e5e5;
-  margin-top: var(--news-s-7);
-  margin-bottom: var(--news-s-4);
-  letter-spacing: -0.01em;
-  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: var(--news-s-4);
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888;
+  margin-top: var(--news-s-8);
+  margin-bottom: var(--news-s-5);
   padding-top: var(--news-s-5);
-  border-top: 1px solid #1a1a1a;
+  border-top: 1px solid #242424;
+}
+
+.prose h2::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #1a1a1a;
+}
+
+.prose h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 .prose p {
@@ -269,13 +325,29 @@
   border-radius: 0;
 }
 
+/* Video digest entries: thumbnail left, title + description right */
+.prose p:has(img) {
+  position: relative;
+  min-height: 90px;
+  padding-left: 176px;
+  margin-bottom: var(--news-s-5);
+  transition: padding-left 0.15s ease;
+}
+
+.prose p:has(img) a {
+  position: absolute;
+  top: 0;
+  left: 0;
+  line-height: 0;
+}
+
 .prose img {
   display: block;
-  width: 320px;
+  width: 160px;
   max-width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 6px;
-  margin: var(--news-s-3) 0 var(--news-s-2);
+  margin: 0;
   object-fit: cover;
   background: #111;
 }
@@ -284,6 +356,121 @@
   border: none;
   border-top: 1px solid #1a1a1a;
   margin: var(--news-s-7) 0;
+}
+
+/* ── Local-only edit mode ───────────────────────────────────────── */
+
+.editable {
+  position: relative;
+}
+
+/* Trash toggle, injected into each video entry; hidden until editing */
+.trashBtn {
+  position: absolute;
+  left: 0;
+  top: 31px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  background: #141414;
+  color: #d06a6a;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.trashBtn:hover {
+  background: #2a1414;
+  border-color: #5a2a2a;
+  color: #ff6b6b;
+}
+
+/* Editing on: open a gutter for the trash button, shift the thumbnail right */
+.editing .prose p:has(img) {
+  padding-left: 216px;
+}
+
+.editing .prose p:has(img) > a {
+  left: 40px;
+}
+
+.editing .trashBtn {
+  display: flex;
+}
+
+/* Marked-for-deletion: grayed out with a "Deleted" overlay, undeletable */
+.prose p[data-deleted='true'] {
+  color: #4a4a4a;
+}
+
+.prose p[data-deleted='true'] strong {
+  color: #4a4a4a;
+}
+
+.prose p[data-deleted='true'] > a {
+  filter: grayscale(1);
+  opacity: 0.3;
+}
+
+.prose p[data-deleted='true'] > a::after {
+  content: 'Deleted';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ff6b6b;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 6px;
+}
+
+.prose p[data-deleted='true'] .trashBtn {
+  background: #2a1414;
+  border-color: #5a2a2a;
+  color: #ff6b6b;
+}
+
+/* "Edit recorded" toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translate(-50%, 12px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #2a2a2a;
+  border-radius: 999px;
+  background: #141414;
+  color: #e5e5e5;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 50;
+}
+
+.toastVisible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.toastDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6ba3f7;
 }
 
 .prose blockquote {
@@ -343,5 +530,18 @@
   .prose p,
   .prose li {
     font-size: 14.5px;
+  }
+
+  .prose p:has(img) {
+    padding-left: 136px;
+    min-height: 68px;
+  }
+
+  .editing .prose p:has(img) {
+    padding-left: 176px;
+  }
+
+  .prose img {
+    width: 120px;
   }
 }

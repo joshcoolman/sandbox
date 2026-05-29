@@ -57,10 +57,9 @@ Source: https://github.com/joshcoolman/sandbox
 
 ## News
 
-Daily curated AI video digest, auto-generated each morning via GitHub Actions + Claude.
+Curated AI video digest, generated on demand via the `/ai-news` skill and maintained as a single running feed.
 
-- [Latest Digest](https://www.joshcoolman.com/news): Today's curated AI/ML videos
-- [May 19, 2026](https://www.joshcoolman.com/news/2026-05-19): AI News — May 19, 2026
+- [AI News](https://www.joshcoolman.com/news): Curated AI/ML video feed
 
 ## Plans
 

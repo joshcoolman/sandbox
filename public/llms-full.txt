@@ -98,10 +98,9 @@ Source: https://github.com/joshcoolman/sandbox
 
 ## News
 
-Daily curated AI video digest at `/news`, auto-generated each morning via a GitHub Actions cron job. The pipeline fetches recent videos from YouTube subscriptions and discovery searches using `yt-ai-news.py`, pipes the JSON to `generate-news.mjs` which calls Claude Sonnet 4.6 to curate and format a digest, then commits the resulting markdown file to `news/YYYY-MM-DD.md` and pushes to main — triggering a Vercel deploy automatically. Keeps: technical deep-dives, tutorials with practical value, significant model announcements, research breakdowns from known educators. Skips: clickbait, reaction videos, affiliate content, non-English, low-signal reposts. Grouped by theme (Agent Frameworks, Model News, Coding Tools, Research, Image/Video). Sidebar lists all past dates for navigation.
+Curated AI video digest at `/news`, generated on demand via the local `/ai-news` skill. The skill runs `yt-ai-news.py` to fetch recent videos from YouTube subscriptions and discovery searches, then curates the digest in-conversation and prepends the net-new videos to a single running feed at `news/feed.md` (with frontmatter and clickable thumbnails). Committing the file triggers a Vercel deploy. Keeps: technical deep-dives, tutorials with practical value, significant model announcements, research breakdowns from known educators. Skips: clickbait, reaction videos, affiliate content, non-English, low-signal reposts. Grouped by theme (Agent Frameworks, Model News, Coding Tools, Research, Image/Video). The feed can be trimmed in-UI, with keeps and deletes logged to `news/.ledger.json`.
 
-- [Latest Digest](https://www.joshcoolman.com/news): Redirects to today's digest, with sidebar showing all past dates
-- [May 19, 2026](https://www.joshcoolman.com/news/2026-05-19): AI News — May 19, 2026 (10 videos across Model News, Agent Frameworks, Coding Tools, Research, Image & Video)
+- [AI News](https://www.joshcoolman.com/news): Curated AI/ML video feed
 
 ## Plans
 

@@ -3,7 +3,6 @@ import { experiments } from '@/lib/experiments/data'
 import { getAllPosts } from '@/lib/blog/loadBlog'
 import { getNavCategories } from '@/lib/docs/loadDocs'
 import { getAllPlans } from '@/lib/plans/loadPlans'
-import { getAllSummaries } from '@/lib/news/loadNews'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.joshcoolman.com'
@@ -47,12 +46,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }))
 
-  const newsRoutes: MetadataRoute.Sitemap = getAllSummaries().map((s) => ({
-    url: `${baseUrl}/news/${s.slug}`,
-    lastModified: new Date(s.slug),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
-
-  return [...staticRoutes, ...blogRoutes, ...experimentRoutes, ...docRoutes, ...planRoutes, ...newsRoutes]
+  return [...staticRoutes, ...blogRoutes, ...experimentRoutes, ...docRoutes, ...planRoutes]
 }

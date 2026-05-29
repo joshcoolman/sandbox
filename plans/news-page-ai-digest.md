@@ -1,8 +1,12 @@
 ---
 title: joshcoolman.com/news — Daily AI Video Digest
 description: Automate the /ai-news skill into a daily-updating page with a sidebar of past summaries, driven by GitHub Actions + Anthropic SDK.
-status: ready
+status: superseded
 ---
+
+<Callout type="caveat">
+**Superseded (2026-05-28).** The CI automation described below — the daily GitHub Actions cron and `scripts/generate-news.mjs` — was removed. The `/ai-news` skill now writes `news/YYYY-MM-DD.md` directly when run locally; the `/news` page, sidebar, and `lib/news/` loader are unchanged. This plan is kept as a historical record of the original approach.
+</Callout>
 
 <Callout type="tldr">
 GitHub Actions runs daily, calls yt-ai-news.py → Claude → saves a markdown file → pushes → Vercel deploys → /news shows the latest digest with a dated sidebar.

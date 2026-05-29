@@ -72,6 +72,18 @@ Claude uses prompt caching on the static system prompt (curation rules), so repe
 
 ---
 
+### News — Dropped the CI Pipeline, Generate Locally via `/ai-news`
+
+**Date:** 2026-05-28
+
+Removed the daily GitHub Actions cron (`.github/workflows/daily-news.yml`) and the `scripts/generate-news.mjs` Claude-API curator. The automation only ever reproduced what running the `/ai-news` skill already does in-conversation, at the cost of a cron job, a second Claude API call, and five GitHub secrets.
+
+Consolidated to one source of truth in the repo. `/ai-news` is now a project skill at `.claude/skills/ai-news/SKILL.md` (was a personal user command), so anyone who clones the repo gets it. It runs the repo's own `scripts/yt-ai-news.py` (no longer a duplicate of a `~/scripts` copy) and, after presenting the digest in chat, writes `news/YYYY-MM-DD.md` with the same frontmatter (`title`/`date`/`videoCount`) and clickable-thumbnail format. The fetcher now loads `.env.local` (via `setdefault`, so shell env still wins) so the repo's env file is the single config surface; required keys (`YOUTUBE_API_KEY`, `YOUTUBE_CLIENT_ID`, `YOUTUBE_CLIENT_SECRET`) are documented in `.env.local.example`, with a one-time browser OAuth caching tokens to `~/.config/yt-ai-news/`. The skill is documented as requiring keys — it's public but won't run without them.
+
+The web side is unchanged: `lib/news/loadNews.ts`, the `/news` redirect, the `[date]` route, and the sidebar all keep working off the dated markdown files. The `YOUTUBE_REFRESH_TOKEN` and `ANTHROPIC_API_KEY` repo secrets are now unused and can be deleted in the GitHub UI.
+
+---
+
 ### Plans — A New Surface for Conversation-Mode Design Work
 
 **Date:** 2026-05-13

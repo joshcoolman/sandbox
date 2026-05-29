@@ -9,6 +9,14 @@ interface NewsContentProps {
 }
 
 const components = {
+  a: ({ href, children, ...props }: { href?: string; children?: React.ReactNode; [key: string]: unknown }) => {
+    const external = typeof href === 'string' && /^https?:\/\//.test(href)
+    return (
+      <a href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})} {...props}>
+        {children}
+      </a>
+    )
+  },
   pre: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   code: ({ className, children, ...props }: { className?: string; children?: React.ReactNode; [key: string]: unknown }) => {
     const isBlock = typeof children === 'string' && children.includes('\n')

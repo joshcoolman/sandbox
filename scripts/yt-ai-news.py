@@ -1,23 +1,56 @@
 #!/usr/bin/env python3
-"""Fetch recent AI/ML videos from YouTube.
+"""Fetch recent AI/ML videos from YouTube — a search tool driven by the caller.
 
-Primary source: your subscribed channels (OAuth).
-Secondary source: general AI search queries (API key).
+Sources:
+  - Your subscribed channels (OAuth), unless --no-subs.
+  - Discovery searches for whatever queries you pass (API key).
+
+Every result is enriched with quality signals (views, view velocity, like
+ratio, channel subscriber count, duration, language) so the caller can rank
+and vet instead of trusting raw search order.
 
 Usage:
-  python3 yt-ai-news.py [days_back]   # default: 2 days
-  python3 yt-ai-news.py --reset-auth  # clear saved tokens
+  python3 yt-ai-news.py [options] "query one" "query two" ...
+  echo "query" | python3 yt-ai-news.py [options]      # queries from stdin
+  python3 yt-ai-news.py --reset-auth                  # clear saved tokens
+
+Options:
+  --days N         lookback window in days (default 2)
+  --order ORDER    search order: viewCount | date | relevance (default viewCount)
+  --max N          results per query, 1-50 (default 15)
+  --min-seconds N  drop videos shorter than N seconds, 0 disables (default 90)
+  --no-subs        skip subscriptions (pure discovery; no OAuth needed)
 """
 
 import os
+import re
 import sys
 import json
+import argparse
 import urllib.request
 import urllib.parse
 import http.server
 import webbrowser
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+
+def _load_dotenv():
+    """Load KEY=VALUE pairs from the repo's .env.local so the script runs straight
+    from a checkout. Uses setdefault, so anything already exported in your shell
+    wins — this only fills gaps, never overrides."""
+    env_file = Path(__file__).resolve().parent.parent / ".env.local"
+    if not env_file.exists():
+        return
+    for line in env_file.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+
+
+_load_dotenv()
 
 # Credentials
 API_KEY = os.environ.get("YOUTUBE_API_KEY")
@@ -27,16 +60,6 @@ CLIENT_SECRET = os.environ.get("YOUTUBE_CLIENT_SECRET")
 TOKEN_FILE = Path.home() / ".config" / "yt-ai-news" / "tokens.json"
 SCOPE = "https://www.googleapis.com/auth/youtube.readonly"
 REDIRECT_URI = "http://localhost:8080"
-
-# General search queries (used as secondary/discovery source)
-DISCOVERY_QUERIES = [
-    "AI image generation tutorial",
-    "AI video generation tutorial",
-    "AI paper explained",
-    "large language model research",
-    "AI agent framework tutorial",
-    "Claude GPT Gemini announcement",
-]
 
 
 # --- OAuth helpers ---
@@ -117,15 +140,6 @@ def do_auth_flow():
 
 
 def get_access_token():
-    # Bootstrap from env var when running in CI (no token file present)
-    refresh_tok_env = os.environ.get("YOUTUBE_REFRESH_TOKEN")
-    if refresh_tok_env and not TOKEN_FILE.exists():
-        save_tokens({
-            "access_token": "synthetic",
-            "expires_at": 0,
-            "refresh_token": refresh_tok_env,
-        })
-
     tokens = load_tokens()
     if tokens:
         expires_at = tokens.get("expires_at", 0)
@@ -200,63 +214,156 @@ def get_recent_from_playlist(playlist_id, channel_title, access_token, published
         vid_id = snippet.get("resourceId", {}).get("videoId")
         if not vid_id or vid_id == "Private video":
             continue
-        pub_dt = datetime.fromisoformat(pub.replace("Z", "+00:00"))
-        videos.append({
-            "id": vid_id,
-            "title": snippet["title"],
-            "channel": channel_title,
-            "published": pub,
-            "published_relative": pub_dt.strftime("%b %d, %Y"),
-            "description": snippet.get("description", "")[:250].strip(),
-            "url": f"https://youtube.com/watch?v={vid_id}",
-            "source": "subscription",
-        })
+        videos.append(_base_video(vid_id, snippet["title"], channel_title, pub, snippet.get("description", ""), "subscription"))
     return videos
 
 
-def search_youtube(query, published_after):
+def search_youtube(query, published_after, order, max_results):
     """General search using API key (no auth needed)."""
     params = {
         "part": "snippet",
         "q": query,
         "type": "video",
         "publishedAfter": published_after,
-        "maxResults": 15,
-        "order": "date",
+        "maxResults": max(1, min(max_results, 50)),
+        "order": order,
         "relevanceLanguage": "en",
-        "videoDuration": "medium",
         "key": API_KEY,
     }
     url = "https://www.googleapis.com/youtube/v3/search?" + urllib.parse.urlencode(params)
     try:
         result = api_get(url)
-        videos = []
-        for item in result.get("items", []):
-            if item["id"].get("kind") != "youtube#video":
-                continue
-            snippet = item["snippet"]
-            pub = snippet["publishedAt"]
-            pub_dt = datetime.fromisoformat(pub.replace("Z", "+00:00"))
-            videos.append({
-                "id": item["id"]["videoId"],
-                "title": snippet["title"],
-                "channel": snippet["channelTitle"],
-                "published": pub,
-                "published_relative": pub_dt.strftime("%b %d, %Y"),
-                "description": snippet["description"][:250].strip(),
-                "url": f"https://youtube.com/watch?v={item['id']['videoId']}",
-                "source": "discovery",
-            })
-        return videos
     except Exception as e:
         print(f"Search error for '{query}': {e}", file=sys.stderr)
         return []
+    videos = []
+    for item in result.get("items", []):
+        if item["id"].get("kind") != "youtube#video":
+            continue
+        snippet = item["snippet"]
+        videos.append(_base_video(
+            item["id"]["videoId"], snippet["title"], snippet["channelTitle"],
+            snippet["publishedAt"], snippet.get("description", ""), "discovery", query,
+        ))
+    return videos
+
+
+def _base_video(vid_id, title, channel, published, description, source, query=None):
+    pub_dt = datetime.fromisoformat(published.replace("Z", "+00:00"))
+    v = {
+        "id": vid_id,
+        "title": title,
+        "channel": channel,
+        "published": published,
+        "published_relative": pub_dt.strftime("%b %d, %Y"),
+        "description": (description or "")[:250].strip(),
+        "url": f"https://youtube.com/watch?v={vid_id}",
+        "source": source,
+    }
+    if query:
+        v["query"] = query
+    return v
+
+
+# --- Quality-signal enrichment ---
+
+_DUR_RE = re.compile(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?")
+
+
+def parse_duration(iso):
+    """ISO-8601 duration (PT#H#M#S) -> seconds, or None if unparseable (e.g. live)."""
+    if not iso:
+        return None
+    m = _DUR_RE.fullmatch(iso)
+    if not m:
+        return None
+    h, mn, s = (int(x) if x else 0 for x in m.groups())
+    return h * 3600 + mn * 60 + s
+
+
+def enrich_videos(videos):
+    """Add views, likes, comments, duration_sec, channel_id, language via videos.list."""
+    if not API_KEY:
+        return
+    by_id = {v["id"]: v for v in videos}
+    ids = list(by_id.keys())
+    for i in range(0, len(ids), 50):
+        batch = ids[i:i + 50]
+        params = {"part": "statistics,contentDetails,snippet", "id": ",".join(batch), "key": API_KEY}
+        url = "https://www.googleapis.com/youtube/v3/videos?" + urllib.parse.urlencode(params)
+        try:
+            result = api_get(url)
+        except Exception as e:
+            print(f"Enrich error: {e}", file=sys.stderr)
+            continue
+        for item in result.get("items", []):
+            v = by_id.get(item["id"])
+            if not v:
+                continue
+            stats = item.get("statistics", {})
+            cd = item.get("contentDetails", {})
+            sn = item.get("snippet", {})
+            v["views"] = int(stats["viewCount"]) if "viewCount" in stats else None
+            v["likes"] = int(stats["likeCount"]) if "likeCount" in stats else None
+            v["comments"] = int(stats["commentCount"]) if "commentCount" in stats else None
+            v["duration_sec"] = parse_duration(cd.get("duration"))
+            v["channel_id"] = sn.get("channelId")
+            v["language"] = sn.get("defaultAudioLanguage") or sn.get("defaultLanguage")
+
+
+def enrich_channels(videos):
+    """Add subs (subscriber count) per video via channels.list."""
+    if not API_KEY:
+        return
+    ch_ids = list({v.get("channel_id") for v in videos if v.get("channel_id")})
+    subs_map = {}
+    for i in range(0, len(ch_ids), 50):
+        batch = ch_ids[i:i + 50]
+        params = {"part": "statistics", "id": ",".join(batch), "key": API_KEY}
+        url = "https://www.googleapis.com/youtube/v3/channels?" + urllib.parse.urlencode(params)
+        try:
+            result = api_get(url)
+        except Exception as e:
+            print(f"Channel enrich error: {e}", file=sys.stderr)
+            continue
+        for item in result.get("items", []):
+            st = item.get("statistics", {})
+            if st.get("hiddenSubscriberCount"):
+                subs_map[item["id"]] = None
+            elif "subscriberCount" in st:
+                subs_map[item["id"]] = int(st["subscriberCount"])
+    for v in videos:
+        v["subs"] = subs_map.get(v.get("channel_id"))
+
+
+def add_derived(videos):
+    """Compute age_hours, views_per_day (velocity), like_ratio."""
+    now = datetime.now(timezone.utc)
+    for v in videos:
+        pub_dt = datetime.fromisoformat(v["published"].replace("Z", "+00:00"))
+        age_h = max((now - pub_dt).total_seconds() / 3600, 0.1)
+        v["age_hours"] = round(age_h, 1)
+        views = v.get("views")
+        if views is not None:
+            v["views_per_day"] = round(views / (age_h / 24), 1)
+            likes = v.get("likes")
+            v["like_ratio"] = round(likes / views, 4) if likes is not None and views > 0 else None
 
 
 # --- Main ---
 
 def main():
-    if "--reset-auth" in sys.argv:
+    parser = argparse.ArgumentParser(add_help=True)
+    parser.add_argument("queries", nargs="*", help="discovery search queries")
+    parser.add_argument("--days", type=int, default=2)
+    parser.add_argument("--order", choices=["viewCount", "date", "relevance"], default="viewCount")
+    parser.add_argument("--max", type=int, default=15, dest="max_results")
+    parser.add_argument("--min-seconds", type=int, default=90, dest="min_seconds")
+    parser.add_argument("--no-subs", action="store_true")
+    parser.add_argument("--reset-auth", action="store_true")
+    args = parser.parse_args()
+
+    if args.reset_auth:
         if TOKEN_FILE.exists():
             TOKEN_FILE.unlink()
             print("Tokens cleared.")
@@ -264,49 +371,80 @@ def main():
             print("No tokens found.")
         return
 
-    days_back = 2
-    for arg in sys.argv[1:]:
-        if arg.isdigit():
-            days_back = int(arg)
+    queries = args.queries
+    if not queries and not sys.stdin.isatty():
+        queries = [ln.strip() for ln in sys.stdin if ln.strip()]
 
-    published_after = (datetime.now(timezone.utc) - timedelta(days=days_back)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    if args.no_subs and not queries:
+        print("Nothing to do: --no-subs with no queries.", file=sys.stderr)
+        sys.exit(1)
 
-    # --- Subscribed channels (primary) ---
-    access_token = get_access_token()
-    print("Fetching subscriptions...", file=sys.stderr)
-    subscriptions = get_subscriptions(access_token)
-    print(f"Found {len(subscriptions)} subscribed channels.", file=sys.stderr)
-
-    channel_ids = [c["id"] for c in subscriptions]
-    channel_titles = {c["id"]: c["title"] for c in subscriptions}
-
-    print("Fetching uploads playlists...", file=sys.stderr)
-    playlist_map = get_uploads_playlists(channel_ids, access_token)
+    published_after = (datetime.now(timezone.utc) - timedelta(days=args.days)).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     seen = set()
     videos = []
 
-    print("Fetching recent videos from subscriptions...", file=sys.stderr)
-    for channel_id, playlist_id in playlist_map.items():
-        title = channel_titles.get(channel_id, "Unknown")
-        recent = get_recent_from_playlist(playlist_id, title, access_token, published_after)
-        for v in recent:
-            if v["id"] not in seen:
-                seen.add(v["id"])
-                videos.append(v)
-
-    # --- Discovery search (secondary) ---
-    if API_KEY:
-        print("Running discovery searches...", file=sys.stderr)
-        for query in DISCOVERY_QUERIES:
-            for v in search_youtube(query, published_after):
+    # --- Subscribed channels ---
+    if not args.no_subs:
+        access_token = get_access_token()
+        print("Fetching subscriptions...", file=sys.stderr)
+        subscriptions = get_subscriptions(access_token)
+        print(f"Found {len(subscriptions)} subscribed channels.", file=sys.stderr)
+        channel_ids = [c["id"] for c in subscriptions]
+        channel_titles = {c["id"]: c["title"] for c in subscriptions}
+        print("Fetching uploads playlists...", file=sys.stderr)
+        playlist_map = get_uploads_playlists(channel_ids, access_token)
+        print("Fetching recent videos from subscriptions...", file=sys.stderr)
+        for channel_id, playlist_id in playlist_map.items():
+            title = channel_titles.get(channel_id, "Unknown")
+            for v in get_recent_from_playlist(playlist_id, title, access_token, published_after):
                 if v["id"] not in seen:
                     seen.add(v["id"])
                     videos.append(v)
 
-    videos.sort(key=lambda x: x["published"], reverse=True)
-    print(f"Total: {len(videos)} videos ({sum(1 for v in videos if v['source']=='subscription')} from subscriptions, {sum(1 for v in videos if v['source']=='discovery')} from discovery).", file=sys.stderr)
-    print(json.dumps(videos, indent=2))
+    # --- Discovery search ---
+    if queries:
+        if not API_KEY:
+            print("WARNING: no YOUTUBE_API_KEY; skipping discovery searches.", file=sys.stderr)
+        else:
+            print(f"Running {len(queries)} discovery search(es) [order={args.order}]...", file=sys.stderr)
+            for query in queries:
+                for v in search_youtube(query, published_after, args.order, args.max_results):
+                    if v["id"] not in seen:
+                        seen.add(v["id"])
+                        videos.append(v)
+
+    # --- Enrich with quality signals ---
+    print("Enriching with quality signals...", file=sys.stderr)
+    enrich_videos(videos)
+    enrich_channels(videos)
+    add_derived(videos)
+
+    # --- Light gating (caller does the real curation) ---
+    kept = []
+    dropped_short = dropped_lang = 0
+    for v in videos:
+        dur = v.get("duration_sec")
+        if args.min_seconds and dur is not None and 0 < dur < args.min_seconds:
+            dropped_short += 1
+            continue
+        lang = v.get("language")
+        if lang and not lang.lower().startswith("en"):
+            dropped_lang += 1
+            continue
+        kept.append(v)
+
+    # Most momentum first; unknown velocity sinks to the bottom.
+    kept.sort(key=lambda x: x.get("views_per_day") or -1, reverse=True)
+
+    subs_n = sum(1 for v in kept if v["source"] == "subscription")
+    disc_n = sum(1 for v in kept if v["source"] == "discovery")
+    print(
+        f"Total: {len(kept)} videos ({subs_n} subscription, {disc_n} discovery); "
+        f"dropped {dropped_short} short, {dropped_lang} non-English.",
+        file=sys.stderr,
+    )
+    print(json.dumps(kept, indent=2))
 
 
 if __name__ == "__main__":

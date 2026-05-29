@@ -2,44 +2,36 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import { cache } from 'react'
-import type { NewsSummary, NewsFile } from './types'
+import type { NewsFeed } from './types'
 
-const newsDirectory = path.join(process.cwd(), 'news')
+const feedPath = path.join(process.cwd(), 'news', 'feed.md')
 
-function readNewsFiles(): { slug: string; raw: string }[] {
-  if (!fs.existsSync(newsDirectory)) return []
-  return fs
-    .readdirSync(newsDirectory, { withFileTypes: true })
-    .filter((e) => e.isFile() && e.name.endsWith('.md') && !e.name.startsWith('.'))
-    .map((e) => ({
-      slug: e.name.replace(/\.md$/, ''),
-      raw: fs.readFileSync(path.join(newsDirectory, e.name), 'utf-8'),
-    }))
+// Drop date dividers (## headings) that have no content beneath them — e.g. when
+// every video for a date has been trimmed, the bare heading should not render.
+function stripEmptySections(content: string): string {
+  const lines = content.split('\n')
+  const out: string[] = []
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    if (line.startsWith('## ')) {
+      let j = i + 1
+      while (j < lines.length && !lines[j].startsWith('## ') && lines[j].trim() === '') j++
+      const empty = j >= lines.length || lines[j].startsWith('## ')
+      if (empty) {
+        i = j - 1 // skip the heading and its trailing blank lines
+        continue
+      }
+    }
+    out.push(line)
+  }
+  return out.join('\n').trim() + '\n'
 }
 
-export const getAllSummaries = cache(function getAllSummaries(): NewsSummary[] {
-  return readNewsFiles()
-    .map(({ slug, raw }) => {
-      const { data } = matter(raw)
-      return {
-        slug,
-        date: data.date ? String(data.date) : slug,
-        title: typeof data.title === 'string' ? data.title : `AI News — ${slug}`,
-        videoCount: Number(data.videoCount) || 0,
-      }
-    })
-    .sort((a, b) => b.slug.localeCompare(a.slug))
-})
-
-export const getNewsByDate = cache(function getNewsByDate(date: string): NewsFile | null {
-  const files = readNewsFiles().filter((f) => f.slug === date)
-  if (files.length === 0) return null
-  const { data, content } = matter(files[0].raw)
+export const getFeed = cache(function getFeed(): NewsFeed | null {
+  if (!fs.existsSync(feedPath)) return null
+  const { data, content } = matter(fs.readFileSync(feedPath, 'utf-8'))
   return {
-    slug: date,
-    date: data.date ? String(data.date) : date,
-    title: typeof data.title === 'string' ? data.title : `AI News — ${date}`,
-    videoCount: Number(data.videoCount) || 0,
-    content,
+    title: typeof data.title === 'string' ? data.title : 'AI News',
+    content: stripEmptySections(content),
   }
 })

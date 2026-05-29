@@ -1,10 +1,4 @@
-export interface NewsSummary {
-  slug: string
-  date: string
+export interface NewsFeed {
   title: string
-  videoCount: number
-}
-
-export interface NewsFile extends NewsSummary {
   content: string
 }

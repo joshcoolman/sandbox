@@ -1,0 +1,29 @@
+{
+  "videos": [
+    { "id": "ulNsa0sD8N0", "title": "Harness Engineering: What Separates Top Agentic Engineers Right Now", "channel": "Cole Medin", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "posted" },
+    { "id": "mh5XZ-L5SFQ", "title": "Can Cursor's HARDCORE Review Skill Stop The Slop?", "channel": "Matt Pocock", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "posted" },
+    { "id": "zjkBMFhNj_g", "title": "Claude 4 API Deep Dive: New Capabilities and Pricing", "channel": "Anthropic Developers", "published": "2026-05-19", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "kCc8FmEb1nY", "title": "Gemini 2.5 Flash vs Claude Haiku 4.5: Speed Benchmark", "channel": "Fireship", "published": "2026-05-18", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "l8pRS7hTsko", "title": "Building Production-Ready Agents with Claude Tool Use", "channel": "Anthropic", "published": "2026-05-18", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "aircAruvnKk", "title": "LangGraph + Claude: Multi-Agent Research Pipeline", "channel": "LangChain", "published": "2026-05-17", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "PkZNo7MFNFg", "title": "Claude Code vs Cursor: Real-World Refactor Test", "channel": "Syntax", "published": "2026-05-19", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "9-RghMUmjxM", "title": "GitHub Copilot Agent Mode Full Demo", "channel": "GitHub", "published": "2026-05-17", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "VMj-3S1tku0", "title": "Chain-of-Thought vs Extended Thinking: What's Actually Different?", "channel": "Andrej Karpathy", "published": "2026-05-18", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "wjZofJX0v4M", "title": "Scaling Laws in 2026: What Changed", "channel": "AI Explained", "published": "2026-05-17", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "o0GTX1xFHmk", "title": "Flux 1.1 LoRA Training in 10 Minutes on Consumer Hardware", "channel": "Sebastian Kamph", "published": "2026-05-18", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "hTTGNgj4Yq4", "title": "Sora 2.0 vs Runway Gen-4: Honest Comparison", "channel": "Matt Wolfe", "published": "2026-05-17", "source": "legacy", "firstSeen": "2026-05-19", "status": "deleted" },
+    { "id": "t3uBGhpii6w", "title": "Anthropic just dropped Opus 4.8... (WOAH)", "channel": "Matthew Berman", "published": "2026-05-29", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "Y0_DJJuFs9w", "title": "Google Omni vs Runway vs Seedance: Which AI Video Tool Wins?", "channel": "Theoretically Media", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "posted" },
+    { "id": "F_6go08nHv4", "title": "Claude Opus 4.8 Is Too Smart… and TOO HONEST", "channel": "Wes Roth", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "posted" },
+    { "id": "NbhNlpRsofY", "title": "Claude Opus 4.8: Here is Everything that Changed", "channel": "Prompt Engineering", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "q5lg3npxjAc", "title": "Opus 4.8 Just Dropped. Here's How To Actually Use It.", "channel": "Nate Herk | AI Automation", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "j-oiGiIEcws", "title": "Claude Opus 4.8 actually blew my mind...", "channel": "Alex Finn", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "-jKWH3TUMak", "title": "Anthropic Drops The Opus 4.8 BOMB", "channel": "Chase AI", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "kXYDUozZAhk", "title": "Why Opus 4.8 Pulled Me Back to Claude", "channel": "Every", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "n0nC1kmztSk", "title": "A Cursor Agent Wiped a Database in 9 Seconds. Agent Analytics Would Have Seen It Coming.", "channel": "AI News & Strategy Daily | Nate B Jones", "published": "2026-05-28", "source": "subscription", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "BGqjbP7XaEs", "title": "Claude Mythos 1 Preview Leaked...", "channel": "WorldofAI", "published": "2026-05-28", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "88mc1Rk7W6s", "title": "Everyone Is Sleeping on Composer 2.5", "channel": "Web Dev Cody", "published": "2026-05-27", "source": "discovery", "firstSeen": "2026-05-28", "status": "deleted" },
+    { "id": "utBeUmDPApk", "title": "Agentic Workflows Have Changed EVERYTHING in 2026 (DEATH Of The Senior Dev?)", "channel": "Modern Software Engineering", "published": "2026-05-27", "source": "discovery", "firstSeen": "2026-05-28", "status": "posted" },
+    { "id": "MFzxIT88zfg", "title": "I Built a Deck With AI, Then Made a Second AI Attack It.", "channel": "AI News & Strategy Daily | Nate B Jones", "published": "2026-05-27", "source": "subscription", "firstSeen": "2026-05-28", "status": "deleted" }
+  ]
+}
