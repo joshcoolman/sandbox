@@ -96,6 +96,13 @@ Source: https://github.com/joshcoolman/sandbox
 
 - [Design Test Page Prompt](https://www.joshcoolman.com/docs/prompts/design-test-page): Reusable prompt template for generating design experiment pages. Describes the expected structure, styling conventions, and patterns that new experiments should follow.
 
+## News
+
+Daily curated AI video digest at `/news`, auto-generated each morning via a GitHub Actions cron job. The pipeline fetches recent videos from YouTube subscriptions and discovery searches using `yt-ai-news.py`, pipes the JSON to `generate-news.mjs` which calls Claude Sonnet 4.6 to curate and format a digest, then commits the resulting markdown file to `news/YYYY-MM-DD.md` and pushes to main — triggering a Vercel deploy automatically. Keeps: technical deep-dives, tutorials with practical value, significant model announcements, research breakdowns from known educators. Skips: clickbait, reaction videos, affiliate content, non-English, low-signal reposts. Grouped by theme (Agent Frameworks, Model News, Coding Tools, Research, Image/Video). Sidebar lists all past dates for navigation.
+
+- [Latest Digest](https://www.joshcoolman.com/news): Redirects to today's digest, with sidebar showing all past dates
+- [May 19, 2026](https://www.joshcoolman.com/news/2026-05-19): AI News — May 19, 2026 (10 videos across Model News, Agent Frameworks, Coding Tools, Research, Image & Video)
+
 ## Plans
 
 Design and architecture plans worked out in conversation with Claude Code, rendered as HTML for review. The plans surface the thinking behind the work — comparisons, rationale, decisions, tradeoffs — not just the resulting code. Each plan has a status: exploratory (still thinking), in-progress (some moves shipped, others pending), implemented (all moves shipped), or archived. Authored as markdown files in `plans/` with custom rendering: numbered "Move" cards, eyebrow labels for inline subsection headers, and colored callouts for notes, decisions, caveats, and TL;DRs. Part of the "coding in public" ethos — the conversation is the artifact.

@@ -55,6 +55,13 @@ Source: https://github.com/joshcoolman/sandbox
 - [Stack Overview](https://www.joshcoolman.com/docs/stack/stack-overview): Full technology stack reference
 - [Design Test Page Prompt](https://www.joshcoolman.com/docs/prompts/design-test-page): Prompt template for design experiments
 
+## News
+
+Daily curated AI video digest, auto-generated each morning via GitHub Actions + Claude.
+
+- [Latest Digest](https://www.joshcoolman.com/news): Today's curated AI/ML videos
+- [May 19, 2026](https://www.joshcoolman.com/news/2026-05-19): AI News — May 19, 2026
+
 ## Plans
 
 Design and architecture plans worked out in conversation with Claude, rendered for review. Coding in public — the thinking behind the work, not just the result.

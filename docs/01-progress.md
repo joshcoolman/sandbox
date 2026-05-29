@@ -62,6 +62,16 @@ The page does not auto-refresh. When the architecture drifts enough to matter, r
 
 ---
 
+### News — Daily AI Video Digest, Fully Automated
+
+**Date:** 2026-05-19
+
+The sandbox has a new section, `/news`, that self-updates daily without any manual step. A GitHub Actions cron job (8am UTC) runs `scripts/yt-ai-news.py` to fetch recent AI/ML videos from YouTube subscriptions and discovery searches, pipes the JSON to `scripts/generate-news.mjs` which calls Claude Sonnet 4.6 to curate and format the digest, commits the resulting `news/YYYY-MM-DD.md` to main, and Vercel auto-deploys. The page redirects `/news` to the latest date; a sidebar lists all past digests for navigation. No nav entry — just discoverable at `/news`.
+
+Claude uses prompt caching on the static system prompt (curation rules), so repeated daily calls get a cache hit on the 800-token instructions. The Python script accepts `YOUTUBE_REFRESH_TOKEN` as an env var for CI — writes a synthetic token file on first run so the normal OAuth refresh flow takes over.
+
+---
+
 ### Plans — A New Surface for Conversation-Mode Design Work
 
 **Date:** 2026-05-13
