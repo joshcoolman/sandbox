@@ -4,6 +4,7 @@ dist
 .vercel
 debug-*.png
 *.log
+*.swp
 
 pnpm-lock.yaml
 

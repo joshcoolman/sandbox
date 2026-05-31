@@ -6,6 +6,7 @@ import styles from '../news.module.css'
 
 const TRASH_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`
 const BAN_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>`
+const X_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`
 
 // "**Title** — Channel (May 29)" → "Channel". The dash/date are stripped off the
 // text node that follows the <strong> title.
@@ -33,14 +34,23 @@ export default function NewsEditableContent({ children }: Props) {
   const deleted = useRef<Map<string, string>>(new Map())
   // channel names to block from future runs, in click order.
   const blocked = useRef<Set<string>>(new Set())
+  // videoId -> { entry title, resource URLs marked for targeted removal }.
+  // Lets a single link be struck out without deleting the whole entry.
+  const links = useRef<Map<string, { title: string; urls: Set<string> }>>(new Map())
   const [toastMsg, setToastMsg] = useState('')
   const [toastNonce, setToastNonce] = useState(0)
   const [toastVisible, setToastVisible] = useState(false)
 
+  // True when nothing is marked anywhere — used to label the toast.
+  function isClear(): boolean {
+    return deleted.current.size === 0 && blocked.current.size === 0 && links.current.size === 0
+  }
+
   function buildPrompt(): string {
     const dels = [...deleted.current.entries()]
     const bans = [...blocked.current]
-    if (dels.length === 0 && bans.length === 0) return ''
+    const linkEntries = [...links.current.entries()]
+    if (dels.length === 0 && bans.length === 0 && linkEntries.length === 0) return ''
     const sections: string[] = []
 
     if (dels.length > 0) {
@@ -75,6 +85,32 @@ export default function NewsEditableContent({ children }: Props) {
       )
     }
 
+    if (linkEntries.length > 0) {
+      const blocks = linkEntries
+        .map(([id, { title, urls }]) => {
+          const urlLines = [...urls].map((u) => `   - ${u}`).join('\n')
+          return `"${title}" (${id})\n${urlLines}`
+        })
+        .join('\n\n')
+      const urlCount = linkEntries.reduce((n, [, { urls }]) => n + urls.size, 0)
+      const linkNoun = urlCount === 1 ? 'resource link' : 'resource links'
+      const entryClause =
+        linkEntries.length === 1
+          ? 'this AI news entry, but keep the entry itself'
+          : 'these AI news entries, but keep the entries themselves'
+      sections.push(
+        [
+          `Remove the following ${linkNoun} from ${entryClause}:`,
+          '',
+          blocks,
+          '',
+          'For each link listed:',
+          '- In `news/feed.md`, find the matching entry and delete only that URL line. If removing it leaves no resource links under that entry, also remove the now-empty `Resources:` label.',
+          '- Do NOT remove the entry, its title, description, or thumbnail, and leave `news/.ledger.json` unchanged.',
+        ].join('\n'),
+      )
+    }
+
     return sections.join('\n\n---\n\n')
   }
 
@@ -94,7 +130,29 @@ export default function NewsEditableContent({ children }: Props) {
       p.dataset.deleted = 'true'
       deleted.current.set(id, title)
     }
-    copyPrompt(deleted.current.size === 0 && blocked.current.size === 0)
+    copyPrompt(isClear())
+  }
+
+  // Strike out a single resource link within an entry without deleting the
+  // entry. Toggled state lives on the anchor via data-link-removed.
+  function toggleLink(p: HTMLElement, a: HTMLAnchorElement, url: string) {
+    const id = p.dataset.videoId
+    if (!id) return
+    const title = p.dataset.title || 'Untitled'
+    if (a.dataset.linkRemoved === 'true') {
+      a.dataset.linkRemoved = 'false'
+      const rec = links.current.get(id)
+      if (rec) {
+        rec.urls.delete(url)
+        if (rec.urls.size === 0) links.current.delete(id)
+      }
+    } else {
+      a.dataset.linkRemoved = 'true'
+      const rec = links.current.get(id) || { title, urls: new Set<string>() }
+      rec.urls.add(url)
+      links.current.set(id, rec)
+    }
+    copyPrompt(isClear())
   }
 
   // Block a channel from future runs. The entry is left untouched (future-only);
@@ -106,7 +164,7 @@ export default function NewsEditableContent({ children }: Props) {
     btn.setAttribute('aria-pressed', on ? 'false' : 'true')
     if (on) blocked.current.delete(channel)
     else blocked.current.add(channel)
-    copyPrompt(deleted.current.size === 0 && blocked.current.size === 0)
+    copyPrompt(isClear())
   }
 
   function copyPrompt(cleared: boolean) {
@@ -162,6 +220,26 @@ export default function NewsEditableContent({ children }: Props) {
         toggleBan(p, banBtn)
       })
       p.appendChild(banBtn)
+
+      // Inject an "x" after each resource link (anchors that aren't the
+      // thumbnail) so a single link can be struck out and removed in isolation.
+      p.querySelectorAll<HTMLAnchorElement>('a').forEach((a) => {
+        if (a.querySelector('img')) return // skip the thumbnail's watch link
+        const url = a.getAttribute('href') || ''
+        if (!url) return
+        if (a.nextElementSibling?.classList.contains(styles.linkBtn)) return
+        const x = document.createElement('button')
+        x.type = 'button'
+        x.className = styles.linkBtn
+        x.setAttribute('aria-label', `Remove link ${url}`)
+        x.innerHTML = X_SVG
+        x.addEventListener('click', (e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          toggleLink(p, a, url)
+        })
+        a.insertAdjacentElement('afterend', x)
+      })
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

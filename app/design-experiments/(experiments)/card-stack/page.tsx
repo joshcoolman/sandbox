@@ -1,5 +1,5 @@
-// Top-level route (not in (experiments)/) -- fullscreen scroll/zoom animation
-// conflicts with the shared layout wrapper's header/footer chrome
+// fullscreen: true in experiment data -- the (experiments) layout skips its
+// header/footer chrome so the scroll/zoom animation owns the viewport
 import type { Metadata } from 'next';
 import { experimentMetadata } from '@/lib/experiments/metadata';
 import { CardStackContent } from './components/CardStackContent';

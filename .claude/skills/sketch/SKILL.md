@@ -7,6 +7,8 @@ description: Rapid visual prototyping. Paint with code — get ideas on screen f
 
 Rapid visual prototyping. Paint with code — no architecture, no data layer, no framework opinions. Get ideas on screen fast and iterate until it feels right.
 
+Sketches live in `app/sketches/<name>/` — a top-level scratch namespace, completely separate from design experiments. They render live at `/sketches/<name>` and are listed on the `/sketches` index, but nothing on the main site links to that index, and they're never in `data.ts`/sitemap/gallery/homepage — so they're undiscoverable unless you know the URL, and always safe to delete. See `app/sketches/README.md`.
+
 ## Usage
 
 ```
@@ -76,7 +78,7 @@ All of that comes later. Right now, we're sketching.
 ## Rules
 
 ### Two Files: page.tsx + styles.css
-Each sketch gets a `page.tsx` and a `styles.css` in the same directory. Import the stylesheet at the top of the page:
+Each sketch gets a `page.tsx` and a `styles.css` in `app/sketches/<name>/`. Import the stylesheet at the top of the page:
 
 ```tsx
 import './styles.css';
@@ -120,12 +122,12 @@ Do NOT run `npm run build` between iterations. The user is running the dev serve
 
 ### Getting Started
 
-1. Create `app/design-experiments/[name]/styles.css` with the visual foundation
-2. Create `app/design-experiments/[name]/page.tsx` with `'use client';` and `import './styles.css';`
+1. Create `app/sketches/[name]/styles.css` with the visual foundation
+2. Create `app/sketches/[name]/page.tsx` with `'use client';` and `import './styles.css';`. Add a description comment on the first line so the `/sketches` index can show it: `// sketch: One sentence about this prototype.`
 3. Get the first version on screen — fast. Something visible. Don't overthink it.
-4. Tell the user what's on screen and wait for direction.
+4. Tell the user what's on screen, including the URL (`/sketches/[name]`), and wait for direction.
 
-Do NOT add the experiment to the gallery. This is a sketch — it's not shipped yet.
+Do NOT add the sketch to `data.ts` or the gallery. It lives in `sketches/` precisely so it stays unlinked and disposable.
 
 ### Iterating
 
@@ -166,9 +168,10 @@ The user will say something like "this is it" or "I'm happy with this." At that 
 
 1. Run `npm run build` to verify it compiles
 2. Suggest next steps:
-   - `/ship-experiment` to screenshot and publish as-is
-   - `/promote` to extract the reusable component with proper TypeScript
    - Keep iterating if there's more to explore
+   - When the idea is worth keeping, start a fresh `/design-experiment` that references this sketch — that's the real, registered version. The sketch stays here as scratch and can be deleted whenever.
+
+The sketch itself is the end of this skill. It does not move, register, or ship anything — graduation is a separate, deliberate `/design-experiment` run.
 
 ## What Good Sketches Look Like
 
@@ -240,7 +243,7 @@ User: Now I want a "now" line that shows the current time
 
 ## Notes
 
-- This skill is the starting point of the pipeline: `/sketch` → `/promote` → production component
-- Don't add to the experiments gallery until the user ships with `/ship-experiment`
+- Sketch is sketch: it produces a disposable prototype in `sketches/` and nothing more. It never moves, registers, ships, or promotes. To make an idea real, the user starts a separate `/design-experiment` referencing the sketch.
+- Sketches are never in `data.ts`, so they never reach the gallery/sitemap/homepage and are always safe to delete — that's the whole point of the `sketches/` namespace
 - If the user wants to switch from sketch mode to proper development mid-stream, that's fine — the sketch becomes the starting point and you can begin structuring it
 - Google Fonts can be added via `next/font/google` import if the user wants specific typography — keep it to 1-2 fonts max during sketching

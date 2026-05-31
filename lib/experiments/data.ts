@@ -101,6 +101,7 @@ export const experiments: Experiment[] = [
       'Infinite canvas for visual brainstorming. Paste, drop, or upload images and arrange them freely. Pan with Space+drag, zoom with scroll wheel, marquee select, multi-select with Shift. All local-first -- images stay as blob URLs, nothing uploaded.',
     screenshot: '/screenshots/moodboard.png',
     tags: ['Infinite Canvas', 'Local-First', 'Interactive', 'Dark Theme'],
+    fullscreen: true,
   },
   {
     slug: 'image-to-ui',
@@ -133,6 +134,7 @@ export const experiments: Experiment[] = [
     description: 'Scroll-driven card stack with seven colored cards. Scroll peels cards off the top to reveal the next. Each card expands to fullscreen with a GSAP-powered zoom transition. Built with GSAP ScrollTrigger.',
     screenshot: '/screenshots/card-stack.png',
     tags: ['GSAP', 'Scroll Animation', 'Cards', 'Interactive'],
+    fullscreen: true,
   },
   {
     slug: 'retro-bento',

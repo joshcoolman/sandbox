@@ -454,6 +454,40 @@
   display: flex;
 }
 
+/* inline "x" injected after each resource link */
+.linkBtn {
+  display: none;
+  vertical-align: middle;
+  margin-left: 4px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid var(--border, #2a2a2a);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.45);
+  color: #c9c9c9;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.linkBtn:hover {
+  border-color: #e5484d;
+  color: #e5484d;
+}
+
+.editing .linkBtn {
+  display: inline-flex;
+}
+
+/* a resource link struck out for targeted removal */
+.editing a[data-link-removed='true'] {
+  text-decoration: line-through;
+  color: #6b6b6b;
+  opacity: 0.6;
+}
+
 /* Marked-for-deletion: grayed out with a "Deleted" overlay, undeletable */
 .prose p[data-deleted='true'] {
   color: #4a4a4a;

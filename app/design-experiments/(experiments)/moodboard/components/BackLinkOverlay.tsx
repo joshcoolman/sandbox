@@ -1,7 +1,7 @@
 'use client'
 
 import CurtainLink from '@/app/components/CurtainLink'
-import { useExperimentBack } from '../../useExperimentBack'
+import { useExperimentBack } from '../../../useExperimentBack'
 import styles from './BackLinkOverlay.module.css'
 
 export function BackLinkOverlay() {

@@ -1,0 +1,83 @@
+.sketchIndex {
+  min-height: 100vh;
+  background: #0a0a0f;
+  color: #e8e8f0;
+  font-family: 'Space Mono', ui-monospace, monospace;
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sketchHead {
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 48px;
+}
+
+.sketchHead h1 {
+  font-size: 14px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: #6a6a85;
+  font-weight: 500;
+  margin: 0 0 16px;
+}
+
+.sketchHead p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #6a6a85;
+  margin: 0;
+  max-width: 52ch;
+}
+
+.sketchEmpty {
+  font-size: 13px;
+  color: #6a6a85;
+}
+.sketchEmpty code {
+  color: #4dd2ff;
+}
+
+.sketchList {
+  width: 100%;
+  max-width: 640px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #1c1c2b;
+}
+
+.sketchLink {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px 4px;
+  border-bottom: 1px solid #1c1c2b;
+  text-decoration: none;
+  color: inherit;
+  transition: padding-left 0.18s ease, background 0.18s ease;
+}
+.sketchLink:hover {
+  padding-left: 16px;
+  background: linear-gradient(90deg, rgba(77, 210, 255, 0.04), transparent);
+}
+
+.sketchName {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  color: #e8e8f0;
+}
+.sketchLink:hover .sketchName {
+  color: #4dd2ff;
+}
+
+.sketchDesc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #8a8aa0;
+  max-width: 60ch;
+}
