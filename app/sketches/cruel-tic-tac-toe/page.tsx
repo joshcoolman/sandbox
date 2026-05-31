@@ -12,6 +12,33 @@ const LINES = [
   [0, 4, 8], [2, 4, 6],            // diagonals
 ];
 
+// Taunts in the register of E.M. Cioran — a couple near his actual aphorisms,
+// the rest adapted to the spirit of a defeat screen.
+const WIN_TAUNTS = [
+  'Mediocrity suits you.',
+  'You are defeated eternally.',
+  'You hoped. How quaint.',
+  'Three steps toward the grave.',
+  'The void was unimpressed.',
+  'Winning: failure in costume.',
+  'Congratulations on nothing.',
+  'You peaked. Downhill now.',
+];
+
+const DRAW_TAUNTS = [
+  'Nothing decided. As ever.',
+  'You played. Pity.',
+  'Both futile. How symmetrical.',
+  'Nine squares, zero point.',
+  'Not even a loser. Less.',
+  'A tie that binds nothing.',
+  'You endure. Barely.',
+];
+
+function pick(pool: string[]): string {
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function findWin(board: Cell[]): { winner: Cell; line: number[] } | null {
   for (const line of LINES) {
     const [a, b, c] = line;
@@ -35,20 +62,21 @@ interface Particle {
 export default function CruelTicTacToePage() {
   const [board, setBoard] = useState<Cell[]>(Array(9).fill(null));
   const [turn, setTurn] = useState<'X' | 'O'>('X');
-  const [winLine, setWinLine] = useState<number[] | null>(null);
+  const [doomed, setDoomed] = useState<number[] | null>(null);
   const [blown, setBlown] = useState(false);
   const [lost, setLost] = useState(false);
+  const [taunt, setTaunt] = useState('');
   const [quaking, setQuaking] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const boardRef = useRef<HTMLDivElement>(null);
   const pid = useRef(0);
 
-  function explode(line: number[], winner: Cell) {
-    const color = winner === 'X' ? '#ff4d6d' : '#4dd2ff';
+  function explode(indices: number[], board: Cell[]) {
     const cells = boardRef.current?.querySelectorAll('.cell');
     if (!cells) return;
     const burst: Particle[] = [];
-    line.forEach((idx) => {
+    indices.forEach((idx) => {
+      const color = board[idx] === 'X' ? '#ff4d6d' : '#4dd2ff';
       const rect = cells[idx].getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
@@ -69,23 +97,33 @@ export default function CruelTicTacToePage() {
     setParticles(burst);
   }
 
+  // win or draw, the ending is the same: flare, quake, blow up the pieces, lose.
+  function doom(indices: number[], board: Cell[], message: string) {
+    setDoomed(indices);
+    setTaunt(message);
+    setTimeout(() => {
+      setQuaking(true);
+      explode(indices, board);
+      setBlown(true);
+      setTimeout(() => setQuaking(false), 400);
+      setTimeout(() => setLost(true), 250);
+    }, 450);
+  }
+
   function handleClick(idx: number) {
-    if (board[idx] || winLine || lost) return;
+    if (board[idx] || doomed || lost) return;
     const next = [...board];
     next[idx] = turn;
     setBoard(next);
 
     const result = findWin(next);
     if (result) {
-      setWinLine(result.line);
-      // flare, then quake + explode, then the cruel reveal
-      setTimeout(() => {
-        setQuaking(true);
-        explode(result.line, result.winner);
-        setBlown(true);
-        setTimeout(() => setQuaking(false), 400);
-        setTimeout(() => setLost(true), 250);
-      }, 450);
+      doom(result.line, next, pick(WIN_TAUNTS));
+      return;
+    }
+    if (next.every((c) => c !== null)) {
+      // a draw — no winner, so the whole board pays the price
+      doom([0, 1, 2, 3, 4, 5, 6, 7, 8], next, pick(DRAW_TAUNTS));
       return;
     }
     setTurn(turn === 'X' ? 'O' : 'X');
@@ -94,9 +132,10 @@ export default function CruelTicTacToePage() {
   function reset() {
     setBoard(Array(9).fill(null));
     setTurn('X');
-    setWinLine(null);
+    setDoomed(null);
     setBlown(false);
     setLost(false);
+    setTaunt('');
     setQuaking(false);
     setParticles([]);
   }
@@ -106,7 +145,7 @@ export default function CruelTicTacToePage() {
       <div className="title">Tic · Tac · Doom</div>
 
       <div className="statusBar">
-        {!winLine && (
+        {!doomed && (
           <>
             <span className={`turnDot ${turn.toLowerCase()}`} />
             <span>{turn}&rsquo;s turn</span>
@@ -116,13 +155,13 @@ export default function CruelTicTacToePage() {
 
       <div ref={boardRef} className={`board ${quaking ? 'quaking' : ''}`}>
         {board.map((cell, idx) => {
-          const isWinning = winLine?.includes(idx);
+          const isDoomed = doomed?.includes(idx);
           return (
             <button
               key={idx}
-              className={`cell ${isWinning ? 'winning' : ''} ${blown && isWinning ? 'blown' : ''}`}
+              className={`cell ${isDoomed ? 'winning' : ''} ${blown && isDoomed ? 'blown' : ''}`}
               onClick={() => handleClick(idx)}
-              disabled={!!cell || !!winLine}
+              disabled={!!cell || !!doomed}
             >
               {cell && <span className={`mark ${cell.toLowerCase()}`}>{cell}</span>}
             </button>
@@ -151,8 +190,7 @@ export default function CruelTicTacToePage() {
 
       {lost && (
         <div className="overlay">
-          <div className="youLose">YOU LOSE</div>
-          <div className="subtitle">Three in a row. Catastrophic. As predicted.</div>
+          <div className="youLose">{taunt}</div>
           <button className="againBtn" onClick={reset}>Lose Again</button>
         </div>
       )}
