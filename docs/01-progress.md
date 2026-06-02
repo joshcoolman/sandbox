@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### X Broadcast — post notes to X, local-only, via Web Intent
+
+**Date:** 2026-06-02
+
+First broadcast channel for the site: sticky notes can be posted to X from a local-only `/x` admin. The queue is *derived* from the note files (all notes minus posted minus removed, oldest-first) — no separate capture step, so writing a note auto-queues it. Posting uses X Web Intent (opens X's pre-filled composer; you click Post) — no developer API, no OAuth, no cost. A personal daily constraint (default 1/day, configurable, or no limit) shows a "post anyway" confirm when exceeded; it's a guardrail, not a hard limit. State lives in a committed `x-state.json` ledger; the admin and its `/api/x/state` route are gated to localhost / 404 in production (same pattern as the news edit mode and monono reset routes). Companion blog draft: `blog/the-site-is-the-source.md`. Code in `lib/x/`.
+
+---
+
 ### Blog post: Shadcn has an AI problem
 
 **Date:** 2026-05-28

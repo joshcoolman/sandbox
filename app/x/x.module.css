@@ -1,0 +1,383 @@
+.wrap {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  color: #e4e4e7;
+}
+
+/* Compose — quick capture, mirrors the /note skill; writes to the queue only. */
+.compose {
+  max-width: 640px;
+  margin: 0 auto 2.5rem;
+  padding: 0.85rem 1rem 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.composeInput {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e7e7ea;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.composeInput::placeholder {
+  color: #6b6b73;
+}
+
+.composeFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.addBtn {
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #18181b;
+  background: #fafafa;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.addBtn:hover {
+  background: #fff;
+}
+
+.addBtn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Dashboard: queued left, posted right; each column capped at the
+   single-column reading width, stacks on narrow screens. */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 640px));
+  justify-content: center;
+  gap: 2.5rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .columns {
+    grid-template-columns: minmax(0, 640px);
+  }
+}
+
+.localOnly {
+  margin-top: 4rem;
+  text-align: center;
+  color: #8b8b93;
+  font-size: 0.95rem;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+  color: #fafafa;
+}
+
+.sub {
+  margin: 0;
+  color: #8b8b93;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Daily constraint — gear button + popover */
+.gearWrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.gearBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  color: #8b8b93;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease;
+}
+
+.gearBtn:hover,
+.gearBtn[aria-expanded='true'] {
+  color: #e4e4e7;
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+.popover {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 220px;
+  padding: 0.85rem 1rem;
+  background: #1c1c20;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+}
+
+.constraintLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #c4c4cc;
+}
+
+.segmented {
+  display: flex;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.seg,
+.segActive {
+  flex: 1;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  border: none;
+  background: transparent;
+  color: #a1a1aa;
+  cursor: pointer;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.seg:last-child,
+.segActive:last-child {
+  border-right: none;
+}
+
+.segActive {
+  background: #fafafa;
+  color: #18181b;
+}
+
+.seg:disabled,
+.segActive:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Sections */
+.sectionTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8b8b93;
+  margin: 2rem 0 0.85rem;
+}
+
+.count {
+  color: #52525b;
+}
+
+.empty {
+  font-size: 0.9rem;
+  color: #71717a;
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* Card — dark glass with a per-note color accent (warm/cool/neutral) */
+.item {
+  --accent: #38bdf8;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent 55%),
+    rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.item:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.postedItem {
+  opacity: 0.55;
+}
+
+.itemBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemText {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #e7e7ea;
+}
+
+.meta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  font-size: 0.75rem;
+}
+
+.chars {
+  color: #8b8b93;
+}
+
+.over {
+  color: #f87171;
+  font-weight: 600;
+}
+
+.date {
+  color: #6b6b73;
+}
+
+.actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.postBtn {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #18181b;
+  background: #fafafa;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.postBtn:hover {
+  background: #fff;
+}
+
+.removeBtn {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.82rem;
+  color: #a1a1aa;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.removeBtn:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #d4d4d8;
+}
+
+.postBtn:disabled,
+.removeBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* "Post anyway" confirm modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+}
+
+.modal {
+  width: 100%;
+  max-width: 380px;
+  padding: 1.5rem;
+  background: #1c1c20;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.modalTitle {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fafafa;
+}
+
+.modalText {
+  margin: 0 0 0.85rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #a1a1aa;
+}
+
+.modalNote {
+  margin: 0 0 1.25rem;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: #d4d4d8;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 2px solid rgba(255, 255, 255, 0.18);
+  border-radius: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

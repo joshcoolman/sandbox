@@ -42,6 +42,7 @@ Word you'd say -> where it lives -> the skill for it. Rows are durable surfaces 
 | Blog         | `app/(blog)/blog/`      | --                                                                    | `/blog-post` |
 | Link Worthy  | `app/(blog)/recommended/` | `loadRecommended.ts`                                                | `/link`, `/replace` |
 | Sticky notes | `app/(blog)/notes/`     | --                                                                    | `/note` |
+| X broadcast  | `app/x/`                | `lib/x/` (derived queue + state) - `x-state.json` (committed ledger) - local-only, Web Intent posting | -- |
 | Experiments  | `app/design-experiments/` | `(experiments)/` (real, in `data.ts`) - `page.tsx` (gallery)        | `/design-experiment`, `/ship-experiment` |
 | Sketches     | `app/sketches/`         | `page.tsx` (index, folder-scanned) -- top-level scratch, unlinked from the site, safe to delete | `/sketch` |
 | Plans        | `app/(plans)/`          | --                                                                    | -- |
