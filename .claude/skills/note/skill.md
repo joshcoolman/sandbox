@@ -14,6 +14,7 @@ Quick-fire a sticky note from the command line.
 1. Takes everything after `/note` as the note content
 2. Creates a new markdown file in `app/(blog)/notes/` with today's date and a slug derived from the first few words
 3. Picks a color: cycles through `warm`, `cool`, `neutral` based on how many notes already exist (so they vary automatically)
+4. Immediately commits the new file and pushes to main
 
 ## File Format
 
@@ -35,4 +36,5 @@ Use a full ISO timestamp (date + time, no timezone) so notes sort by creation or
 
 - No editing the content -- write it exactly as the user said it
 - No confirmation needed -- just create and report back
+- Immediately commit and push to main (no build needed -- notes are plain content): `git add <file> && git commit -m "Add note: <slug>" && git push origin main`
 - Keep it fast -- this is for capturing thoughts in the moment
