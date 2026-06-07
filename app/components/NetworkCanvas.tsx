@@ -177,8 +177,7 @@ export default function NetworkCanvas({ className }: NetworkCanvasProps) {
       const screenCenterX = width / 2
       const screenCenterY = height / 2
 
-      ctx.fillStyle = "black"
-      ctx.fillRect(0, 0, width, height)
+      ctx.clearRect(0, 0, width, height)
 
       // --- Update organisms and draw intra-organism edges ---
       ctx.strokeStyle = "#8FD0FFFF"

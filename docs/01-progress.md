@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Homepage — Plans column replaced with Link Worthy
+
+**Date:** 2026-06-07
+
+The three-column section above the homepage footer now reads Blog, Docs, Link Worthy (the Plans column was pulled — it had become noise). Link Worthy mirrors the Blog column: the four most recent links with thumbnails, each opening its external URL. Every column gained a bottom-aligned "view all" link (View all blog posts / View documentation / View all links), and the columns are pinned even via `margin-top: auto` on the footer link. The Plans feature was unwired — `app/(plans)/` and `lib/plans/` deleted, removed from the sitemap and SEO files — but the `plans/*.md` source files were kept on disk.
+
+---
+
 ### X Broadcast — post notes to X, local-only, via Web Intent
 
 **Date:** 2026-06-02

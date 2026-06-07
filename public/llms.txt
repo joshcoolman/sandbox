@@ -61,13 +61,6 @@ Curated AI video digest, generated on demand via the `/ai-news` skill and mainta
 
 - [AI News](https://www.joshcoolman.com/news): Curated AI/ML video feed
 
-## Plans
-
-Design and architecture plans worked out in conversation with Claude, rendered for review. Coding in public — the thinking behind the work, not just the result.
-
-- [Plans Index](https://www.joshcoolman.com/plans): All plans, with status (exploratory, in-progress, implemented, archived)
-- [Sandbox Skills — Top 3 Moves From Reviewing Matt Pocock's Skills Repo](https://www.joshcoolman.com/plans/skills-it-is-a-dynamic-robin): Comparing sandbox's Claude skills against Matt Pocock's repo, with a strict filter on what's worth porting or refactoring
-
 ## Recommended
 
 - [Recommended Links](https://www.joshcoolman.com/recommended): Curated links to YouTube videos, GitHub repos, and web tools with auto-fetched thumbnails

@@ -12,6 +12,13 @@
   width: 100%;
   height: 100%;
   z-index: 0;
+  /* Dark veil baked over the photo so the animation + content stay legible.
+     The gradient sits in the same layer as the image, beneath the canvas. */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+    url("/home-page-background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .networkCanvas {
@@ -173,10 +180,10 @@
   transform: translateX(2px);
 }
 
-/* Secondary section — Blog + Docs + Plans three columns */
+/* Secondary section — Blog + Docs + Link Worthy three columns */
 .secondarySection {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.5rem;
   width: 100%;
   max-width: var(--content-max);
@@ -272,6 +279,36 @@
   font-style: italic;
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.2;
+}
+
+/* "View all" link pinned to the bottom of each column so footers stay aligned */
+.columnViewAll {
+  margin-top: auto;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding-top: 0.6rem;
+  font-family: var(--font-lora), 'Lora', serif;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.columnViewAll svg {
+  opacity: 0.6;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.columnViewAll:hover {
+  color: #F2EFEB;
+}
+
+.columnViewAll:hover svg {
+  opacity: 1;
+  transform: translateX(2px);
 }
 
 

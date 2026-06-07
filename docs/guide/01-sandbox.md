@@ -16,8 +16,6 @@ This is a design playground that doubles as a portfolio. It's built with Next.js
 
 **Link Worthy** is a curated link collection with auto-fetched thumbnails and source badges. Drop a URL and a comment in a markdown file, and the build system handles the rest -- pulling titles from Open Graph, downloading thumbnails, detecting whether it's a YouTube video, GitHub repo, or web page.
 
-**Plans** are design and architecture conversations with Claude rendered as HTML at `/plans` -- the comparisons, rationale, tradeoffs, and decisions behind the work, not just the resulting code. Each plan carries a status (exploratory, in-progress, implemented, archived) and gets custom rendering conventions: numbered "Move N" cards, eyebrow labels for inline subsection headers, and colored callouts for notes, decisions, caveats, and TL;DRs. Part of the "coding in public" ethos -- the thinking is the artifact.
-
 ## How It's Made
 
 The site is built with Claude Code using a set of slash commands that map to each section. The workflow is conversational: describe what you want, iterate on the result, then use a command to formalize and ship it.

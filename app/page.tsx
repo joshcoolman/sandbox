@@ -1,31 +1,25 @@
 import Image from "next/image";
 import NetworkCanvas from "./components/NetworkCanvas";
-import HeroVideo from "./components/HeroVideo";
 import CurtainLink from "./components/CurtainLink";
 import SiteFooter from "./components/SiteFooter";
 import HomeExperimentCard from "./components/HomeExperimentCard";
 import HomeExperimentPlaceholderCard from "./components/HomeExperimentPlaceholderCard";
 import HomeScrollRestore from "./components/HomeScrollRestore";
+import ProfileCard from "./components/ProfileCard";
+import LocalOnlyCard from "./components/LocalOnlyCard";
 import { getAllPosts } from "@/lib/blog/loadBlog";
 import { getRecentDocs } from "@/lib/docs/loadDocs";
-import { getAllPlans, type PlanStatus } from "@/lib/plans/loadPlans";
+import { getAllRecommendations } from "@/app/(blog)/recommended/loadRecommended";
 import { experiments } from "@/lib/experiments/data";
 import { getRequiredEnv, isRunnable } from "@/lib/experiments/runnable";
 
 import styles from "./page.module.css";
 
-export default function Home() {
+export default async function Home() {
   const recentExperiments = experiments.slice(0, 9);
   const posts = getAllPosts().slice(0, 4);
   const recentDocs = getRecentDocs(4);
-  const recentPlans = getAllPlans().slice(0, 4);
-
-  const statusLabel: Record<PlanStatus, string> = {
-    exploratory: "Exploratory",
-    "in-progress": "In progress",
-    implemented: "Implemented",
-    archived: "Archived",
-  };
+  const links = (await getAllRecommendations()).slice(0, 4);
 
   return (
     <main className={styles.mainContainer}>
@@ -36,8 +30,7 @@ export default function Home() {
 
       <div className={styles.contentOverlay}>
         <div className={styles.contentWrapper}>
-          <HeroVideo />
-          <div className={styles.greetingText}>Greetings Starfighter!</div>
+          <ProfileCard />
 
           <section className={styles.recentWorkSection}>
             <h2 className={styles.recentWorkHeader}>Recent Work</h2>
@@ -129,6 +122,12 @@ export default function Home() {
                   </CurtainLink>
                 ))}
               </div>
+              <CurtainLink href="/blog" className={styles.columnViewAll} curtainTransition={true}>
+                View all blog posts
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+                  <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </CurtainLink>
             </div>
 
             {/* Docs */}
@@ -159,28 +158,65 @@ export default function Home() {
                   </CurtainLink>
                 ))}
               </div>
+              <CurtainLink href="/docs" className={styles.columnViewAll} curtainTransition={true}>
+                View documentation
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+                  <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </CurtainLink>
             </div>
 
-            {/* Plans */}
+            {/* Link Worthy */}
             <div className={styles.column}>
-              <CurtainLink href="/plans" className={styles.columnTitle} curtainTransition={true}>
-                Plans
+              <CurtainLink href="/recommended" className={styles.columnTitle} curtainTransition={true}>
+                Links
                 <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
                   <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </CurtainLink>
               <div className={styles.columnItems}>
-                {recentPlans.map((plan) => (
-                  <CurtainLink key={plan.slug} href={`/plans/${plan.slug}`} className={styles.columnItem} curtainTransition={true}>
+                {links.map((link) => (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.columnItem}
+                  >
+                    {link.thumbnail && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={link.thumbnail}
+                        alt=""
+                        aria-hidden="true"
+                        className={styles.itemThumb}
+                      />
+                    )}
                     <div className={styles.itemText}>
-                      <span className={styles.itemTitle}>{plan.title}</span>
-                      <span className={styles.itemDate}>{statusLabel[plan.status]}</span>
+                      <span className={styles.itemTitle}>{link.title}</span>
+                      {link.date ? (
+                        <span className={styles.itemDate}>
+                          {new Date(link.date).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </span>
+                      ) : null}
                     </div>
-                  </CurtainLink>
+                  </a>
                 ))}
               </div>
+              <CurtainLink href="/recommended" className={styles.columnViewAll} curtainTransition={true}>
+                View all links
+                <svg width="12" height="12" viewBox="0 0 20 20" fill="none">
+                  <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </CurtainLink>
             </div>
           </div>
+
+          <LocalOnlyCard />
 
           <SiteFooter className={styles.homeFooter} />
         </div>
