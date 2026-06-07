@@ -1,0 +1,4 @@
+# Everything in _drafts is local-only and never committed/published.
+# Work-in-progress posts live here until they're moved to the blog root.
+*
+!.gitignore
