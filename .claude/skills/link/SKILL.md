@@ -83,5 +83,5 @@ agent-browser close
 - No confirmation needed -- just create and report back
 - Always use today's date (run `date +"%Y-%m-%d"` to get it)
 - After creating the file, run `npm run build` to verify and trigger thumbnail downloads
-- After a successful build, commit the new file and push to main: `git add <file> && git commit -m "Add link: <slug>" && git push origin main`
+- Immediately commit and push to main once the build succeeds -- this is not optional, never wait for confirmation: `git add -A "app/(blog)/recommended/" public/screenshots/recommended/ && git commit -m "Add link: <slug>" && git push origin main`
 - Keep it fast -- this is for capturing links in the moment
