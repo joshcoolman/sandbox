@@ -5,12 +5,12 @@
   text-decoration: none;
   color: inherit;
   background: rgba(30, 28, 26, 0.92);
-  border: 1px solid rgba(143, 247, 249, 0.1);
-  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
+  border-radius: var(--radius-md);
   overflow: hidden;
   opacity: 0;
   transform: translateY(24px);
-  animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: cardFadeIn 0.6s var(--ease) forwards;
   transition:
     transform 0.25s ease,
     border-color 0.25s ease;
@@ -18,7 +18,7 @@
 
 .card:hover {
   transform: translateY(-2px);
-  border-color: rgba(143, 247, 249, 0.25);
+  border-color: color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 .card[data-delay='1'] { animation-delay: 0.05s; }
@@ -57,7 +57,7 @@
 }
 
 .meta {
-  font-family: var(--font-space-mono), 'Courier New', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.12em;
@@ -67,7 +67,7 @@
 }
 
 .title {
-  font-family: var(--font-bitter), 'Bitter', serif;
+  font-family: var(--font-display);
   font-size: 18px;
   font-weight: 700;
   line-height: 1.2;
@@ -81,7 +81,7 @@
 }
 
 .subtitle {
-  font-family: var(--font-lora), 'Lora', serif;
+  font-family: var(--font-serif);
   font-size: 13px;
   font-weight: 400;
   font-style: italic;
@@ -127,7 +127,7 @@
 
 .cardPlaceholder:hover {
   transform: none;
-  border-color: rgba(143, 247, 249, 0.1);
+  border-color: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 .placeholderThumb {
@@ -141,14 +141,14 @@
     transparent 8px,
     transparent 16px
   );
-  border-bottom: 1px dashed rgba(143, 247, 249, 0.2);
+  border-bottom: 1px dashed color-mix(in srgb, var(--accent) 20%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .placeholderThumbLabel {
-  font-family: var(--font-space-mono), 'Courier New', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.18em;
@@ -169,7 +169,7 @@
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.10);
-  font-family: var(--font-space-mono), 'Courier New', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.7);
@@ -178,7 +178,7 @@
 
 .placeholderHint {
   margin: 10px 0 0;
-  font-family: var(--font-lora), 'Lora', serif;
+  font-family: var(--font-serif);
   font-size: 11px;
   font-style: italic;
   color: rgba(255, 255, 255, 0.5);

@@ -45,7 +45,7 @@ export default function ShareButton({ title, text }: { title: string; text?: str
         alignItems: 'center',
         gap: 6,
         cursor: 'pointer',
-        color: copied ? '#8FF7F9' : '#666',
+        color: copied ? 'var(--accent)' : 'var(--text-faint)',
         fontSize: 13,
         lineHeight: 1,
         position: 'relative',
@@ -53,10 +53,10 @@ export default function ShareButton({ title, text }: { title: string; text?: str
         transition: 'color 0.15s ease',
       }}
       onMouseEnter={(e) => {
-        if (!copied) e.currentTarget.style.color = '#aaa'
+        if (!copied) e.currentTarget.style.color = 'var(--text-muted)'
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.color = copied ? '#8FF7F9' : '#666'
+        e.currentTarget.style.color = copied ? 'var(--accent)' : 'var(--text-faint)'
       }}
     >
       {copied ? (

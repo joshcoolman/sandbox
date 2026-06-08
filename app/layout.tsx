@@ -7,6 +7,7 @@ const karla = Karla({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600'],
   display: 'swap',
+  variable: '--font-karla',
 })
 
 const bitter = Bitter({
@@ -75,8 +76,21 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${bitter.variable} ${lora.variable} ${spaceMono.variable}`}>
-      <body className={karla.className}>
+    <html
+      lang="en"
+      data-theme="dark"
+      suppressHydrationWarning
+      className={`${karla.variable} ${bitter.variable} ${lora.variable} ${spaceMono.variable}`}
+    >
+      <head>
+        {/* Apply saved theme before paint to avoid a flash of the wrong theme. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('site-theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t)}}catch(e){}`,
+          }}
+        />
+      </head>
+      <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

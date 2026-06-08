@@ -7,22 +7,27 @@
  */
 
 .root {
-  --bg: #0f1115;
-  --panel: #161922;
-  --panel-2: #1c2030;
-  --border: #2a2f40;
-  --text: #e6e8ef;
-  --muted: #9aa3b2;
-  --accent: #8ab4ff;
+  /* Local tokens remapped onto the global theme contract (app/globals.css).
+   * Left side = local token consumed throughout this file; right side resolves
+   * to the GLOBAL token inherited from :root, so /about now follows the site
+   * theme (dark default + light under [data-theme='light']). Status colors
+   * (good/warn/bad) stay literal — they carry semantic meaning, not theme. */
+  --bg: var(--bg);
+  --panel: var(--surface);
+  --panel-2: var(--surface-raised);
+  --border: var(--border);
+  --text: var(--text);
+  --muted: var(--text-muted);
+  --accent: var(--accent);
   --accent-2: #b08aff;
   --good: #6dd58c;
   --warn: #f0b85a;
   --bad: #f08a8a;
-  --code-bg: #0b0d13;
+  --code-bg: var(--surface-sunken);
 
   background: var(--bg);
   color: var(--text);
-  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Helvetica, Arial, sans-serif;
+  font: 16px/1.6 var(--font-body);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
@@ -143,7 +148,7 @@
 
 .root code,
 .root kbd {
-  font: 13px/1.5 "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font: 13px/1.5 var(--font-mono);
   background: var(--code-bg);
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -157,7 +162,7 @@
   border-radius: 8px;
   padding: 14px 16px;
   overflow-x: auto;
-  font: 13px/1.5 "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font: 13px/1.5 var(--font-mono);
   color: #d7e2ff;
   margin: 12px 0 18px;
 }
@@ -273,7 +278,7 @@
 }
 
 .root .filepath {
-  font: 12px/1.4 "JetBrains Mono", ui-monospace, monospace;
+  font: 12px/1.4 var(--font-mono);
   color: var(--accent);
   background: var(--code-bg);
   padding: 1px 6px;

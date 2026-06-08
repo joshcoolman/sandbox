@@ -128,7 +128,7 @@
   font-family: var(--font-space-mono), monospace;
   font-size: 12px;
   font-weight: 400;
-  color: #8FF7F9;
+  color: var(--accent);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   margin-bottom: 10px;
@@ -151,7 +151,7 @@
 }
 
 .experimentTitle a:hover {
-  border-bottom-color: #8FF7F9;
+  border-bottom-color: var(--accent);
 }
 
 .experimentDescription {

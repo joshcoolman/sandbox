@@ -4,37 +4,24 @@ import { useState, useEffect } from 'react'
 import { Sun, Moon } from 'lucide-react'
 import styles from '../blog.module.css'
 
-const STORAGE_KEY = 'blog-theme'
+const STORAGE_KEY = 'site-theme'
 
+// Global light/dark toggle. Sets data-theme on <html> so every base-site surface
+// (home, blog, docs, news) responds; persists across navigation via localStorage.
+// The no-FOUC inline script in app/layout.tsx applies the saved value before paint.
 export default function ThemeToggle() {
   const [isLight, setIsLight] = useState(false)
 
   useEffect(() => {
-    const layout = document.querySelector(`.${styles.blogLayout}`)
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved === 'light') {
-      setIsLight(true)
-      layout?.setAttribute('data-theme', 'light')
-    }
-    return () => {
-      layout?.removeAttribute('data-theme')
-    }
+    setIsLight(document.documentElement.getAttribute('data-theme') === 'light')
   }, [])
 
-  function toggle(e: React.MouseEvent<HTMLButtonElement>) {
-    const layout = (e.currentTarget as HTMLElement).closest(
-      `.${styles.blogLayout}`
-    ) as HTMLElement | null
-    if (!layout) return
+  function toggle() {
     const next = !isLight
     setIsLight(next)
-    if (next) {
-      layout.setAttribute('data-theme', 'light')
-      localStorage.setItem(STORAGE_KEY, 'light')
-    } else {
-      layout.removeAttribute('data-theme')
-      localStorage.removeItem(STORAGE_KEY)
-    }
+    const theme = next ? 'light' : 'dark'
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem(STORAGE_KEY, theme)
   }
 
   return (

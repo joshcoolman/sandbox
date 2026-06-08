@@ -60,7 +60,7 @@
 }
 
 .iconLink:hover {
-  color: #8FF7F9;
+  color: var(--accent);
 }
 
 .skull {
@@ -76,8 +76,4 @@
 
 :global([data-theme="light"]) .skull {
   color: var(--light-meta);
-}
-
-:global([data-theme="light"]) .iconLink:hover {
-  color: #0a6e70;
 }

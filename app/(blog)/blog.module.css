@@ -3,15 +3,16 @@
    ─────────────────────────────────────────── */
 
 .blogLayout {
-  --serif: var(--font-lora), 'Georgia', serif;
-  --sans: var(--font-dm-sans), 'Helvetica Neue', sans-serif;
-  --ink: var(--site-text);
-  --body: #d5d0c8;
-  --mid: #a09888;
-  --light: #706860;
-  --rule: #383430;
-  --paper: var(--site-bg);
-  --accent: #8FF7F9;
+  /* Local names mapped onto the global theme contract (globals.css). These now
+     follow data-theme on <html>, so the blog themes with the rest of the site. */
+  --serif: var(--font-serif);
+  --sans: var(--font-sans);
+  --ink: var(--text);
+  --body: var(--text-body);
+  --mid: var(--text-muted);
+  --light: var(--text-faint);
+  --rule: var(--border);
+  --paper: var(--bg);
   --col-max: 680px;
 
   background: var(--paper);
@@ -42,40 +43,30 @@
   display: inline-flex;
   align-items: center;
   cursor: pointer;
-  color: #666;
-  font-size: 13px;
+  color: var(--text-faint);
+  font-size: var(--text-sm);
   line-height: 1;
   position: relative;
   top: 8px;
-  transition: color 0.15s ease;
+  transition: color var(--dur-fast) ease;
 }
 
 .themeToggle:hover {
-  color: #aaa;
-}
-
-.blogLayout[data-theme="light"] {
-  --paper: var(--light-bg);
-  --body: var(--light-text);
-  --ink: var(--light-text);
-  --mid: #333;
-  --light: #555;
-  --rule: #bbb;
-  -webkit-text-stroke: 0.25px currentColor;
+  color: var(--text-muted);
 }
 
 .indexBackLink {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 13px;
-  color: #666;
+  font-size: var(--text-sm);
+  color: var(--text-faint);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: color var(--dur-fast) ease;
 }
 
 .indexBackLink:hover {
-  color: #aaa;
+  color: var(--text-muted);
 }
 
 .headerRow {
@@ -110,7 +101,7 @@
 
 .indexRule {
   height: 1px;
-  background: #3f3f3f;
+  background: var(--border);
   margin: 0 0 40px;
 }
 
@@ -127,14 +118,14 @@
   height: 100%;
   text-decoration: none;
   color: inherit;
-  background: var(--card-bg, #1e1c1a);
-  border-radius: 8px;
+  background: var(--card-bg, var(--surface));
+  border-radius: var(--radius-md);
   overflow: hidden;
   opacity: 0;
   transform: translateY(24px);
   transition:
-    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity var(--dur-slow) var(--ease),
+    transform var(--dur-slow) var(--ease);
 }
 
 .cardVisible {
@@ -158,7 +149,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: #1e1c1a;
+  background: var(--surface);
   overflow: hidden;
 }
 
@@ -279,8 +270,8 @@
   margin-left: auto;
   width: 30px;
   height: 30px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  background: var(--border-faint);
   color: var(--mid);
 }
 
@@ -601,7 +592,7 @@
 .prose a {
   color: var(--accent);
   text-decoration: none;
-  border-bottom: 1px solid rgba(0, 255, 143, 0.3);
+  border-bottom: 1px solid var(--accent-soft);
   transition: border-color 0.2s;
 }
 
@@ -637,7 +628,7 @@
 
 .prose code {
   font-size: 14px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--border-faint);
   padding: 2px 6px;
   border-radius: 3px;
 }

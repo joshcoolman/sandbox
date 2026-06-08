@@ -1,13 +1,107 @@
+/* ───────────────────────────────────────────
+   Theme contract — single source of truth.
+
+   This is the control surface the /restyle skill drives. Dark values match the
+   site's original hand-tuned look (dark stays pixel-identical); the light block
+   under :root[data-theme='light'] is the global light palette. Surfaces consume
+   the semantic tokens below, so a change here cascades site-wide. Experiments and
+   sketches scope their own tokens and intentionally do NOT read these.
+   ─────────────────────────────────────────── */
+
 :root {
-  --site-bg: #0d0d0d;
-  --site-text: #f0ede8;
+  /* Color — dark (default) */
+  --bg: #0d0d0d;            /* page background */
+  --surface: #1e1c1a;       /* cards / panels */
+  --surface-raised: rgba(30, 28, 26, 0.92); /* floating cards over imagery */
+  --surface-sunken: rgba(0, 0, 0, 0.45);    /* recessed wells */
+  --text: #f0ede8;          /* primary text / headings */
+  --text-body: #d5d0c8;     /* long-form body copy */
+  --text-muted: #a09888;    /* secondary / meta */
+  --text-faint: #706860;    /* tertiary / disabled */
+  --border: #383430;        /* content rules / dividers */
+  --border-soft: rgba(255, 255, 255, 0.12); /* soft dividers on dark */
+  --border-faint: rgba(255, 255, 255, 0.08);
+  --accent: #8FF7F9;        /* THE accent — single source (was 3 cyans) */
+  --accent-contrast: #0d0d0d; /* text/ink on an accent fill */
+  --accent-soft: rgba(143, 247, 249, 0.15); /* accent borders / tints */
+
+  /* Font roles — alias the next/font variables loaded in layout.tsx */
+  --font-display: var(--font-bitter), 'Bitter', serif;
+  --font-serif: var(--font-lora), 'Lora', 'Georgia', serif;
+  --font-body: var(--font-karla), 'Karla', system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), 'Helvetica Neue', sans-serif;
+  --font-mono: var(--font-space-mono), 'Courier New', monospace;
+
+  /* Spacing scale (density knob) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+
+  /* Radius scale (roundness knob) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+
+  /* Border weight (thickness knob) */
+  --border-width: 1px;
+  --border-width-strong: 2px;
+
+  /* Type scale */
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 22px;
+  --text-xl: 28px;
+  --text-title: clamp(36px, 6vw, 56px);
+  --text-subtitle: clamp(16px, 2vw, 22px);
+
+  /* Shadow */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 0.15s;
+  --dur-base: 0.2s;
+  --dur-slow: 0.6s;
+
+  /* Layout */
   --content-max: 900px;
 
-  /* Light mode tokens */
+  /* Legacy aliases — keep old references working during/after migration */
+  --site-bg: var(--bg);
+  --site-text: var(--text);
   --light-bg: #d8d4ca;
   --light-text: #2a2a28;
   --light-rule: rgba(0, 0, 0, 0.15);
   --light-meta: rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme='light'] {
+  --bg: #d8d4ca;
+  --surface: #e7e3d9;
+  --surface-raised: rgba(255, 255, 255, 0.72);
+  --surface-sunken: rgba(0, 0, 0, 0.04);
+  --text: #2a2a28;
+  --text-body: #2a2a28;
+  --text-muted: #555555;
+  --text-faint: #777777;
+  --border: #bbbbbb;
+  --border-soft: rgba(0, 0, 0, 0.15);
+  --border-faint: rgba(0, 0, 0, 0.08);
+  --accent: #0a6e70;
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(10, 110, 112, 0.15);
 }
 
 html {
@@ -21,10 +115,11 @@ html {
 }
 
 body {
-  background: var(--site-bg);
-  color: var(--site-text);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
   line-height: 1.6;
-  animation: quickFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: quickFadeIn var(--dur-base) var(--ease);
 }
 
 @keyframes quickFadeIn {

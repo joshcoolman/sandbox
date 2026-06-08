@@ -1,28 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Bitter:wght@400;700;800&family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@400;500;700&display=swap');
 
 :root {
-  --news-s-1: 4px;
-  --news-s-2: 8px;
-  --news-s-3: 12px;
-  --news-s-4: 16px;
-  --news-s-5: 24px;
-  --news-s-6: 32px;
-  --news-s-7: 48px;
-  --news-s-8: 64px;
-  --news-s-9: 80px;
+  /* Alias the local news spacing scale to the global contract scale.
+     Values are identical; this sources every var(--news-s-N) reference
+     from the unified --space-N tokens without touching usages. */
+  --news-s-1: var(--space-1);
+  --news-s-2: var(--space-2);
+  --news-s-3: var(--space-3);
+  --news-s-4: var(--space-4);
+  --news-s-5: var(--space-5);
+  --news-s-6: var(--space-6);
+  --news-s-7: var(--space-7);
+  --news-s-8: var(--space-8);
+  --news-s-9: var(--space-9);
 }
 
 /* Layout */
 .layout {
   display: flex;
   min-height: 100vh;
-  background: #000;
+  background: var(--bg);
 }
 
 .main {
   flex: 1;
   min-width: 0;
-  color: #aaa;
+  color: var(--text-muted);
 }
 
 .page {
@@ -39,8 +42,8 @@
 .sidebar {
   width: 260px;
   flex-shrink: 0;
-  border-right: 1px solid #1e1e1e;
-  background: #0a0a0a;
+  border-right: var(--border-width) solid var(--border);
+  background: var(--surface);
   padding: var(--news-s-5) 0;
   position: fixed;
   top: 0;
@@ -59,18 +62,18 @@
   align-items: center;
   gap: var(--news-s-1);
   font-size: 12px;
-  color: #666;
+  color: var(--text-faint);
   text-decoration: none;
   transition: color 0.1s ease;
 }
 
 .sidebarBackLink:hover {
-  color: #aaa;
+  color: var(--text-muted);
 }
 
 .sidebarHeader {
   padding: 0 var(--news-s-5) var(--news-s-4);
-  border-bottom: 1px solid #1e1e1e;
+  border-bottom: var(--border-width) solid var(--border);
   margin-bottom: var(--news-s-3);
 }
 
@@ -78,13 +81,13 @@
   font-family: 'Bitter', serif;
   font-size: 14px;
   font-weight: 700;
-  color: #e5e5e5;
+  color: var(--text);
   text-decoration: none;
   letter-spacing: -0.01em;
 }
 
 .sidebarTitle:hover {
-  color: #999;
+  color: var(--text-muted);
 }
 
 .sidebarItems {
@@ -107,25 +110,25 @@
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #888;
-  background: #1a1a1a;
-  border: 1px solid #2e2e2e;
-  border-radius: 6px;
+  color: var(--text-muted);
+  background: var(--surface-raised);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
 }
 
 .editToggle:hover {
-  color: #e5e5e5;
-  background: #222;
-  border-color: #3a3a3a;
+  color: var(--text);
+  background: var(--surface-raised);
+  border-color: var(--border-soft);
 }
 
 .editToggleActive,
 .editToggleActive:hover {
-  color: #6ba3f7;
-  background: #10203a;
-  border-color: #2f4d7a;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }
 
 .sidebarLink {
@@ -134,22 +137,22 @@
   gap: 4px;
   padding: var(--news-s-3) var(--news-s-5);
   font-size: 13px;
-  color: #888;
+  color: var(--text-muted);
   text-decoration: none;
-  border-left: 2px solid transparent;
+  border-left: var(--border-width-strong) solid transparent;
   transition: color 0.1s ease, background 0.1s ease, border-color 0.1s ease;
   line-height: 1.4;
 }
 
 .sidebarLink:hover {
-  color: #e5e5e5;
-  background: #131313;
+  color: var(--text);
+  background: var(--surface-raised);
 }
 
 .sidebarLinkActive {
-  color: #fff;
-  background: #131313;
-  border-left-color: #6ba3f7;
+  color: var(--text);
+  background: var(--surface-raised);
+  border-left-color: var(--accent);
 }
 
 .sidebarLinkDate {
@@ -161,12 +164,12 @@
 .sidebarLinkCount {
   font-family: 'Space Mono', monospace;
   font-size: 11px;
-  color: #555;
+  color: var(--text-faint);
   letter-spacing: 0.04em;
 }
 
 .sidebarLinkActive .sidebarLinkCount {
-  color: #888;
+  color: var(--text-muted);
 }
 
 /* Mobile sidebar toggle */
@@ -178,19 +181,19 @@
   z-index: 20;
   width: 36px;
   height: 36px;
-  border-radius: 8px;
-  border: 1px solid #333;
-  background: rgba(10, 10, 10, 0.9);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--border-soft);
+  background: var(--surface);
   backdrop-filter: blur(8px);
   cursor: pointer;
   align-items: center;
   justify-content: center;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .mobileToggle:hover {
-  background: #1a1a1a;
-  color: #e5e5e5;
+  background: var(--surface-raised);
+  color: var(--text);
 }
 
 .sidebarOverlay {
@@ -212,7 +215,7 @@
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #777;
+  color: var(--text-muted);
   display: inline-block;
 }
 
@@ -220,7 +223,7 @@
   font-family: 'Bitter', serif;
   font-size: 28px;
   font-weight: 700;
-  color: #f0f0f0;
+  color: var(--text);
   letter-spacing: -0.02em;
   margin: var(--news-s-2) 0 0;
   line-height: 1.2;
@@ -233,7 +236,7 @@
   margin-top: var(--news-s-3);
   font-family: 'Space Mono', monospace;
   font-size: 11px;
-  color: #555;
+  color: var(--text-faint);
   letter-spacing: 0.04em;
 }
 
@@ -248,7 +251,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #888;
+  color: var(--text-muted);
   margin-top: var(--news-s-8);
   margin-bottom: var(--news-s-5);
   padding-top: var(--news-s-5);
@@ -258,7 +261,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #1a1a1a;
+  background: var(--border);
 }
 
 .prose h2:first-child {
@@ -269,13 +272,13 @@
 
 .prose p {
   margin-bottom: var(--news-s-3);
-  color: #aaa;
+  color: var(--text-body);
   line-height: 1.7;
   font-size: 15px;
 }
 
 .prose a {
-  color: #6ba3f7;
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -285,7 +288,7 @@
 
 .prose strong {
   font-weight: 600;
-  color: #e5e5e5;
+  color: var(--text);
 }
 
 .prose ul,
@@ -297,23 +300,23 @@
 
 .prose li {
   margin-bottom: 6px;
-  color: #aaa;
+  color: var(--text-body);
   font-size: 15px;
   line-height: 1.6;
 }
 
 .prose code {
-  font-family: 'SF Mono', 'Fira Code', Menlo, monospace;
+  font-family: var(--font-mono), 'SF Mono', 'Fira Code', Menlo, monospace;
   font-size: 13px;
-  background: #161616;
+  background: var(--surface-sunken);
   padding: 2px 6px;
-  border-radius: 4px;
-  color: #ddd;
+  border-radius: var(--radius-sm);
+  color: var(--text);
 }
 
 .prose pre {
   margin: var(--news-s-4) 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow-x: auto;
 }
 
@@ -351,7 +354,7 @@
   font-family: 'Space Mono', monospace;
   font-size: 11px;
   line-height: 1.7;
-  color: #6ba3f7;
+  color: var(--accent);
   text-decoration: none;
   word-break: break-all;
 }
@@ -365,15 +368,15 @@
   width: 160px;
   max-width: 100%;
   aspect-ratio: 16 / 9;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   margin: 0;
   object-fit: cover;
-  background: #111;
+  background: var(--surface-sunken);
 }
 
 .prose hr {
   border: none;
-  border-top: 1px solid #1a1a1a;
+  border-top: var(--border-width) solid var(--border);
   margin: var(--news-s-7) 0;
 }
 
@@ -394,9 +397,9 @@
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid #2a2a2a;
-  border-radius: 6px;
-  background: #141414;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
   color: #d06a6a;
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
@@ -420,10 +423,10 @@
   width: 28px;
   height: 28px;
   padding: 0;
-  border: 1px solid #2a2a2a;
-  border-radius: 6px;
-  background: #141414;
-  color: #9a9a9a;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: var(--text-muted);
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
@@ -462,10 +465,10 @@
   width: 16px;
   height: 16px;
   padding: 0;
-  border: 1px solid var(--border, #2a2a2a);
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.45);
-  color: #c9c9c9;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--text-body);
   cursor: pointer;
   align-items: center;
   justify-content: center;
@@ -484,17 +487,17 @@
 /* a resource link struck out for targeted removal */
 .editing a[data-link-removed='true'] {
   text-decoration: line-through;
-  color: #6b6b6b;
+  color: var(--text-faint);
   opacity: 0.6;
 }
 
 /* Marked-for-deletion: grayed out with a "Deleted" overlay, undeletable */
 .prose p[data-deleted='true'] {
-  color: #4a4a4a;
+  color: var(--text-faint);
 }
 
 .prose p[data-deleted='true'] strong {
-  color: #4a4a4a;
+  color: var(--text-faint);
 }
 
 .prose p[data-deleted='true'] > a:has(img) {
@@ -515,7 +518,7 @@
   text-transform: uppercase;
   color: #ff6b6b;
   background: rgba(0, 0, 0, 0.45);
-  border-radius: 6px;
+  border-radius: var(--radius-md);
 }
 
 .prose p[data-deleted='true'] .trashBtn {
@@ -534,10 +537,10 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  border: 1px solid #2a2a2a;
-  border-radius: 999px;
-  background: #141414;
-  color: #e5e5e5;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-raised);
+  color: var(--text);
   font-family: 'Space Mono', monospace;
   font-size: 12px;
   letter-spacing: 0.04em;
@@ -555,15 +558,15 @@
 .toastDot {
   width: 7px;
   height: 7px;
-  border-radius: 50%;
-  background: #6ba3f7;
+  border-radius: var(--radius-circle);
+  background: var(--accent);
 }
 
 .prose blockquote {
-  border-left: 3px solid #2a2a2a;
+  border-left: 3px solid var(--border);
   padding-left: var(--news-s-4);
   margin: var(--news-s-4) 0;
-  color: #888;
+  color: var(--text-muted);
 }
 
 /* Responsive */
