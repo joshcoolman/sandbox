@@ -1,28 +1,22 @@
 import type { Metadata } from 'next'
-import { Karla, Bitter, Lora, Space_Mono } from 'next/font/google'
+import { Hanken_Grotesk, Fraunces, Space_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const karla = Karla({
+// Paper & Ink — Swiss grotesque for display/UI, high-contrast serif for prose.
+const hanken = Hanken_Grotesk({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
-  variable: '--font-karla',
+  variable: '--font-hanken',
 })
 
-const bitter = Bitter({
+const fraunces = Fraunces({
   subsets: ['latin'],
-  weight: ['700', '800'],
-  display: 'swap',
-  variable: '--font-bitter',
-})
-
-const lora = Lora({
-  subsets: ['latin'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],
   display: 'swap',
-  variable: '--font-lora',
+  variable: '--font-fraunces',
 })
 
 const spaceMono = Space_Mono({
@@ -78,9 +72,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="dark"
+      data-theme="light"
       suppressHydrationWarning
-      className={`${karla.variable} ${bitter.variable} ${lora.variable} ${spaceMono.variable}`}
+      className={`${hanken.variable} ${fraunces.variable} ${spaceMono.variable}`}
     >
       <head>
         {/* Apply saved theme before paint to avoid a flash of the wrong theme. */}

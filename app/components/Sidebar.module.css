@@ -11,26 +11,25 @@
   width: 40px;
   height: 40px;
   padding: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: var(--surface);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   z-index: 1100;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .hamburger:hover {
-  background: rgba(0, 0, 0, 1);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: var(--surface-raised);
+  border-color: var(--text-faint);
 }
 
 .hamburgerLine {
   width: 16px;
   height: 1.5px;
-  background: #ffffff;
+  background: var(--text);
   border-radius: 1px;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: center;
@@ -73,9 +72,10 @@
   width: 320px;
   max-width: 85vw;
   height: 100dvh;
-  background: rgba(10, 10, 10, 0.95);
+  background: var(--surface-raised);
   backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: var(--border-width) solid var(--border);
+  box-shadow: var(--shadow-lg);
   transform: translateX(100%);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 1075;
@@ -100,23 +100,23 @@
 .navLink {
   display: block;
   padding: 14px 20px;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-muted);
   text-decoration: none;
   font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.01em;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .navLink:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  background: var(--surface-sunken);
 }
 
 .navLinkActive {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  background: var(--accent-soft);
 }
 
 @media (max-width: 768px) {

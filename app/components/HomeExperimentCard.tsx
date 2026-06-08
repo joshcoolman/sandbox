@@ -20,9 +20,18 @@ function formatDate(dateStr: string): string {
 interface Props {
   experiment: Experiment
   delay?: number
+  /** Where the experiment's back button should return to. Defaults to home. */
+  referrer?: string
+  /** sessionStorage key used for scroll restoration on the referring page. */
+  lastSlugKey?: string
 }
 
-export default function HomeExperimentCard({ experiment, delay }: Props) {
+export default function HomeExperimentCard({
+  experiment,
+  delay,
+  referrer = '/',
+  lastSlugKey = 'home-last-slug',
+}: Props) {
   return (
     <CurtainLink
       id={experiment.slug}
@@ -31,8 +40,8 @@ export default function HomeExperimentCard({ experiment, delay }: Props) {
       data-delay={delay}
       curtainTransition={true}
       onClick={() => {
-        sessionStorage.setItem('experiment-referrer', '/')
-        sessionStorage.setItem('home-last-slug', experiment.slug)
+        sessionStorage.setItem('experiment-referrer', referrer)
+        sessionStorage.setItem(lastSlugKey, experiment.slug)
       }}
     >
       <div className={styles.imageWrapper}>

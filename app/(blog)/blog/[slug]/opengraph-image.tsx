@@ -114,7 +114,7 @@ export default async function OGImage({ params }: { params: Promise<{ slug: stri
               style={{
                 width: 64,
                 height: 4,
-                backgroundColor: '#8FF7F9',
+                backgroundColor: '#c67e5e',
                 borderRadius: 2,
                 position: 'absolute',
                 top: 60,

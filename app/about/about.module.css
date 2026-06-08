@@ -19,7 +19,7 @@
   --text: var(--text);
   --muted: var(--text-muted);
   --accent: var(--accent);
-  --accent-2: #b08aff;
+  --accent-2: var(--accent);
   --good: #6dd58c;
   --warn: #f0b85a;
   --bad: #f08a8a;
@@ -153,7 +153,7 @@
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 1px 6px;
-  color: #d7e2ff;
+  color: var(--text-body);
 }
 
 .root pre {
@@ -163,7 +163,7 @@
   padding: 14px 16px;
   overflow-x: auto;
   font: 13px/1.5 var(--font-mono);
-  color: #d7e2ff;
+  color: var(--text-body);
   margin: 12px 0 18px;
 }
 

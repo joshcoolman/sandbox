@@ -1,8 +1,15 @@
+/* Gallery index chrome. The route layout (layout.tsx) stays data-theme="dark"
+   so the experiment pages keep their dark backdrop + gutters; this container
+   sets data-theme="light" and paints its own paper ground over that dark layer,
+   so the gallery reads light and cohesive with the blog index. The cards
+   themselves are the shared experiment card (HomeExperimentCard.module.css). */
+
 .container {
   max-width: 100%;
   margin: 0;
   padding: 80px 40px;
   min-height: 100vh;
+  background: var(--bg);
 }
 
 .container > * {
@@ -19,176 +26,48 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-sans);
   font-size: 13px;
-  color: #666;
+  color: var(--text-muted);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .backLink:hover {
-  color: #aaa;
+  color: var(--text);
 }
 
 .title {
-  font-family: var(--font-bitter), serif;
+  font-family: var(--font-display);
   font-size: clamp(36px, 6vw, 56px);
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.08;
   margin: 0 auto 10px;
-  letter-spacing: -0.02em;
-  color: #f0ede8;
+  letter-spacing: -0.01em;
+  color: var(--text);
 }
 
 .subtitle {
-  font-family: var(--font-lora), serif;
+  font-family: var(--font-serif);
   font-size: clamp(16px, 2vw, 22px);
   font-weight: 400;
   font-style: italic;
-  color: #f0ede8;
+  color: var(--text-muted);
   margin: 0 auto;
   letter-spacing: 0;
 }
 
 .rule {
   height: 1px;
-  background: #3f3f3f;
+  background: var(--border);
   margin: 32px auto 40px auto;
   max-width: var(--content-max);
 }
 
-.experiment {
-  display: flex;
-  gap: 32px;
-  margin-bottom: 50px;
-  padding-bottom: 50px;
-  border-bottom: 1px solid #303030;
-  opacity: 0;
-  transform: translateY(24px);
-  transition:
-    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.experiment.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.experiment[data-delay='1'] {
-  transition-delay: 0.05s;
-}
-.experiment[data-delay='2'] {
-  transition-delay: 0.1s;
-}
-.experiment[data-delay='3'] {
-  transition-delay: 0.15s;
-}
-.experiment[data-delay='4'] {
-  transition-delay: 0.2s;
-}
-.experiment[data-delay='5'] {
-  transition-delay: 0.25s;
-}
-.experiment[data-delay='6'] {
-  transition-delay: 0.3s;
-}
-
-.experiment:last-child {
-  border-bottom: none;
-}
-
-.experimentPreviewContainer {
-  flex: 0 0 280px;
-}
-
-.experimentPreview {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  border: 1px solid #3f3f3f;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
-  cursor: pointer;
-  display: block;
-}
-
-.experimentPreview:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(16, 55, 71, 0.4);
-}
-
-.experimentContent {
-  flex: 1;
-  min-width: 0;
-}
-
-.experimentDate {
-  font-family: var(--font-space-mono), monospace;
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--accent);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.experimentTitle {
-  font-family: var(--font-bitter), serif;
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-}
-
-.experimentTitle a {
-  color: #F2EFEB;
-  text-decoration: none;
-  border-bottom: 3px solid transparent;
-  transition: border-color 0.2s;
-}
-
-.experimentTitle a:hover {
-  border-bottom-color: var(--accent);
-}
-
-.experimentDescription {
-  font-family: var(--font-lora), serif;
-  font-size: 15px;
-  font-weight: 400;
-  color: #959595;
-  margin-bottom: 16px;
-  line-height: 1.7;
-  letter-spacing: 0;
-}
-
-.experimentTags {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.tag {
-  font-family: var(--font-space-mono), monospace;
-  font-size: 10px;
-  font-weight: 400;
-  padding: 4px 10px;
-  background: #151515;
-  border-radius: 4px;
-  color: #959595;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-
-@media (prefers-reduced-motion: reduce) {
-  .experiment {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
 }
 
 @media (max-width: 768px) {
@@ -200,111 +79,7 @@
     margin-bottom: 12px;
   }
 
-  .title {
-    font-size: 36px;
+  .rule {
+    margin: 24px auto 28px auto;
   }
-
-  .subtitle {
-    margin-bottom: 24px;
-  }
-
-  .experiment {
-    flex-direction: column;
-    margin-bottom: 32px;
-    padding-bottom: 32px;
-  }
-
-  .experimentPreviewContainer {
-    flex: 0 0 auto;
-  }
-
-  .experimentTitle {
-    font-size: 24px;
-  }
-}
-
-/* Placeholder card — shown when an experiment requires env vars that aren't set
-   in the local environment. Same row layout as a real experiment so the gallery
-   shape stays consistent; just visually muted to signal "requires setup." */
-
-.placeholder {
-  opacity: 0.65;
-}
-
-.placeholderThumb {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: 8px;
-  border: 1px dashed #4a4a4a;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.015),
-    rgba(255, 255, 255, 0.015) 8px,
-    transparent 8px,
-    transparent 16px
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.placeholderThumbLabel {
-  font-family: var(--font-space-mono), monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #6a6a6a;
-}
-
-.placeholderTitle {
-  color: #999;
-}
-
-.placeholderRequires {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.placeholderRequiresLabel {
-  font-family: var(--font-space-mono), monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #6a6a6a;
-}
-
-.placeholderEnv {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  font-family: var(--font-space-mono), monospace;
-  font-size: 11px;
-  font-weight: 500;
-  color: #b8b8b8;
-  letter-spacing: 0.02em;
-}
-
-.placeholderHelp {
-  margin-top: 12px;
-  font-size: 13px;
-  font-style: italic;
-  color: #888;
-  line-height: 1.5;
-}
-
-.placeholderHelp code {
-  font-family: var(--font-space-mono), monospace;
-  font-size: 12px;
-  font-style: normal;
-  padding: 1px 5px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #c8c8c8;
 }

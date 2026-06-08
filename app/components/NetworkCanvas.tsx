@@ -180,7 +180,7 @@ export default function NetworkCanvas({ className }: NetworkCanvasProps) {
       ctx.clearRect(0, 0, width, height)
 
       // --- Update organisms and draw intra-organism edges ---
-      ctx.strokeStyle = "#8FD0FFFF"
+      ctx.strokeStyle = "#B6A48FFF"
       ctx.lineWidth = 0.5
 
       for (const org of organisms) {
@@ -313,7 +313,7 @@ export default function NetworkCanvas({ className }: NetworkCanvasProps) {
       }
 
       // --- Inter-organism edges (only check neighboring organisms) ---
-      ctx.strokeStyle = "#4094D0FF"
+      ctx.strokeStyle = "#8A6B57FF"
       ctx.lineWidth = 0.5
 
       const interPath = new Path2D()
@@ -353,7 +353,7 @@ export default function NetworkCanvas({ className }: NetworkCanvasProps) {
       }
 
       // --- Draw all nodes in a single batched path ---
-      ctx.fillStyle = "#8FF7F9FF"
+      ctx.fillStyle = "#C67E5EFF"
       ctx.beginPath()
       for (const org of organisms) {
         for (const node of org.nodes) {
@@ -384,7 +384,7 @@ export default function NetworkCanvas({ className }: NetworkCanvasProps) {
         if (opacity > 0 && currentRadius > 0) {
           ctx.beginPath()
           ctx.arc(anim.x, anim.y, Math.max(0, currentRadius), 0, TWO_PI)
-          ctx.fillStyle = `rgba(64, 148, 208, ${opacity})`
+          ctx.fillStyle = `rgba(198, 126, 94, ${opacity})`
           ctx.fill()
         }
 

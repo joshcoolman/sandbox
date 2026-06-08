@@ -5,9 +5,9 @@
   width: 100%;
   max-width: var(--content-max);
   pointer-events: auto;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px dashed color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: 0.75rem;
+  background: var(--surface);
+  border: var(--border-width) dashed color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: var(--radius-lg);
   padding: 0.85rem 1rem;
 }
 
@@ -31,12 +31,12 @@
   align-items: baseline;
   gap: 0.4rem;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-body);
   transition: color 0.2s ease;
 }
 
 .link:hover {
-  color: #f2efeb;
+  color: var(--text);
 }
 
 .arrow {
@@ -58,7 +58,7 @@
   font-family: var(--font-serif);
   font-size: 0.7rem;
   font-style: italic;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-muted);
 }
 
 @media (max-width: 640px) {

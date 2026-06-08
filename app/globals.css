@@ -1,36 +1,44 @@
 /* ───────────────────────────────────────────
-   Theme contract — single source of truth.
+   Theme contract — single source of truth. "Paper & Ink" (see THEME.md).
 
-   This is the control surface the /restyle skill drives. Dark values match the
-   site's original hand-tuned look (dark stays pixel-identical); the light block
-   under :root[data-theme='light'] is the global light palette. Surfaces consume
-   the semantic tokens below, so a change here cascades site-wide. Experiments and
-   sketches scope their own tokens and intentionally do NOT read these.
-   ─────────────────────────────────────────── */
+   This is the control surface the /restyle skill drives. LIGHT is the default
+   (warm paper + soft ink + one clay accent); :root holds the light values and
+   the theme-agnostic knobs. Color blocks key off [data-theme] (NOT :root-only),
+   so the theme switches at any element — used to keep the experiments room a
+   dark island while the rest of the site (home included) is paper. Surfaces
+   consume the semantic tokens below, so a change here cascades site-wide.
+
+   Experiments and sketches scope their own tokens and do NOT read these — except
+   the FROZEN --light-* aliases below, which a few isolated experiments consume
+   directly and which must therefore never be rethemed. ─────────────────────── */
 
 :root {
-  /* Color — dark (default) */
-  --bg: #0d0d0d;            /* page background */
-  --surface: #1e1c1a;       /* cards / panels */
-  --surface-raised: rgba(30, 28, 26, 0.92); /* floating cards over imagery */
-  --surface-sunken: rgba(0, 0, 0, 0.45);    /* recessed wells */
-  --text: #f0ede8;          /* primary text / headings */
-  --text-body: #d5d0c8;     /* long-form body copy */
-  --text-muted: #a09888;    /* secondary / meta */
-  --text-faint: #706860;    /* tertiary / disabled */
-  --border: #383430;        /* content rules / dividers */
-  --border-soft: rgba(255, 255, 255, 0.12); /* soft dividers on dark */
-  --border-faint: rgba(255, 255, 255, 0.08);
-  --accent: #8FF7F9;        /* THE accent — single source (was 3 cyans) */
-  --accent-contrast: #0d0d0d; /* text/ink on an accent fill */
-  --accent-soft: rgba(143, 247, 249, 0.15); /* accent borders / tints */
+  /* ── Color — Paper & Ink, LIGHT is the default ──
+     These light values are the fallback; [data-theme='light'] below restates
+     them so nested light frames win over a dark ancestor. Color is near-absent:
+     warm greige paper, soft near-black ink, one muted clay accent. */
+  --bg: #e9e6df;            /* warm off-white paper ground */
+  --surface: #f1efe8;       /* cards / panels — a touch lighter than paper */
+  --surface-raised: #f7f5ef; /* raised ivory (never pure white) */
+  --surface-sunken: rgba(26, 22, 16, 0.045); /* recessed wells — faint ink wash */
+  --text: #1a1a18;          /* soft near-black ink (never pure black) */
+  --text-body: #26241f;     /* long-form body copy — warm ink */
+  --text-muted: #6a655b;    /* secondary / meta */
+  --text-faint: #938d81;    /* tertiary / decoration */
+  --border: #c7c1b4;        /* hairline content rules / dividers */
+  --border-soft: rgba(26, 22, 16, 0.13);
+  --border-faint: rgba(26, 22, 16, 0.07);
+  --accent: #8f523a;        /* THE accent — muted clay (links + the live edge) */
+  --accent-contrast: #f7f5ef; /* ink on an accent fill */
+  --accent-soft: rgba(143, 82, 58, 0.12); /* accent borders / tints */
 
-  /* Font roles — alias the next/font variables loaded in layout.tsx */
-  --font-display: var(--font-bitter), 'Bitter', serif;
-  --font-serif: var(--font-lora), 'Lora', 'Georgia', serif;
-  --font-body: var(--font-karla), 'Karla', system-ui, sans-serif;
-  --font-sans: var(--font-dm-sans), 'Helvetica Neue', sans-serif;
-  --font-mono: var(--font-space-mono), 'Courier New', monospace;
+  /* Font roles — alias the next/font variables loaded in layout.tsx.
+     Display/UI = Hanken Grotesk (Swiss grotesque); prose = Fraunces (serif). */
+  --font-display: var(--font-hanken), 'Hanken Grotesk', system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), 'Fraunces', 'Georgia', serif;
+  --font-body: var(--font-hanken), 'Hanken Grotesk', system-ui, sans-serif;
+  --font-sans: var(--font-hanken), 'Helvetica Neue', system-ui, sans-serif;
+  --font-mono: var(--font-space-mono), 'SF Mono', Menlo, monospace;
 
   /* Spacing scale (density knob) */
   --space-1: 4px;
@@ -43,14 +51,14 @@
   --space-8: 64px;
   --space-9: 80px;
 
-  /* Radius scale (roundness knob) */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* Radius scale (roundness knob) — near-square, classic not soft */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
   --radius-pill: 999px;
   --radius-circle: 50%;
 
-  /* Border weight (thickness knob) */
+  /* Border weight (thickness knob) — hairline Swiss rules */
   --border-width: 1px;
   --border-width-strong: 2px;
 
@@ -64,10 +72,10 @@
   --text-title: clamp(36px, 6vw, 56px);
   --text-subtitle: clamp(16px, 2vw, 22px);
 
-  /* Shadow */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+  /* Shadow — flat by default; elevation reserved for true overlays only */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 12px 40px rgba(26, 22, 16, 0.18);
 
   /* Motion */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -78,7 +86,9 @@
   /* Layout */
   --content-max: 900px;
 
-  /* Legacy aliases — keep old references working during/after migration */
+  /* Legacy aliases. --site-* follow the theme; the --light-* quartet is FROZEN
+     at the original sand values because the isolated experiments (e.g. retro-tech)
+     consume them directly and must look unchanged. Do not retheme these. */
   --site-bg: var(--bg);
   --site-text: var(--text);
   --light-bg: #d8d4ca;
@@ -87,21 +97,43 @@
   --light-meta: rgba(0, 0, 0, 0.5);
 }
 
-:root[data-theme='light'] {
-  --bg: #d8d4ca;
-  --surface: #e7e3d9;
-  --surface-raised: rgba(255, 255, 255, 0.72);
-  --surface-sunken: rgba(0, 0, 0, 0.04);
-  --text: #2a2a28;
-  --text-body: #2a2a28;
-  --text-muted: #555555;
-  --text-faint: #777777;
-  --border: #bbbbbb;
-  --border-soft: rgba(0, 0, 0, 0.15);
-  --border-faint: rgba(0, 0, 0, 0.08);
-  --accent: #0a6e70;
-  --accent-contrast: #ffffff;
-  --accent-soft: rgba(10, 110, 112, 0.15);
+/* Light theme — restated so a nested [data-theme='light'] subtree overrides a
+   dark ancestor (these match the :root defaults). */
+[data-theme='light'] {
+  --bg: #e9e6df;
+  --surface: #f1efe8;
+  --surface-raised: #f7f5ef;
+  --surface-sunken: rgba(26, 22, 16, 0.045);
+  --text: #1a1a18;
+  --text-body: #26241f;
+  --text-muted: #6a655b;
+  --text-faint: #938d81;
+  --border: #c7c1b4;
+  --border-soft: rgba(26, 22, 16, 0.13);
+  --border-faint: rgba(26, 22, 16, 0.07);
+  --accent: #8f523a;
+  --accent-contrast: #f7f5ef;
+  --accent-soft: rgba(143, 82, 58, 0.12);
+}
+
+/* Dark theme — warm ink-on-near-black companion. Applies at the root when
+   toggled, and to the nested [data-theme='dark'] experiments-room island so it
+   stays dark while the rest of the site is paper. */
+[data-theme='dark'] {
+  --bg: #14130f;
+  --surface: #1f1d18;
+  --surface-raised: #262320;
+  --surface-sunken: rgba(0, 0, 0, 0.3);
+  --text: #ece7dd;
+  --text-body: #d7d1c5;
+  --text-muted: #9c958a;
+  --text-faint: #6e685e;
+  --border: #38342d;
+  --border-soft: rgba(255, 255, 255, 0.12);
+  --border-faint: rgba(255, 255, 255, 0.07);
+  --accent: #c67e5e;
+  --accent-contrast: #14130f;
+  --accent-soft: rgba(198, 126, 94, 0.16);
 }
 
 html {

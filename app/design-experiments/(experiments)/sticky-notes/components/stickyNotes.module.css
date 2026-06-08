@@ -39,6 +39,23 @@
   transition: top 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   align-items: center;
+  /* Paper grain comes from the ::after overlay below; isolate keeps that overlay
+     layered within this note. */
+  isolation: isolate;
+}
+
+/* Light-touch paper texture: real paper photo over the note color, opacity as
+   the strength dial. No blend mode (baseline) — just the texture laid over. */
+.stackCard::after,
+.modal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: url('/textures/note-paper.jpg') center / cover;
+  opacity: 0.25;
+  pointer-events: none;
+  border-radius: inherit;
 }
 
 .stack:hover .stackCardTop {
@@ -48,6 +65,8 @@
 .stackTeaser {
   font-size: 11px;
   line-height: 1.4;
+  position: relative;
+  z-index: 2;
 }
 
 /* ───────────────────────────────────────────
@@ -55,21 +74,18 @@
    ─────────────────────────────────────────── */
 
 .warm {
-  background: #f5e960;
+  background-color: #f5e960;
   color: rgba(0, 0, 0, 0.7);
-  border: 1px solid #e0d44e;
 }
 
 .cool {
-  background: #a8d8ea;
+  background-color: #a8d8ea;
   color: rgba(0, 0, 0, 0.65);
-  border: 1px solid #94c4d6;
 }
 
 .neutral {
-  background: #f5c6d0;
+  background-color: #f5c6d0;
   color: rgba(0, 0, 0, 0.65);
-  border: 1px solid #e0b2bc;
 }
 
 /* ───────────────────────────────────────────
@@ -113,6 +129,10 @@
   overflow: hidden;
   display: flex;
   align-items: center;
+  background-image: url('/textures/note-paper.jpg');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: soft-light;
 }
 
 .modalTop {
@@ -190,6 +210,8 @@
 
 .modalContent {
   margin: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .caretLeft,

@@ -31,7 +31,7 @@ export default async function RecommendedPage() {
   const items = await getAllRecommendations()
 
   return (
-    <div className={styles.blogLayout} data-theme="dark">
+    <div className={styles.blogLayout}>
       <div className={styles.indexWrapper}>
         <div className={styles.backRow}>
           <Link href="/blog" className={styles.indexBackLink}>

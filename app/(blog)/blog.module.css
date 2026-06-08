@@ -74,7 +74,7 @@
 }
 
 .indexTitle {
-  font-family: var(--font-bitter), serif;
+  font-family: var(--font-display), serif;
   font-size: clamp(36px, 6vw, 56px);
   font-weight: 700;
   line-height: 1.08;
@@ -91,7 +91,7 @@
 }
 
 .indexSubtitle {
-  font-family: var(--font-lora), serif;
+  font-family: var(--font-serif), serif;
   font-size: clamp(16px, 2vw, 22px);
   font-weight: 400;
   font-style: italic;
@@ -118,14 +118,16 @@
   height: 100%;
   text-decoration: none;
   color: inherit;
-  background: var(--card-bg, var(--surface));
-  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  border: var(--border-width) solid var(--border-faint);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   opacity: 0;
   transform: translateY(24px);
   transition:
     opacity var(--dur-slow) var(--ease),
-    transform var(--dur-slow) var(--ease);
+    transform 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .cardVisible {
@@ -135,6 +137,7 @@
 
 .card:hover {
   transform: translateY(-2px);
+  border-color: var(--accent-soft);
 }
 
 /* Stagger delays for entrance animation */
@@ -149,7 +152,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: var(--surface);
+  background: var(--surface-sunken);
   overflow: hidden;
 }
 
@@ -173,19 +176,19 @@
   font-family: var(--sans);
   font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--subtitle-color, var(--mid));
+  color: var(--text-muted);
   margin-bottom: 12px;
 }
 
 .cardTitle {
-  font-family: var(--font-bitter), serif;
+  font-family: var(--font-display), serif;
   font-size: 22px;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.01em;
-  color: var(--ink);
+  color: var(--text);
   margin: 0 0 8px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -199,7 +202,7 @@
   font-weight: 400;
   font-style: italic;
   line-height: 1.45;
-  color: var(--subtitle-color, var(--mid));
+  color: var(--text-muted);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -297,7 +300,7 @@
 }
 
 .recLink {
-  font-family: var(--font-lora), serif;
+  font-family: var(--font-serif), serif;
   font-size: 17px;
   font-weight: 400;
   color: var(--ink);
@@ -318,7 +321,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-space-mono), monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 12px;
   color: var(--mid);
 }
@@ -328,7 +331,7 @@
 }
 
 .recNote {
-  font-family: var(--font-lora), serif;
+  font-family: var(--font-serif), serif;
   font-size: 14px;
   font-style: italic;
   line-height: 1.5;
@@ -344,7 +347,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  font-family: var(--font-lora), serif;
+  font-family: var(--font-serif), serif;
   font-size: 0.7rem;
   font-style: italic;
   color: var(--ink);
@@ -354,7 +357,7 @@
 }
 
 .indexMetaHeart {
-  color: rgb(219, 112, 147);
+  color: var(--accent);
   transition: transform 0.2s ease;
 }
 
@@ -417,7 +420,7 @@
 }
 
 .postTitle {
-  font-family: var(--font-bitter), serif;
+  font-family: var(--font-display), serif;
   font-size: clamp(36px, 6vw, 56px);
   font-weight: 700;
   line-height: 1.08;
@@ -432,7 +435,7 @@
   font-weight: 400;
   font-style: italic;
   line-height: 1.45;
-  color: var(--subtitle-color, var(--body));
+  color: var(--body);
   margin: 0 0 8px;
 }
 

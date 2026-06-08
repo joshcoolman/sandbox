@@ -1,7 +1,9 @@
 .footer {
-  --sf-rule: rgba(255, 255, 255, 0.12);
-  --sf-text: rgba(255, 255, 255, 0.7);
-  --sf-label: rgba(255, 255, 255, 0.5);
+  /* Semantic tokens so the footer follows whatever theme it sits in — paper on
+     the reading surfaces, dark on the home hero / experiments room islands. */
+  --sf-rule: var(--border-soft);
+  --sf-text: var(--text-body);
+  --sf-label: var(--text-muted);
   margin-bottom: 0;
 }
 
@@ -39,12 +41,12 @@
 }
 
 .navLink svg {
-  color: rgba(219, 112, 147, 0.6);
+  color: color-mix(in srgb, var(--accent) 65%, transparent);
   transition: color 0.2s ease;
 }
 
 .navLink:hover svg {
-  color: rgba(219, 112, 147, 0.9);
+  color: var(--accent);
 }
 
 .icons {
@@ -65,15 +67,5 @@
 
 .skull {
   display: block;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-:global([data-theme="light"]) .footer {
-  --sf-rule: var(--light-rule);
-  --sf-text: var(--light-text);
-  --sf-label: var(--light-meta);
-}
-
-:global([data-theme="light"]) .skull {
-  color: var(--light-meta);
+  color: var(--text-muted);
 }

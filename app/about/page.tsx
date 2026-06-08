@@ -56,7 +56,7 @@ export default function AboutPage() {
           <li>Next.js 16.1.6 with React 19, TypeScript 5.9</li>
           <li>CSS Modules + raw CSS (no Tailwind lock-in)</li>
           <li>Animation: GSAP (ScrollTrigger, timeline), Motion (layout animations), vanilla JS/Canvas/WebGL</li>
-          <li>Styling system: 4 Google Fonts (Karla, Bitter, Lora, Space Mono) + custom color tokens (globals.css)</li>
+          <li>Styling system: 3 Google Fonts (Hanken Grotesk, Fraunces, Space Mono) + custom color tokens (globals.css)</li>
           <li>AI integration: Anthropic SDK (monono, chatroom experiments)</li>
           <li>Data sources: Markdown files, TypeScript data objects (static), Cloudflare Durable Objects (chatroom)</li>
           <li>Analytics: Vercel Analytics</li>
@@ -279,10 +279,9 @@ export default function AboutPage() {
           (layout.tsx lines 6–32):
         </p>
         <ul>
-          <li>Karla (300–600 weight) — default body font</li>
-          <li>Bitter (700–800 weight) — headings, serif</li>
-          <li>Lora (400–500, italic) — editorial</li>
-          <li>Space Mono (400–700) — monospace</li>
+          <li>Hanken Grotesk (300–700 weight) — display, UI, and body</li>
+          <li>Fraunces (400–700, italic) — long-form serif / editorial prose</li>
+          <li>Space Mono (400–700) — code and monospace</li>
         </ul>
         <p>
           Each experiment may load additional fonts (DM Sans, Geist Pixel Square, etc.).
@@ -602,7 +601,7 @@ export default function AboutPage() {
           <tbody>
             <tr><td><span className={styles.filepath}>package.json</span></td><td>1–42</td><td>All dependencies. GSAP, Motion, Anthropic SDK, Vercel Analytics, sharp-cli.</td></tr>
             <tr><td><span className={styles.filepath}>next.config.js</span></td><td>1–10</td><td>View Transitions enabled, trailing slash disabled, no rewrites or redirects.</td></tr>
-            <tr><td><span className={styles.filepath}>app/layout.tsx</span></td><td>1–89</td><td>Root fonts (Karla, Bitter, Lora, Space Mono), metadata defaults, Analytics injection.</td></tr>
+            <tr><td><span className={styles.filepath}>app/layout.tsx</span></td><td>1–89</td><td>Root fonts (Hanken Grotesk, Fraunces, Space Mono), metadata defaults, Analytics injection.</td></tr>
             <tr><td><span className={styles.filepath}>app/globals.css</span></td><td>1–161</td><td>Site-wide tokens (--site-bg, --site-text), View Transitions animations (curtain wipe + fade), reduced-motion fallback.</td></tr>
             <tr><td><span className={styles.filepath}>lib/experiments/data.ts</span></td><td>1–228</td><td>Gallery registry. 25 experiments with metadata. Manually maintained.</td></tr>
             <tr><td><span className={styles.filepath}>lib/experiments/runnable.ts</span></td><td>1–48</td><td>Env var gating logic. REQUIREMENTS map lists which experiments need which keys.</td></tr>
