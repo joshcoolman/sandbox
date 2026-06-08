@@ -35,11 +35,7 @@ export default async function Home() {
           <section className={styles.recentWorkSection}>
             <h2 className={styles.recentWorkHeader}>Recent Work</h2>
             <p className={styles.preamble}>
-              These are experiments in agentic coding. Have a look around.{' '}
-              <CurtainLink href="/about" className={styles.preambleLink} curtainTransition={true}>
-                About this repo
-              </CurtainLink>
-              . All code available on{' '}
+              Experiments in agentic coding. All code available on{' '}
               <a
                 href="https://github.com/joshcoolman/sandbox"
                 target="_blank"
