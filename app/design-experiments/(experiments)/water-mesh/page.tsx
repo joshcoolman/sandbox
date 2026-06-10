@@ -17,10 +17,15 @@ const Z_CAP_UP = -(CAM_Z - 100);
 
 // Z physics — extrude force targets the camera plane in one click
 const Z_DAMPING = 0.75;
-const Z_LINEAR_DECAY = 5; // units/frame toward zero — 7s recovery from full cap at 60fps
+const Z_LINEAR_DECAY = 2; // units/frame toward zero — ~17s recovery from full cap at 60fps
 const BLAST_FORCE = CAM_Z * (1 - Z_DAMPING);
 const BLAST_SIGMA = CELL_SIZE * 1.5;
 const Z_NEIGHBOR_K = 0.004;
+
+// Ambient ripple — purely visual, doesn't touch node.z
+const RIPPLE_AMP = 55;    // depth units (~2.5% of CAM_Z)
+const RIPPLE_K = 0.008;   // spatial frequency
+const RIPPLE_SPEED = 0.0004; // radians per ms
 
 function terrain(nx: number, ny: number, t: number): number {
   const x = nx * 7;
@@ -168,11 +173,13 @@ export default function WaterMesh() {
         if (Math.abs(node.z) < 1.0) { node.z = 0; node.vz = 0; }
       }
 
-      // Perspective projection
+      // Perspective projection (ambient ripple added to z for rendering only)
+      const t = timestamp * RIPPLE_SPEED;
       const px = new Float32Array(nodes.length);
       const py = new Float32Array(nodes.length);
       for (let i = 0; i < nodes.length; i++) {
-        const scale = CAM_Z / (CAM_Z + nodes[i].z);
+        const ripple = RIPPLE_AMP * Math.sin(nodes[i].x * RIPPLE_K + nodes[i].y * RIPPLE_K * 0.7 + t);
+        const scale = CAM_Z / (CAM_Z + nodes[i].z + ripple);
         px[i] = W / 2 + (nodes[i].x - W / 2) * scale;
         py[i] = H / 2 + (nodes[i].y - H / 2) * scale;
       }
