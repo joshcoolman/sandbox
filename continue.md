@@ -1,44 +1,76 @@
-# Continue
+# Continue: Promote water-mesh sketch to experiment
 
-## What was being worked on
-Built **X Broadcast** — a local-only feature to post sticky notes to X (Twitter), plus a companion blog draft. Feature is complete and styled; nothing committed yet.
+## What we built
 
-## Changes made so far (all uncommitted)
-**Core lib (`lib/x/`):**
-- `types.ts` — `XState` (`postsPerDay`, `posted[]`, `removed[]`, `order[]`), `XQueueItem`, `XPostedItem`, `NoteColor` (`warm|cool|neutral`), `X_CHAR_LIMIT = 280`.
-- `state.ts` — `loadState`/`saveState` (reads/writes `x-state.json` at repo root), `postedToday(state)` UTC-day soft guard.
-- `queue.ts` — `getQueue()` derives the queue from note files (all notes minus posted minus removed), **newest-first**, carries `color`, flags `overLimit`; `getPosted()` (newest-posted-first, content reattached); `nextPostable()`.
-- `intent.ts` — `tweetIntentUrl(text)` → `https://x.com/intent/post?text=...` (X Web Intent; pure, client-safe).
-- NOTE: there is **no** `client.ts` and **no** `twitter-api-v2` dep — both were added then removed during the API→Web Intent pivot.
+Over a long exploratory session we developed a canvas sketch at `app/sketches/water-mesh/` that has arrived at something genuinely interesting. It is committed and stable on `main`.
 
-**API:** `app/api/x/state/route.ts` — single dev-guarded route (404 when `NODE_ENV==='production'`, same pattern as `app/api/monono/reset`). GET returns `{state, queue, posted, postedToday}`; POST handles actions `markPosted | unpost | remove | restore | setPostsPerDay`.
+**What it does:** A hexagonal mesh viewed from directly above. Nodes are fixed in XY — the only movement is on the Z axis (depth), visualized through a perspective camera. Clicking extrudes nodes toward the camera; shift-clicking dents them away. The mesh recovers back to flat via linear decay (~7 seconds for a full extrusion). Contained within the viewport with 80px padding so it reads as a visible object, not a wallpaper texture.
 
-**Admin UI (`app/x/`):** `page.tsx` (server, loads state) + `XAdmin.tsx` (client island) + `x.module.css`.
-- Gated to localhost via `useIsLocal()` imported from `app/(news)/_components/NewsEditContext`.
-- Queued + Posted sections; per-item char count with red over-limit flag; **Post** opens the X composer (`window.open`) and calls `markPosted`; **Remove** / **Undo** (unpost).
-- Daily constraint segmented control: **1/day · 3/day · No limit** (0 = unlimited). Exceeding it shows an inline "Already posted today — Post anyway / Cancel" confirm (no native dialog).
-- Dark mode cards: dark glass surface, light text, per-note color accent (left stripe + faint wash) — `warm`=#fbbf24, `cool`=#38bdf8, `neutral`=#a78bfa. Deterministic `formatDate` (no Date/locale) to avoid hydration mismatch.
+**Key technical facts:**
+- `app/sketches/water-mesh/page.tsx` — single file, ~240 lines
+- `app/sketches/water-mesh/styles.css` — minimal, full-bleed canvas
+- Hex grid, XY positions frozen, Z-axis physics only
+- Perspective projection: `scale = CAM_Z / (CAM_Z + node.z)`
+- Linear decay: `Z_LINEAR_DECAY = 5` units/frame — constant rate, reaches zero in finite time
+- Dead zone snap: `if (Math.abs(node.z) < 1.0) { node.z = 0; node.vz = 0; }`
+- Weak Z neighbor coupling (`Z_NEIGHBOR_K = 0.004`) keeps surface coherent without over-smoothing
+- `BLAST_FORCE = CAM_Z * (1 - Z_DAMPING)` — one click targets the camera plane
+- Click: extrude toward camera. Shift-click: dent away at 3x force.
 
-**State file:** `x-state.json` (committed) — `{ postsPerDay:1, posted:[], removed:[], order:[] }`.
+## Goal for next session
 
-**Blog draft:** `blog/the-site-is-the-source.md` — author Josh Coolman, dated 2026-06-02. Thesis: the site is the source, X is a faucet you control; rate-limit-as-the-point; the API-overkill detour → Web Intent. Rough, to be refined later. No hero image (repo has no placeholder asset; cards render fine without one).
+**Promote this sketch to a proper design experiment** using the `/design-experiment` skill as a guide.
 
-**Docs:** added "X broadcast" row to `CLAUDE.md` Feature Map; progress entry in `docs/01-progress.md`. Deliberately NOT in sitemap/llms/README (local-only tool, like sketches).
+## What "promoting" involves
 
-## Key decisions
-- **Posting via X Web Intent, not the API.** X killed the free tier (Feb 2026, now pay-per-use ~$0.015/text post); more importantly Josh didn't want to register as a developer. Web Intent = no dev account, no OAuth, no cost, opens X's own composer to click Post. Tradeoff: can't read back tweet IDs, so "mark posted" is optimistic on click (Undo covers misfires).
-- **Queue is derived, not captured** — writing a note auto-queues it; `/note` skill untouched.
-- **Daily limit is a personal guardrail, not a hard cap** — confirm-and-override, configurable, can be off.
-- **Local-only admin** is consistent with the repo ethos (no app auth, no DB); X is the first of possibly several broadcast channels for the "living site / personal brand."
-- Leaderboard experiment (`app/design-experiments/(experiments)/leaderboard/`) was a **style reference only** — explored then fully reverted; do not change it.
+### 1. Move files
 
-## Outstanding work
-- **Live verification not yet done:** Josh runs the dev server himself. Open `localhost:3000/x`, confirm queue (newest-first, colored dark cards), click Post → X composer opens prefilled → note moves to Posted; verify daily-limit confirm and `x-state.json` updates.
-- Blog post refinement (currently a rough draft).
-- Possible future: other broadcast channels, manual reorder UI (the `order` field exists, no drag UI yet), strict local-day vs UTC for the daily count.
-- Not committed — Josh commits when he says so (workflow: `git add -A`, thorough message, `git push` to current branch).
+Because this is a fullscreen immersive canvas (conflicts with the shared layout wrapper), it should live **outside** the `(experiments)` route group per the skill instructions:
 
-## Git state
-- Branch: `main`. All feature work is **uncommitted** (untracked: `app/api/x/`, `app/x/`, `lib/x/`, `blog/the-site-is-the-source.md`, `x-state.json`; modified: `CLAUDE.md`, `docs/01-progress.md`).
-- `tsc --noEmit` clean; `npm run build` passes (`/x` static, `/api/x/state` dynamic).
-- Plan file (planning artifact): `/Users/joshcoolman/.claude/plans/i-d-like-to-sort-rippling-key.md`.
+```
+app/design-experiments/water-mesh/
+├── page.tsx      (moved + cleaned from sketch)
+└── styles.css    (moved as-is)
+```
+
+Add a comment in `page.tsx` explaining why it's outside `(experiments)/`.
+
+### 2. Add to data.ts
+
+Add an entry at the top of the experiments array in `lib/experiments/data.ts`:
+
+```ts
+{
+  slug: 'water-mesh',
+  date: 'June 10, 2026',
+  title: 'Water Mesh',
+  subtitle: 'A hexagonal surface you press and pull — each click leaves a permanent impression.',
+  description: 'A hexagonal mesh viewed from directly above. Nodes are fixed in the plane; clicking pushes them toward you in Z, shift-clicking dents them away. The perspective camera turns Z displacement into foreshortening — dents compress the cells, extrusions expand them. Deformations decay back to flat over about seven seconds via linear decay.',
+  screenshot: '/screenshots/water-mesh.png',
+  tags: ['Canvas', 'Physics', 'Interactive', '3D', 'Generative'],
+  theme: 'dark',
+}
+```
+
+### 3. Code cleanup for the promotion
+
+- Update the comment at line 1 (currently says `// sketch:`)
+- Verify `nx`/`ny` terrain sampling (`rx / W`, `ry / H`) still makes sense with `MESH_PADDING = 80` — nodes no longer start near 0,0 so the terrain snapshot may look different; eyeball it
+- No physics or interaction changes — it's dialed in
+
+### 4. SEO checklist (per CLAUDE.md)
+
+- `app/sitemap.ts` — confirm dynamic experiments are auto-discovered (likely fine, no manual entry needed)
+- `public/llms.txt` — concise entry
+- `public/llms-full.txt` — expanded entry
+
+### 5. Ship it
+
+Use `/ship-experiment` after verifying the promoted experiment looks right. It handles screenshot, README update, commit, and push.
+
+## What NOT to do
+
+- Do not change the physics or interaction
+- Do not add UI controls or overlays
+- Do not add the shared layout wrapper manually — go fullscreen and skip it
+- Do not run `npm run dev` — the user will start the server
