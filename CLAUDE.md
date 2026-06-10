@@ -3,9 +3,16 @@ Next.js design experiments sandbox. Each experiment is a self-contained route.
 ## Commands
 
 ```bash
-npm run dev      # Dev server :3000
-npm run build    # Production build
+npm run dev        # Dev server :3000
+npm run build      # Production build
+npm run typecheck  # tsc --noEmit -- run before pushing
 ```
+
+## Pre-push gate
+
+A git `pre-push` hook runs `npm run typecheck` before each push, blocking any push that would fail Vercel's build (a type error caught locally in ~3s instead of a failed deploy minutes later). It's bypassable with `git push --no-verify`.
+
+The hook lives in `.git/hooks/` (untracked), so on a fresh clone it won't exist. If `.git/hooks/pre-push` is missing, offer to install it -- don't create it unprompted. When offering, briefly explain what it is and why it helps (the line above), since a first-time cloner won't know. If they accept: write a `sh` script that runs `npm run typecheck` and exits non-zero on failure, then `chmod +x` it.
 
 ## Frequent Workflows
 
