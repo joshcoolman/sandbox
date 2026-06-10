@@ -176,6 +176,31 @@ function enforceCoverage(grid: boolean[][]) {
   }
 }
 
+// At least 3 of the 5 lead rows must carry notes — fewer reads as thin/blah.
+// Runs after coverage caps so the floor survives; new notes respect the same
+// ≤2-lead / ≤4-total per-column polyphony limits where a slot allows.
+function enforceLeadRowFloor(grid: boolean[][]) {
+  const isLit = (r: number) => grid[r].some(Boolean)
+  let guard = 0
+  while (LEAD_ROWS.filter(isLit).length < 3 && guard++ < 20) {
+    const empty = LEAD_ROWS.filter(r => !isLit(r))
+    if (empty.length === 0) break
+    const row = empty[rand(empty.length)]
+    const order = Array.from({ length: STEPS }, (_, i) => i)
+    for (let i = STEPS - 1; i > 0; i--) {
+      const j = rand(i + 1)
+      ;[order[i], order[j]] = [order[j], order[i]]
+    }
+    let step = order.find(s => {
+      const leadLit = LEAD_ROWS.filter(r => grid[r][s]).length
+      const total = grid.reduce((n, r) => n + (r[s] ? 1 : 0), 0)
+      return leadLit < 2 && total < 4
+    })
+    if (step === undefined) step = order[0]
+    grid[row][step] = true
+  }
+}
+
 // Remember the last archetype so consecutive generates always change feel
 let lastArchetype: Archetype | null = null
 
@@ -194,5 +219,29 @@ export function generateTechnoPattern(): boolean[][] {
   stampBass(grid, archetype)
   stampLead(grid)
   enforceCoverage(grid)
+  enforceLeadRowFloor(grid)
+  return grid
+}
+
+// LUDICROUS — the antithesis of the geometric generator above. No archetype,
+// no phase, no stamp shapes, no coverage caps: every row independently lights
+// a random count of distinct cells between MIN and MAX. It's "me just clicking
+// pads" mechanized. On the quantized pentatonic grid it grooves anyway — the
+// scale keeps it consonant and the compressor glues the density.
+const LUDICROUS_MIN = 3
+const LUDICROUS_MAX = 7
+
+export function generateLudicrousPattern(): boolean[][] {
+  const grid = makeEmptyGrid()
+  for (let r = 0; r < ROW_COUNT; r++) {
+    const count = LUDICROUS_MIN + rand(LUDICROUS_MAX - LUDICROUS_MIN + 1)
+    // partial Fisher–Yates: pick `count` distinct columns without repeats
+    const cols = Array.from({ length: STEPS }, (_, i) => i)
+    for (let i = 0; i < count; i++) {
+      const j = i + rand(STEPS - i)
+      ;[cols[i], cols[j]] = [cols[j], cols[i]]
+      grid[r][cols[i]] = true
+    }
+  }
   return grid
 }

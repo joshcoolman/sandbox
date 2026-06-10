@@ -264,16 +264,65 @@
   text-shadow: 0 0 6px rgba(180, 130, 255, 0.6);
 }
 
-.swing,
 .bpm {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #c8c8d8;
+  position: relative;
+  margin-left: auto;
 }
 
-.swing {
-  margin-left: auto;
+.bpmButton {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  color: #c8c8d8;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.bpmButton:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.bpmButton:focus-visible {
+  outline: 2px solid #6aa9ff;
+  outline-offset: 2px;
+}
+
+.bpmPopover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 10px 12px;
+  background: #1e1e26;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  z-index: 10;
+}
+
+.bpmInput {
+  width: 64px;
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  color: #f0f0f6;
+  background: #0a0a0e;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  padding: 4px 8px;
+  text-align: right;
+}
+
+.bpmInput:focus-visible {
+  outline: 2px solid #6aa9ff;
+  outline-offset: 1px;
 }
 
 .bpmReadout {
@@ -290,18 +339,6 @@
   font-size: 9px;
   letter-spacing: 0.18em;
   color: #6a6a82;
-}
-
-.bpm input[type='range'] {
-  width: 90px;
-  accent-color: #6aa9ff;
-  cursor: pointer;
-}
-
-.swing input[type='range'] {
-  width: 60px;
-  accent-color: #c8a8ff;
-  cursor: pointer;
 }
 
 @media (max-width: 600px) {
@@ -335,11 +372,5 @@
   .transport {
     flex-wrap: wrap;
     row-gap: 10px;
-  }
-  .bpm input[type='range'] {
-    width: 70px;
-  }
-  .swing input[type='range'] {
-    width: 50px;
   }
 }

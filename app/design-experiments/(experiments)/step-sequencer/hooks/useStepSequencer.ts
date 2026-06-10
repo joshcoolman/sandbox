@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ROW_DEFS, STEPS } from '../lib/rows'
-import { makeEmptyGrid, normalizeGrid, generateTechnoPattern } from '../lib/generate'
+import { makeEmptyGrid, normalizeGrid, generateTechnoPattern, generateLudicrousPattern } from '../lib/generate'
 import {
   playKick,
   playClap,
@@ -18,6 +18,7 @@ export interface SequencerController {
   toggleCell: (row: number, col: number) => void
   clearAll: () => void
   randomize: () => void
+  ludicrous: () => void
   playing: boolean
   setPlaying: (b: boolean) => void
   bpm: number
@@ -27,8 +28,6 @@ export interface SequencerController {
   bassTone: BassTone
   setLeadTone: (t: LeadTone) => void
   setBassTone: (t: BassTone) => void
-  swing: number
-  setSwing: (n: number) => void
 }
 
 export interface UseStepSequencerOptions {
@@ -48,22 +47,19 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
     options?.initialGrid ? normalizeGrid(options.initialGrid) : makeEmptyGrid()
   )
   const [playing, setPlaying] = useState(false)
-  const [bpm, setBpm] = useState(options?.initialBpm ?? 124)
+  const [bpm, setBpm] = useState(options?.initialBpm ?? 114)
   const [currentStep, setCurrentStep] = useState<number | null>(null)
   const [leadTone, setLeadTone] = useState<LeadTone>('sqr')
   const [bassTone, setBassTone] = useState<BassTone>('saw')
-  const [swing, setSwing] = useState(0)
 
   const gridRef = useRef(grid)
   const bpmRef = useRef(bpm)
   const leadToneRef = useRef(leadTone)
   const bassToneRef = useRef(bassTone)
-  const swingRef = useRef(swing)
   useEffect(() => { gridRef.current = grid }, [grid])
   useEffect(() => { bpmRef.current = bpm }, [bpm])
   useEffect(() => { leadToneRef.current = leadTone }, [leadTone])
   useEffect(() => { bassToneRef.current = bassTone }, [bassTone])
-  useEffect(() => { swingRef.current = swing }, [swing])
 
   // No initialGrid -> seed a generated pattern after mount so the SSR'd
   // markup stays deterministic (Math.random in initial state = hydration bug)
@@ -144,10 +140,9 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
     while (nextStepTimeRef.current < horizon) {
       const stepDur = (60 / bpmRef.current) / 4 // 16th notes
       const idx = nextStepIdxRef.current
-      const swingOffset = idx % 2 === 1 ? swingRef.current * stepDur : 0
-      const t = nextStepTimeRef.current + swingOffset
+      const t = nextStepTimeRef.current
       const g = gridRef.current
-      // Subtle accents: downbeats push, swung offbeats sit back
+      // Subtle accents: downbeats push, offbeats sit back
       const accent = idx % 4 === 0 ? 1.15 : idx % 2 === 1 ? 0.85 : 1
       for (let r = 0; r < g.length; r++) {
         if (!g[r][idx]) continue
@@ -218,8 +213,16 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
     setGrid(makeEmptyGrid())
   }, [])
 
+  // Generating implies "play": pressing either button while stopped also
+  // starts the transport (the click is the user gesture audio needs).
   const randomize = useCallback(() => {
     setGrid(generateTechnoPattern())
+    setPlaying(true)
+  }, [])
+
+  const ludicrous = useCallback(() => {
+    setGrid(generateLudicrousPattern())
+    setPlaying(true)
   }, [])
 
   return {
@@ -227,6 +230,7 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
     toggleCell,
     clearAll,
     randomize,
+    ludicrous,
     playing,
     setPlaying,
     bpm,
@@ -236,7 +240,5 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
     bassTone,
     setLeadTone,
     setBassTone,
-    swing,
-    setSwing,
   }
 }

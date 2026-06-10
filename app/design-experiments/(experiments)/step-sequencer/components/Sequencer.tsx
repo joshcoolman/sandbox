@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useStepSequencer, type SequencerController } from '../hooks/useStepSequencer'
 import { ROW_DEFS } from '../lib/rows'
 import { LEAD_TONES, BASS_TONES } from '../lib/voices'
@@ -13,9 +14,16 @@ export function Sequencer({ controller }: Props) {
   const internal = useStepSequencer()
   const ctrl = controller ?? internal
   const {
-    grid, toggleCell, clearAll, randomize, playing, setPlaying, bpm, setBpm, currentStep,
-    leadTone, bassTone, setLeadTone, setBassTone, swing, setSwing,
+    grid, toggleCell, clearAll, randomize, ludicrous, playing, setPlaying, bpm, setBpm, currentStep,
+    leadTone, bassTone, setLeadTone, setBassTone,
   } = ctrl
+
+  const [bpmOpen, setBpmOpen] = useState(false)
+
+  const commitBpm = (raw: string) => {
+    const n = Number(raw)
+    if (Number.isFinite(n)) setBpm(Math.max(60, Math.min(180, Math.round(n))))
+  }
 
   return (
     <div className={styles.device}>
@@ -98,10 +106,19 @@ export function Sequencer({ controller }: Props) {
           type="button"
           className={styles.generate}
           onClick={randomize}
-          aria-label="Generate random pattern"
+          aria-label="Generate random pattern and play"
         >
           <span className={styles.generateGlyph} aria-hidden>✦</span>
           GENERATE
+        </button>
+
+        <button
+          type="button"
+          className={styles.generate}
+          onClick={ludicrous}
+          aria-label="Generate a ludicrous random pattern and play"
+        >
+          LUDICROUS
         </button>
 
         <button
@@ -113,33 +130,48 @@ export function Sequencer({ controller }: Props) {
           CLEAR
         </button>
 
-        <label className={styles.swing}>
-          <span className={styles.bpmReadout}>{Math.round(swing * 100)}</span>
-          <span className={styles.bpmUnit}>SWING</span>
-          <input
-            type="range"
-            min={0}
-            max={60}
-            step={1}
-            value={Math.round(swing * 100)}
-            onChange={e => setSwing(Number(e.target.value) / 100)}
-            aria-label="Swing amount"
-          />
-        </label>
-
-        <label className={styles.bpm}>
-          <span className={styles.bpmReadout}>{bpm}</span>
-          <span className={styles.bpmUnit}>BPM</span>
-          <input
-            type="range"
-            min={60}
-            max={180}
-            step={1}
-            value={bpm}
-            onChange={e => setBpm(Number(e.target.value))}
+        <div className={styles.bpm}>
+          <button
+            type="button"
+            className={styles.bpmButton}
+            onClick={() => setBpmOpen(o => !o)}
+            aria-haspopup="dialog"
+            aria-expanded={bpmOpen}
             aria-label="Tempo in beats per minute"
-          />
-        </label>
+          >
+            <span className={styles.bpmReadout}>{bpm}</span>
+            <span className={styles.bpmUnit}>BPM</span>
+          </button>
+          {bpmOpen && (
+            <div className={styles.bpmPopover} role="dialog" aria-label="Set tempo">
+              <input
+                type="number"
+                className={styles.bpmInput}
+                min={60}
+                max={180}
+                step={1}
+                defaultValue={bpm}
+                autoFocus
+                onFocus={e => e.currentTarget.select()}
+                onChange={e => commitBpm(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    commitBpm(e.currentTarget.value)
+                    setBpmOpen(false)
+                  } else if (e.key === 'Escape') {
+                    setBpmOpen(false)
+                  }
+                }}
+                onBlur={e => {
+                  commitBpm(e.currentTarget.value)
+                  setBpmOpen(false)
+                }}
+                aria-label="Tempo in beats per minute"
+              />
+              <span className={styles.bpmUnit}>BPM</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
