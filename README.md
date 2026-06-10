@@ -34,6 +34,20 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### Water Mesh
+
+**June 10, 2026**
+
+[![Water Mesh](./public/screenshots/water-mesh.png)](/design-experiments/water-mesh)
+
+A hexagonal mesh viewed from directly above. Nodes are fixed in the plane; clicking pushes them toward you in Z, shift-clicking dents them away at 3× force. The perspective camera turns Z displacement into foreshortening — dents compress the cells, extrusions expand them. Deformations decay back to flat over about seven seconds via linear decay (5 units/frame). Weak Z neighbor coupling keeps the surface coherent without over-smoothing. Pure canvas 2D API, no libraries.
+
+`Canvas` `Physics` `Interactive` `3D` `Generative`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/water-mesh) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/water-mesh)**
+
+---
+
 ### Step Sequencer
 
 **May 27, 2026**

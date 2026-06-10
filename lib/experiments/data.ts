@@ -2,6 +2,16 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'water-mesh',
+    date: 'June 10, 2026',
+    title: 'Water Mesh',
+    subtitle: 'A hexagonal surface you press and pull — each click leaves a permanent impression.',
+    description: 'A hexagonal mesh viewed from directly above. Nodes are fixed in the plane; clicking pushes them toward you in Z, shift-clicking dents them away. The perspective camera turns Z displacement into foreshortening — dents compress the cells, extrusions expand them. Deformations decay back to flat over about seven seconds via linear decay.',
+    screenshot: '/screenshots/water-mesh.png',
+    tags: ['Canvas', 'Physics', 'Interactive', '3D', 'Generative'],
+    theme: 'dark',
+  },
+  {
     slug: 'step-sequencer',
     date: 'May 27, 2026',
     title: 'Step Sequencer',
