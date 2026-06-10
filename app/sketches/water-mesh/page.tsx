@@ -1,32 +1,42 @@
-// sketch: Aerial seismic mesh — static topographic ground, blast physics on click.
+// sketch: Hexagonal mesh with Z-axis deformation — aerial perspective, click to dent.
 'use client';
 
 import { useEffect, useRef } from 'react';
 import './styles.css';
 
 const CELL_SIZE = 30;
-const BLEED = 2;
-const DAMPING = 0.97;     // high — displacement travels far, settles slowly
+const MESH_PADDING = 80;
+const ROW_SPACING = CELL_SIZE * (Math.sqrt(3) / 2);
 const ALPHA_BUCKETS = 12;
-const TERRAIN_T = 1.4;    // frozen terrain snapshot
+const TERRAIN_T = 1.4;
+
+// Camera directly above
+const CAM_Z = 2200;
+const Z_CAP_UP = -(CAM_Z - 100);
+
+// Z physics — extrude force targets the camera plane in one click
+const Z_DAMPING = 0.75;
+const Z_LINEAR_DECAY = 5; // units/frame toward zero — 7s recovery from full cap at 60fps
+const BLAST_FORCE = CAM_Z * (1 - Z_DAMPING);
+const BLAST_SIGMA = CELL_SIZE * 1.5;
+const Z_NEIGHBOR_K = 0.004;
 
 function terrain(nx: number, ny: number, t: number): number {
   const x = nx * 7;
   const y = ny * 5;
   const h1 = Math.sin(x * 0.8 + t * 0.9) * Math.cos(y * 0.6 + t * 0.7);
-  const h2 = Math.sin(x * 1.5 - y * 1.1  + t * 0.5) * 0.5;
-  const h3 = Math.cos(x * 0.4 + y * 1.3  + t * 0.3) * 0.35;
-  const h4 = Math.sin(x * 2.2 + y * 0.7  + t * 0.8) * 0.15;
+  const h2 = Math.sin(x * 1.5 - y * 1.1 + t * 0.5) * 0.5;
+  const h3 = Math.cos(x * 0.4 + y * 1.3 + t * 0.3) * 0.35;
+  const h4 = Math.sin(x * 2.2 + y * 0.7 + t * 0.8) * 0.15;
   return (h1 + h2 + h3 + h4) / 2.0;
 }
 
-const ROW_SPACING = CELL_SIZE * (Math.sqrt(3) / 2);
-
 function buildMesh(W: number, H: number) {
-  const cols = Math.ceil(W / CELL_SIZE) + BLEED * 2 + 2;
-  const rows = Math.ceil(H / ROW_SPACING) + BLEED * 2 + 2;
-  const startX = -(BLEED * CELL_SIZE);
-  const startY = -(BLEED * ROW_SPACING);
+  // Mesh fits within viewport minus padding; subtract half-cell for odd-row hex offset
+  const cols = Math.floor((W - MESH_PADDING * 2 - CELL_SIZE / 2) / CELL_SIZE) + 1;
+  const rows = Math.floor((H - MESH_PADDING * 2) / ROW_SPACING) + 1;
+  const startX = MESH_PADDING;
+  const startY = MESH_PADDING;
 
   const nodes = [];
   for (let row = 0; row < rows; row++) {
@@ -34,11 +44,9 @@ function buildMesh(W: number, H: number) {
       const rx = startX + col * CELL_SIZE + (row % 2) * (CELL_SIZE / 2);
       const ry = startY + row * ROW_SPACING;
       nodes.push({
-        restX: rx, restY: ry,
-        x: rx,     y: ry,
-        vx: 0,     vy: 0,
-        nx: rx / W,
-        ny: ry / H,
+        x: rx, y: ry,       // fixed — never change
+        z: 0, vz: 0,        // depth and velocity
+        nx: rx / W, ny: ry / H,
       });
     }
   }
@@ -47,15 +55,12 @@ function buildMesh(W: number, H: number) {
   const idx = (r: number, c: number) => r * cols + c;
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      // Horizontal neighbor
       if (col < cols - 1) edges.push([idx(row, col), idx(row, col + 1)]);
       if (row < rows - 1) {
         if (row % 2 === 0) {
-          // Even row: lower-left and lower-right
           if (col > 0) edges.push([idx(row, col), idx(row + 1, col - 1)]);
           edges.push([idx(row, col), idx(row + 1, col)]);
         } else {
-          // Odd row: lower-left and lower-right
           edges.push([idx(row, col), idx(row + 1, col)]);
           if (col < cols - 1) edges.push([idx(row, col), idx(row + 1, col + 1)]);
         }
@@ -63,22 +68,27 @@ function buildMesh(W: number, H: number) {
     }
   }
 
-  return { nodes, edges };
+  // Adjacency list for Z neighbor coupling
+  const adjacency: number[][] = Array.from({ length: nodes.length }, () => []);
+  for (const [a, b] of edges) {
+    adjacency[a].push(b);
+    adjacency[b].push(a);
+  }
+
+  return { nodes, edges, adjacency };
 }
 
-interface Blast {
+interface BlastRing {
   x: number; y: number;
   startTime: number;
   maxRadius: number;
   duration: number;
-  force: number;
-  waveWidth: number;
 }
 
 export default function WaterMesh() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
-  const blastsRef = useRef<Blast[]>([]);
+  const ringsRef = useRef<BlastRing[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -87,9 +97,7 @@ export default function WaterMesh() {
     if (!ctx) return;
 
     let mesh = buildMesh(window.innerWidth, window.innerHeight);
-
-    // Pre-compute static terrain heights — recomputed only on resize
-    let heights: number[] = mesh.nodes.map(n => terrain(n.nx, n.ny, TERRAIN_T));
+    let heights = mesh.nodes.map(n => terrain(n.nx, n.ny, TERRAIN_T));
 
     function resize() {
       if (!canvas) return;
@@ -107,16 +115,23 @@ export default function WaterMesh() {
     function handleClick(e: MouseEvent) {
       const W = window.innerWidth;
       const H = window.innerHeight;
-      const dx = Math.max(e.clientX, W - e.clientX);
-      const dy = Math.max(e.clientY, H - e.clientY);
-      const maxRadius = Math.sqrt(dx * dx + dy * dy) * 1.05;
-      blastsRef.current.push({
+      const force = e.shiftKey ? BLAST_FORCE * 3 : -BLAST_FORCE;
+      const sigma2 = BLAST_SIGMA * BLAST_SIGMA * 2;
+
+      for (const node of mesh.nodes) {
+        const dx = node.x - e.clientX;
+        const dy = node.y - e.clientY;
+        node.vz += force * Math.exp(-(dx * dx + dy * dy) / sigma2);
+      }
+
+      // Visual ring for feedback
+      const cx = Math.max(e.clientX, W - e.clientX);
+      const cy = Math.max(e.clientY, H - e.clientY);
+      ringsRef.current.push({
         x: e.clientX, y: e.clientY,
         startTime: performance.now(),
-        maxRadius,
-        duration: 2800,
-        force: e.shiftKey ? -0.8 : 0.8,
-        waveWidth: 60,
+        maxRadius: Math.sqrt(cx * cx + cy * cy) * 1.05,
+        duration: 2000,
       });
     }
     window.addEventListener('click', handleClick);
@@ -134,63 +149,59 @@ export default function WaterMesh() {
       ctx.fillStyle = '#050505';
       ctx.fillRect(0, 0, W, H);
 
-      // Apply blast forces
-      blastsRef.current = blastsRef.current.filter(blast => {
-        const elapsed = timestamp - blast.startTime;
-        const progress = elapsed / blast.duration;
-        if (progress >= 1) return false;
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const waveRadius = blast.maxRadius * eased;
-        const forceMultiplier = Math.max(0, 1 - progress * 2);
-
-        for (const node of nodes) {
-          const dx = node.x - blast.x;
-          const dy = node.y - blast.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const distFromEdge = dist - waveRadius;
-          if (distFromEdge < 0 && distFromEdge > -blast.waveWidth && dist > 0) {
-            const inv = 1 / dist;
-            const depth = 1 - Math.abs(distFromEdge) / blast.waveWidth;
-            const strength = blast.force * depth * forceMultiplier;
-            node.vx += dx * inv * strength;
-            node.vy += dy * inv * strength;
-          }
-        }
-        return true;
-      });
-
-      // Physics — no spring, nodes stay where blasts leave them
-      for (const node of nodes) {
-        node.vx *= DAMPING;
-        node.vy *= DAMPING;
-        node.x += node.vx;
-        node.y += node.vy;
+      // Z neighbor coupling — each node pulled toward average Z of its neighbors
+      const { adjacency } = mesh;
+      for (let i = 0; i < nodes.length; i++) {
+        const nbrs = adjacency[i];
+        let avgZ = 0;
+        for (const j of nbrs) avgZ += nodes[j].z;
+        nodes[i].vz += ((avgZ / nbrs.length) - nodes[i].z) * Z_NEIGHBOR_K;
       }
 
-      // Blast ring visual
-      for (const blast of blastsRef.current) {
-        const elapsed = timestamp - blast.startTime;
-        const progress = elapsed / blast.duration;
+      // Z integrate
+      for (const node of nodes) {
+        if (node.z !== 0) node.vz += Math.sign(-node.z) * Z_LINEAR_DECAY;
+        node.vz *= Z_DAMPING;
+        node.z += node.vz;
+        if (node.z < Z_CAP_UP) node.z = Z_CAP_UP;
+        if (Math.abs(node.z) < 1.0) { node.z = 0; node.vz = 0; }
+      }
+
+      // Perspective projection
+      const px = new Float32Array(nodes.length);
+      const py = new Float32Array(nodes.length);
+      for (let i = 0; i < nodes.length; i++) {
+        const scale = CAM_Z / (CAM_Z + nodes[i].z);
+        px[i] = W / 2 + (nodes[i].x - W / 2) * scale;
+        py[i] = H / 2 + (nodes[i].y - H / 2) * scale;
+      }
+
+      // Visual rings
+      ringsRef.current = ringsRef.current.filter(ring => {
+        const elapsed = timestamp - ring.startTime;
+        const progress = elapsed / ring.duration;
+        if (progress >= 1) return false;
         const eased = 1 - Math.pow(1 - progress, 3);
-        const waveRadius = blast.maxRadius * eased;
-        const opacity = 0.22 * Math.max(0, 1 - progress * 1.4);
+        const radius = ring.maxRadius * eased;
+        const opacity = 0.18 * Math.max(0, 1 - progress * 1.4);
         if (opacity > 0.005) {
           ctx.beginPath();
-          ctx.arc(blast.x, blast.y, waveRadius, 0, Math.PI * 2);
+          ctx.arc(ring.x, ring.y, radius, 0, Math.PI * 2);
           ctx.strokeStyle = `rgba(210,210,210,${opacity.toFixed(3)})`;
           ctx.lineWidth = 1.5;
           ctx.stroke();
         }
-      }
+        return true;
+      });
 
-      // Batch edges by alpha bucket
+      // Batch edges by terrain alpha
       for (let b = 0; b < ALPHA_BUCKETS; b++) buckets[b].length = 0;
 
       for (const [a, b] of edges) {
         const avgH = (heights[a] + heights[b]) / 2;
         const alpha = 0.12 + ((avgH + 1) / 2) * 0.65;
         const bucket = Math.min(ALPHA_BUCKETS - 1, Math.floor(alpha * ALPHA_BUCKETS));
-        buckets[bucket].push({ ax: nodes[a].x, ay: nodes[a].y, bx: nodes[b].x, by: nodes[b].y });
+        buckets[bucket].push({ ax: px[a], ay: py[a], bx: px[b], by: py[b] });
       }
 
       ctx.lineWidth = 0.75;
@@ -212,7 +223,7 @@ export default function WaterMesh() {
         const r = 0.8 + ((h + 1) / 2) * 1.4;
         const a = 0.25 + ((h + 1) / 2) * 0.65;
         ctx.beginPath();
-        ctx.arc(nodes[i].x, nodes[i].y, r, 0, Math.PI * 2);
+        ctx.arc(px[i], py[i], r, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(220,220,220,${a.toFixed(3)})`;
         ctx.fill();
       }
