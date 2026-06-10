@@ -51,7 +51,12 @@ agent-browser screenshot ./public/screenshots/experiment-name.png
 # 3. Update README.md
 #    Move experiment section to top of list
 #    Update date if needed
-#    Ensure links point to /experiment-name
+#    Two links per entry: View Live (absolute joshcoolman.com URL) and
+#    View Code (GitHub source URL). The View Code path MUST match where the
+#    experiment actually lives on disk — verify it:
+ls -d app/design-experiments/experiment-name app/design-experiments/\(experiments\)/experiment-name 2>/dev/null
+#    Most experiments live under (experiments)/ — that route-group segment is
+#    part of the GitHub path and is the #1 source of broken View Code links.
 
 # 4. Commit and push
 git add -A
@@ -81,11 +86,20 @@ The experiment's single source of truth is the `experiments` array in `lib/exper
 }
 ```
 
-README.md — relative paths:
+README.md entry — note the two-link footer with full URLs:
 ```markdown
-[![Experiment Name](./public/screenshots/experiment-name.png)](/experiment-name)
-**[View Live →](/experiment-name)**
+[![Experiment Name](./public/screenshots/experiment-name.png)](/design-experiments/experiment-name)
+
+One-to-three sentence description.
+
+`Tag1` `Tag2`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/experiment-name) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/experiment-name)**
 ```
+
+The `(experiments)/` segment in the View Code URL is required only when the
+experiment lives in that route group — confirm with the `ls` check in step 3
+above before pasting. Getting this wrong 404s the link (this has happened).
 
 ## Requirements
 

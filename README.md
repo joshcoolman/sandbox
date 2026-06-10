@@ -44,7 +44,7 @@ An experiment with the new Fable 5 model. A hexagonal mesh viewed from directly 
 
 `Fable 5` `Physics` `Interactive` `3D` `Generative`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/seismic-mesh) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/seismic-mesh)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/seismic-mesh) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/seismic-mesh)**
 
 ---
 
