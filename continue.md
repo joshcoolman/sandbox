@@ -1,30 +1,38 @@
-# Continue: Seismic Mesh shipped
+# Continue: Seismic Mesh shipped + MeshCanvas home backdrop
 
-## What was being worked on
+Two major pieces this session, both committed and pushed on `main`.
 
-Implemented the full CINEMATIC-SPEC.md for the water-mesh experiment, then renamed it to **seismic-mesh** and shipped it. All work lives in `app/design-experiments/(experiments)/seismic-mesh/` (page.tsx, styles.css, data/readout.ts, CINEMATIC-SPEC.md).
+## 1. Seismic Mesh experiment (shipped)
 
-## Changes made so far
+Implemented CINEMATIC-SPEC.md for the water-mesh experiment, renamed it **seismic-mesh**, shipped with screenshot. Lives in `app/design-experiments/(experiments)/seismic-mesh/`.
 
-- **Cinematic state machine** in the raf loop (no timers for phases): plain click -> `rising` (~480ms Gaussian impulse) -> `frozen` (~2.6s, physics gated: no coupling/decay, `vz *= 0.5`) -> release -> existing linear-decay melt. Shift-click = quick dent, no cinematic.
-- **Seismic wave**: render-Z-only gaussian-windowed cosine ring (`seismicWavesRef`), per-quake amp variation (±15%), faint leading-edge circle. Old `ringsRef` 2D blast rings deleted.
-- **Topographic coloring**: 16-band precomputed LUT (`EDGE_COLORS`/`NODE_COLORS`/`NODE_RADII`, deep blue -> teal -> green -> yellow -> amber -> white) keyed off renderZ; edges/nodes batched one stroke/fill per band; frozen peak reads white-hot.
-- **Telemetry overlay**: `data/readout.ts` `makeReadout(x,y,W,H)` derives magnitude/epicenter/elevation/radius/depth from click point (coordinate-seeded + random, client-only). DOM panel `.sm-readout` with staggered DecodeText; overlay `gen` counter guards stale fade timeouts so mid-cinematic clicks restart cleanly.
-- **Epicenter marker**: canvas crosshair + pulsing ring, leader line draws out to panel over ~260ms; canvas and DOM agree via shared `panelPos()` — `PANEL_W`/`PANEL_H` constants in page.tsx must track `.sm-readout` CSS (252px wide, ~196px tall).
-- **Entry animation gotcha**: panel mounts with `is-visible` already applied, so fade-in is a CSS `animation` (`sm-readout-in`), fade-out is the transition.
-- **Rename**: folder, `SeismicMesh` component, CSS classes (`seismic-mesh-*`, `sm-*`), `lib/experiments/data.ts` entry, README.md, llms.txt, llms-full.txt. Old `public/screenshots/water-mesh.png` deleted; new `seismic-mesh.png` captured mid-freeze with overlay visible (agent-browser synthetic click + timed screenshot).
-- **Fable 5 branding** (user asked twice — it matters to them): description opens "An experiment with the new Fable 5 model", tag `Canvas` -> `Fable 5`, and the card subtitle leads "A Fable 5 experiment — click to trigger a quake: ...".
+- Plain click cinematic: rise (~480ms) -> freeze (~2.6s, physics gated) -> ASCII telemetry panel (`data/readout.ts`, DecodeText, `.sm-readout`) -> release/melt. Shift-click = dent.
+- Topo color LUT (blue->green->amber->white), render-only seismic wave, epicenter crosshair + leader line via shared `panelPos()` (PANEL_W/H must track CSS).
+- Fable 5 branding everywhere (user asked repeatedly — it matters): card subtitle leads "A Fable 5 experiment", description opener, tag `Fable 5` (replaced `Canvas`). In data.ts, README, llms.txt, llms-full.txt.
+- Screenshot trick: `agent-browser eval "window.dispatchEvent(new MouseEvent('click',{clientX,clientY}))"`, wait ~1700ms, shoot mid-freeze.
 
-## Key decisions
+## 2. MeshCanvas home backdrop (new, swapped in)
 
-- `app/sketches/water-mesh/` is the old scratch predecessor — intentionally left untouched.
-- All animation timing stays in the raf loop; React state only for the overlay DOM.
-- Screenshot strategy for cinematic experiments: `agent-browser eval "window.dispatchEvent(new MouseEvent('click', {clientX, clientY}))"`, wait ~1700ms (freeze + decode), shoot. Composition B (click at 560,380) won.
+`app/components/MeshCanvas.tsx` replaces NetworkCanvas on the home page. **NetworkCanvas.tsx kept untouched** — revert = flip the import in `app/page.tsx` (comment there notes this). Same `{ className }` prop interface.
+
+Final tuned state (every quality = one named constant at top of file):
+- Hex mesh `CELL_SIZE 84`, static jitter, overscanned to viewport **diagonal** (rotation must never expose corners)
+- Interference swell: `swell()` = 3 low-frequency waves morphing, `SWELL_AMP 480`, `SWELL_SPEED 0.0007`
+- Whole-field rotation `ROT_SPEED 0.0001` (~63s/rev) — user picked the "extreme" value deliberately and confirmed twice; do not quietly slow it
+- Click = always a **depression** (no shift variant): `renderZ = -ambient + waveZ`, broad slow surge `WAVE_SIGMA 170`, `WAVE_SPEED 0.22`, `WAVE_K 0.006` (no rings), **`WAVE_ATTACK 700ms` smoothstep so there's no jump at click time**, ~5s dissipation
+- All render-only, zero node physics; document-level click listener keeps cards clickable
+- Warm palette preserved: edges `#B6A48F`, nodes `#C67E5E`, terrain-seeded base alpha, 12 batched alpha buckets
+
+## Key decisions / lessons
+
+- Tune-by-extremes workflow saved to memory (`feedback-tune-by-extremes.md`): crank a constant 2-4x so Josh can see it, then dial back.
+- Click feel evolved: rapid ripple -> "slow surge in the same dialect as the ambient flow" -> depression-only with eased attack. The attack envelope was the fix for "sudden shift on click".
+- Verification pattern: typecheck + build, then agent-browser zoomed margin crops (`magick -crop 280x600+0+100 -resize 300%`) to judge the subtle backdrop.
 
 ## Outstanding work
 
-- None pending. Optional polish never discussed in depth: sound, multi-quake interference.
+- None. Possible future: prefers-reduced-motion support for MeshCanvas (never discussed); parked DecodeText-on-homepage-cards idea in memory.
 
 ## Git state
 
-- Branch `main`, clean tree, all pushed: `6e1b5ab` (rename + cinematic), `b53cd65` (Fable 5 subtitle). Vercel deploy triggered — worth a quick look at the live URL.
+Branch `main`, clean tree, all pushed: `6e1b5ab` (seismic-mesh), `b53cd65` (Fable 5 subtitle), `90c0927` (MeshCanvas backdrop). Vercel deploys on push.
