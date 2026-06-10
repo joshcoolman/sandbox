@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Homepage backdrop v2 — MeshCanvas
+
+**Date:** 2026-06-10
+
+The home page background effect was upgraded from NetworkCanvas (organic node organisms with a physical click blast) to MeshCanvas — a structured, noise-jittered hex mesh in the same warm palette, descended from the seismic-mesh experiment. The field moves on three layers, all render-only: an interference swell (three low-frequency waves that morph rather than march), a slow whole-field rotation (~63s per revolution, mesh overscanned to the viewport diagonal so corners never expose), and a per-node sway. Clicks are always a depression — a broad slow surge with a 700ms smoothstep attack that presses the field away and dims it over ~5s, no rings, no node physics to recover from. NetworkCanvas remains in the repo untouched; swapping back is a one-line import change in `app/page.tsx`.
+
+---
+
 ### Homepage — Plans column replaced with Link Worthy
 
 **Date:** 2026-06-07

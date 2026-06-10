@@ -1,5 +1,6 @@
 import Image from "next/image";
-import NetworkCanvas from "./components/NetworkCanvas";
+// Swap back to ./components/NetworkCanvas for the original organic-organisms backdrop
+import MeshCanvas from "./components/MeshCanvas";
 import CurtainLink from "./components/CurtainLink";
 import SiteFooter from "./components/SiteFooter";
 import HomeExperimentCard from "./components/HomeExperimentCard";
@@ -25,7 +26,7 @@ export default async function Home() {
     <main className={styles.mainContainer}>
       <HomeScrollRestore />
       <div className={styles.networkBackground}>
-        <NetworkCanvas className={styles.networkCanvas} />
+        <MeshCanvas className={styles.networkCanvas} />
       </div>
 
       <div className={styles.contentOverlay}>
