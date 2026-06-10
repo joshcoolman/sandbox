@@ -100,7 +100,7 @@ export default function WaterMesh() {
     let heights = mesh.nodes.map(n => terrain(n.nx, n.ny, TERRAIN_T));
 
     function resize() {
-      if (!canvas) return;
+      if (!canvas || !ctx) return;
       canvas.width = window.innerWidth * devicePixelRatio;
       canvas.height = window.innerHeight * devicePixelRatio;
       canvas.style.width = window.innerWidth + 'px';
