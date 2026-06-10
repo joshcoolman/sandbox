@@ -1,76 +1,30 @@
-# Continue: Promote water-mesh sketch to experiment
+# Continue: Seismic Mesh shipped
 
-## What we built
+## What was being worked on
 
-Over a long exploratory session we developed a canvas sketch at `app/sketches/water-mesh/` that has arrived at something genuinely interesting. It is committed and stable on `main`.
+Implemented the full CINEMATIC-SPEC.md for the water-mesh experiment, then renamed it to **seismic-mesh** and shipped it. All work lives in `app/design-experiments/(experiments)/seismic-mesh/` (page.tsx, styles.css, data/readout.ts, CINEMATIC-SPEC.md).
 
-**What it does:** A hexagonal mesh viewed from directly above. Nodes are fixed in XY — the only movement is on the Z axis (depth), visualized through a perspective camera. Clicking extrudes nodes toward the camera; shift-clicking dents them away. The mesh recovers back to flat via linear decay (~7 seconds for a full extrusion). Contained within the viewport with 80px padding so it reads as a visible object, not a wallpaper texture.
+## Changes made so far
 
-**Key technical facts:**
-- `app/sketches/water-mesh/page.tsx` — single file, ~240 lines
-- `app/sketches/water-mesh/styles.css` — minimal, full-bleed canvas
-- Hex grid, XY positions frozen, Z-axis physics only
-- Perspective projection: `scale = CAM_Z / (CAM_Z + node.z)`
-- Linear decay: `Z_LINEAR_DECAY = 5` units/frame — constant rate, reaches zero in finite time
-- Dead zone snap: `if (Math.abs(node.z) < 1.0) { node.z = 0; node.vz = 0; }`
-- Weak Z neighbor coupling (`Z_NEIGHBOR_K = 0.004`) keeps surface coherent without over-smoothing
-- `BLAST_FORCE = CAM_Z * (1 - Z_DAMPING)` — one click targets the camera plane
-- Click: extrude toward camera. Shift-click: dent away at 3x force.
+- **Cinematic state machine** in the raf loop (no timers for phases): plain click -> `rising` (~480ms Gaussian impulse) -> `frozen` (~2.6s, physics gated: no coupling/decay, `vz *= 0.5`) -> release -> existing linear-decay melt. Shift-click = quick dent, no cinematic.
+- **Seismic wave**: render-Z-only gaussian-windowed cosine ring (`seismicWavesRef`), per-quake amp variation (±15%), faint leading-edge circle. Old `ringsRef` 2D blast rings deleted.
+- **Topographic coloring**: 16-band precomputed LUT (`EDGE_COLORS`/`NODE_COLORS`/`NODE_RADII`, deep blue -> teal -> green -> yellow -> amber -> white) keyed off renderZ; edges/nodes batched one stroke/fill per band; frozen peak reads white-hot.
+- **Telemetry overlay**: `data/readout.ts` `makeReadout(x,y,W,H)` derives magnitude/epicenter/elevation/radius/depth from click point (coordinate-seeded + random, client-only). DOM panel `.sm-readout` with staggered DecodeText; overlay `gen` counter guards stale fade timeouts so mid-cinematic clicks restart cleanly.
+- **Epicenter marker**: canvas crosshair + pulsing ring, leader line draws out to panel over ~260ms; canvas and DOM agree via shared `panelPos()` — `PANEL_W`/`PANEL_H` constants in page.tsx must track `.sm-readout` CSS (252px wide, ~196px tall).
+- **Entry animation gotcha**: panel mounts with `is-visible` already applied, so fade-in is a CSS `animation` (`sm-readout-in`), fade-out is the transition.
+- **Rename**: folder, `SeismicMesh` component, CSS classes (`seismic-mesh-*`, `sm-*`), `lib/experiments/data.ts` entry, README.md, llms.txt, llms-full.txt. Old `public/screenshots/water-mesh.png` deleted; new `seismic-mesh.png` captured mid-freeze with overlay visible (agent-browser synthetic click + timed screenshot).
+- **Fable 5 branding** (user asked twice — it matters to them): description opens "An experiment with the new Fable 5 model", tag `Canvas` -> `Fable 5`, and the card subtitle leads "A Fable 5 experiment — click to trigger a quake: ...".
 
-## Goal for next session
+## Key decisions
 
-**Promote this sketch to a proper design experiment** using the `/design-experiment` skill as a guide.
+- `app/sketches/water-mesh/` is the old scratch predecessor — intentionally left untouched.
+- All animation timing stays in the raf loop; React state only for the overlay DOM.
+- Screenshot strategy for cinematic experiments: `agent-browser eval "window.dispatchEvent(new MouseEvent('click', {clientX, clientY}))"`, wait ~1700ms (freeze + decode), shoot. Composition B (click at 560,380) won.
 
-## What "promoting" involves
+## Outstanding work
 
-### 1. Move files
+- None pending. Optional polish never discussed in depth: sound, multi-quake interference.
 
-Because this is a fullscreen immersive canvas (conflicts with the shared layout wrapper), it should live **outside** the `(experiments)` route group per the skill instructions:
+## Git state
 
-```
-app/design-experiments/water-mesh/
-├── page.tsx      (moved + cleaned from sketch)
-└── styles.css    (moved as-is)
-```
-
-Add a comment in `page.tsx` explaining why it's outside `(experiments)/`.
-
-### 2. Add to data.ts
-
-Add an entry at the top of the experiments array in `lib/experiments/data.ts`:
-
-```ts
-{
-  slug: 'water-mesh',
-  date: 'June 10, 2026',
-  title: 'Water Mesh',
-  subtitle: 'A hexagonal surface you press and pull — each click leaves a permanent impression.',
-  description: 'A hexagonal mesh viewed from directly above. Nodes are fixed in the plane; clicking pushes them toward you in Z, shift-clicking dents them away. The perspective camera turns Z displacement into foreshortening — dents compress the cells, extrusions expand them. Deformations decay back to flat over about seven seconds via linear decay.',
-  screenshot: '/screenshots/water-mesh.png',
-  tags: ['Canvas', 'Physics', 'Interactive', '3D', 'Generative'],
-  theme: 'dark',
-}
-```
-
-### 3. Code cleanup for the promotion
-
-- Update the comment at line 1 (currently says `// sketch:`)
-- Verify `nx`/`ny` terrain sampling (`rx / W`, `ry / H`) still makes sense with `MESH_PADDING = 80` — nodes no longer start near 0,0 so the terrain snapshot may look different; eyeball it
-- No physics or interaction changes — it's dialed in
-
-### 4. SEO checklist (per CLAUDE.md)
-
-- `app/sitemap.ts` — confirm dynamic experiments are auto-discovered (likely fine, no manual entry needed)
-- `public/llms.txt` — concise entry
-- `public/llms-full.txt` — expanded entry
-
-### 5. Ship it
-
-Use `/ship-experiment` after verifying the promoted experiment looks right. It handles screenshot, README update, commit, and push.
-
-## What NOT to do
-
-- Do not change the physics or interaction
-- Do not add UI controls or overlays
-- Do not add the shared layout wrapper manually — go fullscreen and skip it
-- Do not run `npm run dev` — the user will start the server
+- Branch `main`, clean tree, all pushed: `6e1b5ab` (rename + cinematic), `b53cd65` (Fable 5 subtitle). Vercel deploy triggered — worth a quick look at the live URL.
