@@ -54,9 +54,9 @@ An experiment with the new Fable 5 model. A hexagonal mesh viewed from directly 
 
 [![Step Sequencer](./public/screenshots/step-sequencer.png)](/design-experiments/step-sequencer)
 
-A Tenori-on / ToneMatrix-flavored grid sequencer. Sixteen 16th-note steps wide, eight pads tall, with each row tuned to a note in the C major pentatonic — meaning any combination of toggled cells sounds musical, no piano skills required. The playhead sweeps left to right and lit pads fire chiptune square-wave notes; rows are color-coded warm-to-cool top-to-bottom so the grid reads like a rainbow when filled. Pure Web Audio API — lazy AudioContext, oscillator + gain envelope per note, setInterval lookahead scheduler. No deps, no audio assets. Variable tempo from 60 to 180 BPM.
+A Tenori-on / ToneMatrix-flavored grid sequencer, grown into a three-layer groovebox. Sixteen 16th-note steps wide, eleven rows tall: five pentatonic lead rows, three bass rows, and a synthesized drum kit (sine-drop kick, filtered-noise clap and hat). The generate button writes a real techno pattern — four-on-the-floor kick, offbeat hats, backbeat clap, rolling bassline, sparse lead motif — and the page loads with one ready to play. Two segmented tone pills — lead soft / square / saw, bass sub / saw / acid — plus a swing control and a tempo-synced dotted-eighth delay on the lead bus, all glued by a master compressor. Pure Web Audio API — no deps, no audio assets. Variable tempo from 60 to 180 BPM.
 
-`Audio` `Web Audio API` `Sequencer` `Interactive` `Chiptune`
+`Audio` `Web Audio API` `Sequencer` `Interactive` `Techno`
 
 **[View Live →](https://www.joshcoolman.com/design-experiments/step-sequencer) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/step-sequencer)**
 

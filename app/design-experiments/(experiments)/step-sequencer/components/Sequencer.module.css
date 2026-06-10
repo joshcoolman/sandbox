@@ -13,7 +13,10 @@
 
 .top {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   padding-bottom: 14px;
 }
 
@@ -23,6 +26,54 @@
   letter-spacing: 0.22em;
   color: #8a8aa0;
   text-transform: uppercase;
+}
+
+.tones {
+  display: flex;
+  gap: 8px;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.segment {
+  font-family: 'DM Mono', ui-monospace, monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  border: none;
+  background: transparent;
+  color: #6a6a82;
+  padding: 5px 9px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.segment + .segment {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.segment:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #c8c8d8;
+}
+
+.segment:focus-visible {
+  outline: 2px solid #6aa9ff;
+  outline-offset: -2px;
+}
+
+.segmentLead.segmentOn {
+  background: rgba(140, 110, 230, 0.18);
+  color: #e6d8ff;
+}
+
+.segmentBass.segmentOn {
+  background: rgba(70, 130, 220, 0.2);
+  color: #bcd8ff;
 }
 
 .grid {
@@ -41,6 +92,10 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.sectionStart {
+  margin-top: 9px;
 }
 
 .rowLabel {
@@ -209,12 +264,16 @@
   text-shadow: 0 0 6px rgba(180, 130, 255, 0.6);
 }
 
+.swing,
 .bpm {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: auto;
   color: #c8c8d8;
+}
+
+.swing {
+  margin-left: auto;
 }
 
 .bpmReadout {
@@ -234,8 +293,14 @@
 }
 
 .bpm input[type='range'] {
-  width: 120px;
+  width: 90px;
   accent-color: #6aa9ff;
+  cursor: pointer;
+}
+
+.swing input[type='range'] {
+  width: 60px;
+  accent-color: #c8a8ff;
   cursor: pointer;
 }
 
@@ -264,7 +329,17 @@
   .row {
     gap: 2px;
   }
+  .sectionStart {
+    margin-top: 6px;
+  }
+  .transport {
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
   .bpm input[type='range'] {
-    width: 80px;
+    width: 70px;
+  }
+  .swing input[type='range'] {
+    width: 50px;
   }
 }

@@ -1,9 +1,17 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-
-const ROWS = 8
-const STEPS = 16
+import { ROW_DEFS, STEPS } from '../lib/rows'
+import { makeEmptyGrid, normalizeGrid, generateTechnoPattern } from '../lib/generate'
+import {
+  playKick,
+  playClap,
+  playHat,
+  playBass,
+  playLead,
+  type LeadTone,
+  type BassTone,
+} from '../lib/voices'
 
 export interface SequencerController {
   grid: boolean[][]
@@ -15,6 +23,12 @@ export interface SequencerController {
   bpm: number
   setBpm: (n: number) => void
   currentStep: number | null
+  leadTone: LeadTone
+  bassTone: BassTone
+  setLeadTone: (t: LeadTone) => void
+  setBassTone: (t: BassTone) => void
+  swing: number
+  setSwing: (n: number) => void
 }
 
 export interface UseStepSequencerOptions {
@@ -22,102 +36,47 @@ export interface UseStepSequencerOptions {
   initialBpm?: number
 }
 
-// C major pentatonic, top-of-UI = highest pitch
-export const NOTE_FREQS = [
-  659.25, // E5
-  587.33, // D5
-  523.25, // C5
-  440.00, // A4
-  392.00, // G4
-  329.63, // E4
-  293.66, // D4
-  261.63, // C4
-]
-
-const makeEmptyGrid = (): boolean[][] =>
-  Array.from({ length: ROWS }, () => Array(STEPS).fill(false))
-
-// Per-row probability that the row participates in a generated pattern
-const ROW_ACTIVE_PROB = [0.3, 0.5, 0.55, 0.6, 0.5, 0.45, 0.4, 0.7]
-// Per-step probability within a 4-step motif: downbeat heaviest, then beat 3, then offbeats
-const MOTIF_STEP_PROBS = [0.5, 0.2, 0.35, 0.2]
-
-function makeRandomGrid(): boolean[][] {
-  for (let attempt = 0; attempt < 8; attempt++) {
-    const grid: boolean[][] = Array.from({ length: ROWS }, () => Array(STEPS).fill(false))
-
-    const activeRows: number[] = []
-    for (let r = 0; r < ROWS; r++) {
-      if (Math.random() < ROW_ACTIVE_PROB[r]) activeRows.push(r)
-    }
-
-    for (const r of activeRows) {
-      if (Math.random() < 0.55) {
-        // Motif strategy: generate a 4-step micropattern, repeat across 4 bars with light mutation
-        const motif: boolean[] = [false, false, false, false]
-        for (let i = 0; i < 4; i++) {
-          const adjBoost = i > 0 && motif[i - 1] ? 0.25 : 0
-          if (Math.random() < MOTIF_STEP_PROBS[i] + adjBoost) motif[i] = true
-        }
-        for (let bar = 0; bar < 4; bar++) {
-          for (let i = 0; i < 4; i++) {
-            const flip = Math.random() < 0.18
-            grid[r][bar * 4 + i] = flip ? !motif[i] : motif[i]
-          }
-        }
-      } else {
-        // Cluster strategy: walk left to right with an adjacency boost so notes group into runs
-        for (let c = 0; c < STEPS; c++) {
-          const adjBoost = c > 0 && grid[r][c - 1] ? 0.35 : 0
-          const downbeatBoost = c % 4 === 0 ? 0.15 : 0
-          if (Math.random() < 0.22 + adjBoost + downbeatBoost) grid[r][c] = true
-        }
-      }
-    }
-
-    // End-of-loop fill: stack 2–3 notes on the last step ~half the time
-    if (Math.random() < 0.5 && activeRows.length > 0) {
-      const fillCount = 2 + Math.floor(Math.random() * 2)
-      const shuffled = [...activeRows].sort(() => Math.random() - 0.5).slice(0, fillCount)
-      for (const r of shuffled) grid[r][15] = true
-    }
-
-    // Bass anchor on step 0
-    if (Math.random() < 0.7) grid[7][0] = true
-
-    // Cap polyphony at 4 per column
-    for (let c = 0; c < STEPS; c++) {
-      const lit: number[] = []
-      for (let r = 0; r < ROWS; r++) if (grid[r][c]) lit.push(r)
-      while (lit.length > 4) {
-        const idx = Math.floor(Math.random() * lit.length)
-        grid[lit[idx]][c] = false
-        lit.splice(idx, 1)
-      }
-    }
-
-    let count = 0
-    for (let r = 0; r < ROWS; r++) for (let c = 0; c < STEPS; c++) if (grid[r][c]) count++
-    if (count >= 14 && count <= 32) return grid
-  }
-  return makeEmptyGrid()
+type Buses = {
+  master: GainNode
+  lead: GainNode
+  bass: GainNode
+  drums: GainNode
 }
 
 export function useStepSequencer(options?: UseStepSequencerOptions): SequencerController {
   const [grid, setGrid] = useState<boolean[][]>(() =>
-    options?.initialGrid ? options.initialGrid.map(r => r.slice()) : makeEmptyGrid()
+    options?.initialGrid ? normalizeGrid(options.initialGrid) : makeEmptyGrid()
   )
   const [playing, setPlaying] = useState(false)
-  const [bpm, setBpm] = useState(options?.initialBpm ?? 110)
+  const [bpm, setBpm] = useState(options?.initialBpm ?? 124)
   const [currentStep, setCurrentStep] = useState<number | null>(null)
+  const [leadTone, setLeadTone] = useState<LeadTone>('sqr')
+  const [bassTone, setBassTone] = useState<BassTone>('saw')
+  const [swing, setSwing] = useState(0)
 
   const gridRef = useRef(grid)
   const bpmRef = useRef(bpm)
+  const leadToneRef = useRef(leadTone)
+  const bassToneRef = useRef(bassTone)
+  const swingRef = useRef(swing)
   useEffect(() => { gridRef.current = grid }, [grid])
   useEffect(() => { bpmRef.current = bpm }, [bpm])
+  useEffect(() => { leadToneRef.current = leadTone }, [leadTone])
+  useEffect(() => { bassToneRef.current = bassTone }, [bassTone])
+  useEffect(() => { swingRef.current = swing }, [swing])
+
+  // No initialGrid -> seed a generated pattern after mount so the SSR'd
+  // markup stays deterministic (Math.random in initial state = hydration bug)
+  const seededRef = useRef(Boolean(options?.initialGrid))
+  useEffect(() => {
+    if (seededRef.current) return
+    seededRef.current = true
+    setGrid(generateTechnoPattern())
+  }, [])
 
   const ctxRef = useRef<AudioContext | null>(null)
-  const masterRef = useRef<GainNode | null>(null)
+  const busesRef = useRef<Buses | null>(null)
+  const delayRef = useRef<DelayNode | null>(null)
   const nextStepTimeRef = useRef(0)
   const nextStepIdxRef = useRef(0)
   const timerRef = useRef<number | null>(null)
@@ -128,59 +87,91 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
     const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
     if (!Ctx) return null
     const ctx = new Ctx()
+
+    // master gain -> compressor (glue) -> speakers
+    const compressor = ctx.createDynamicsCompressor()
+    compressor.threshold.value = -18
+    compressor.knee.value = 8
+    compressor.ratio.value = 4
+    compressor.attack.value = 0.003
+    compressor.release.value = 0.25
+    compressor.connect(ctx.destination)
     const master = ctx.createGain()
-    master.gain.value = 0.32
-    master.connect(ctx.destination)
+    master.gain.value = 0.5
+    master.connect(compressor)
+
+    // per-layer buses: the lead bus feeds the delay send, and they keep a
+    // single place to rebalance layers against each other
+    const lead = ctx.createGain()
+    const bass = ctx.createGain()
+    const drums = ctx.createGain()
+    lead.connect(master)
+    bass.connect(master)
+    drums.connect(master)
+
+    // dotted-eighth feedback delay on the lead bus only
+    const delay = ctx.createDelay(2)
+    delay.delayTime.value = (60 / bpmRef.current) * 0.75
+    const feedback = ctx.createGain()
+    feedback.gain.value = 0.3
+    const wet = ctx.createGain()
+    wet.gain.value = 0.18
+    lead.connect(delay)
+    delay.connect(feedback)
+    feedback.connect(delay)
+    delay.connect(wet)
+    wet.connect(master)
+
     ctxRef.current = ctx
-    masterRef.current = master
+    busesRef.current = { master, lead, bass, drums }
+    delayRef.current = delay
     return ctx
   }, [])
 
-  const playNote = useCallback(
-    (freq: number, startTime: number, durationSec: number, gain: number) => {
-      const ctx = ctxRef.current
-      const master = masterRef.current
-      if (!ctx || !master) return
-      const osc = ctx.createOscillator()
-      const env = ctx.createGain()
-      osc.type = 'square'
-      osc.frequency.value = freq
-      const attack = 0.005
-      const release = Math.min(0.05, durationSec * 0.4)
-      env.gain.setValueAtTime(0.0001, startTime)
-      env.gain.exponentialRampToValueAtTime(gain, startTime + attack)
-      env.gain.setValueAtTime(gain, startTime + Math.max(attack, durationSec - release))
-      env.gain.exponentialRampToValueAtTime(0.0001, startTime + durationSec)
-      osc.connect(env)
-      env.connect(master)
-      osc.start(startTime)
-      osc.stop(startTime + durationSec + 0.02)
-    },
-    []
-  )
+  // Keep the delay locked to a dotted eighth as the tempo moves
+  useEffect(() => {
+    const ctx = ctxRef.current
+    const delay = delayRef.current
+    if (ctx && delay) delay.delayTime.setTargetAtTime((60 / bpm) * 0.75, ctx.currentTime, 0.05)
+  }, [bpm])
 
   const scheduler = useCallback(() => {
     const ctx = ctxRef.current
-    if (!ctx) return
+    const buses = busesRef.current
+    if (!ctx || !buses) return
     const lookahead = 0.25
     const horizon = ctx.currentTime + lookahead
     while (nextStepTimeRef.current < horizon) {
       const stepDur = (60 / bpmRef.current) / 4 // 16th notes
-      const t = nextStepTimeRef.current
       const idx = nextStepIdxRef.current
+      const swingOffset = idx % 2 === 1 ? swingRef.current * stepDur : 0
+      const t = nextStepTimeRef.current + swingOffset
       const g = gridRef.current
-      for (let r = 0; r < ROWS; r++) {
-        if (g[r][idx]) {
-          playNote(NOTE_FREQS[r], t, stepDur * 0.85, 0.09)
+      // Subtle accents: downbeats push, swung offbeats sit back
+      const accent = idx % 4 === 0 ? 1.15 : idx % 2 === 1 ? 0.85 : 1
+      for (let r = 0; r < g.length; r++) {
+        if (!g[r][idx]) continue
+        const def = ROW_DEFS[r]
+        if (!def) continue
+        if (def.section === 'lead') {
+          playLead(ctx, buses.lead, t, def.freq, stepDur * 0.85, 0.085 * accent, leadToneRef.current)
+        } else if (def.section === 'bass') {
+          playBass(ctx, buses.bass, t, def.freq, stepDur * 0.95, 0.17 * accent, bassToneRef.current)
+        } else if (def.drum === 'kick') {
+          playKick(ctx, buses.drums, t, 0.5)
+        } else if (def.drum === 'clap') {
+          playClap(ctx, buses.drums, t, 0.17)
+        } else {
+          playHat(ctx, buses.drums, t, 0.08 * accent)
         }
       }
       const delayMs = Math.max(0, (t - ctx.currentTime) * 1000)
       const id = window.setTimeout(() => setCurrentStep(idx), delayMs)
       uiTimeoutsRef.current.push(id)
-      nextStepTimeRef.current = t + stepDur
+      nextStepTimeRef.current += stepDur
       nextStepIdxRef.current = (idx + 1) % STEPS
     }
-  }, [playNote])
+  }, [])
 
   useEffect(() => {
     if (!playing) {
@@ -210,7 +201,8 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
       const ctx = ctxRef.current
       if (ctx) void ctx.close()
       ctxRef.current = null
-      masterRef.current = null
+      busesRef.current = null
+      delayRef.current = null
     }
   }, [])
 
@@ -227,7 +219,7 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
   }, [])
 
   const randomize = useCallback(() => {
-    setGrid(makeRandomGrid())
+    setGrid(generateTechnoPattern())
   }, [])
 
   return {
@@ -240,5 +232,11 @@ export function useStepSequencer(options?: UseStepSequencerOptions): SequencerCo
     bpm,
     setBpm,
     currentStep,
+    leadTone,
+    bassTone,
+    setLeadTone,
+    setBassTone,
+    swing,
+    setSwing,
   }
 }

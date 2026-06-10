@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Step Sequencer v2 — three-layer techno groovebox
+
+**Date:** 2026-06-10
+
+The step sequencer grew from a 16×8 pentatonic toy into a 16×11 three-layer groovebox: five pentatonic lead rows, three bass rows (C3/G2/C2), and a synthesized drum kit (hat, clap, kick). The audio engine moved from a single square-wave voice to real synthesis in `lib/voices.ts` — sine-drop kick, staggered noise-burst clap, filtered-noise hats, three bass tones (sub / saw / acid with a resonant filter sweep), three lead tones (soft / square / detuned saw) — routed through per-layer gain buses into a master compressor, with a tempo-synced dotted-eighth delay on the lead bus. GENERATE (`lib/generate.ts`) now composes geometrically rather than per-row probabilistically — small stamp shapes repeated at a fixed period with per-row phase offsets, on the observation that on a quantized pentatonic grid visual regularity is rhythmic regularity (diagonals = rolls, translation = ostinato). Three archetypes (cascade staircase through the kit, classic backbeat, sparse offbeat) never repeat back-to-back; the kick's four-on-the-floor is the one fixed musical anchor; repeats mutate more toward bars 3–4 so the loop drifts like a fill; a coverage pass enforces polyphony caps and a lead-density floor. The page loads with a pattern pre-seeded (in a mount effect, keeping SSR hydration clean). New controls stay inside the existing design language: two segmented tone pills in the header strip (lead soft/square/saw, bass sub/saw/acid — no mutes, this is for non-musicians), a swing slider next to BPM. Monono's embedded starter pattern was ported to the new row layout, and the hook normalizes any stale grid shape defensively.
+
+---
+
 ### Homepage backdrop v2 — MeshCanvas
 
 **Date:** 2026-06-10
