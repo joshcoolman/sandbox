@@ -34,17 +34,17 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
-### Water Mesh
+### Seismic Mesh
 
 **June 10, 2026**
 
-[![Water Mesh](./public/screenshots/water-mesh.png)](/design-experiments/water-mesh)
+[![Seismic Mesh](./public/screenshots/seismic-mesh.png)](/design-experiments/seismic-mesh)
 
-A hexagonal mesh viewed from directly above. Nodes are fixed in the plane; clicking pushes them toward you in Z, shift-clicking dents them away at 3× force. The perspective camera turns Z displacement into foreshortening — dents compress the cells, extrusions expand them. Deformations decay back to flat over about seven seconds via linear decay (5 units/frame). Weak Z neighbor coupling keeps the surface coherent without over-smoothing. Pure canvas 2D API, no libraries.
+An experiment with the new Fable 5 model. A hexagonal mesh viewed from directly above, colored topographically by live elevation (deep blue through green and amber to white-hot). Clicking triggers a seismic cinematic: a mountain rises at the click point, a ripple radiates outward through the mesh, and the surface freezes at peak while an ASCII telemetry readout decodes in beside the epicenter — magnitude, coordinates, depth — before everything releases and melts back to flat. Shift-click for a quick dent. The perspective camera turns Z displacement into foreshortening, and an ambient ripple keeps the surface shimmering even while frozen. Pure canvas 2D API, no libraries.
 
-`Canvas` `Physics` `Interactive` `3D` `Generative`
+`Fable 5` `Physics` `Interactive` `3D` `Generative`
 
-**[View Live →](https://www.joshcoolman.com/design-experiments/water-mesh) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/water-mesh)**
+**[View Live →](https://www.joshcoolman.com/design-experiments/seismic-mesh) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/seismic-mesh)**
 
 ---
 

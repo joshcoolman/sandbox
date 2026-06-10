@@ -2,13 +2,13 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
-    slug: 'water-mesh',
+    slug: 'seismic-mesh',
     date: 'June 10, 2026',
-    title: 'Water Mesh',
-    subtitle: 'A hexagonal surface you press and pull — each click leaves a permanent impression.',
-    description: 'A hexagonal mesh viewed from directly above. Nodes are fixed in the plane; clicking pushes them toward you in Z, shift-clicking dents them away. The perspective camera turns Z displacement into foreshortening — dents compress the cells, extrusions expand them. Deformations decay back to flat over about seven seconds via linear decay.',
-    screenshot: '/screenshots/water-mesh.png',
-    tags: ['Canvas', 'Physics', 'Interactive', '3D', 'Generative'],
+    title: 'Seismic Mesh',
+    subtitle: 'Click to trigger a quake — the mountain rises, freezes at peak, and telemetry decodes in beside it.',
+    description: 'An experiment with the new Fable 5 model. A hexagonal mesh viewed from directly above, colored topographically by live elevation. Clicking triggers a seismic cinematic: a mountain rises at the click point, a ripple radiates outward through the mesh, and the surface freezes at peak while an ASCII telemetry readout decodes in beside the epicenter — magnitude, coordinates, depth — before everything releases and melts back to flat. Shift-click for a quick dent. Perspective projection turns Z displacement into foreshortening; the ambient ripple keeps the surface shimmering even while frozen.',
+    screenshot: '/screenshots/seismic-mesh.png',
+    tags: ['Fable 5', 'Physics', 'Interactive', '3D', 'Generative'],
     theme: 'dark',
   },
   {

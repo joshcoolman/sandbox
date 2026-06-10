@@ -1,0 +1,142 @@
+.seismic-mesh-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #050505;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.seismic-mesh-canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Seismic telemetry readout — width/height must track PANEL_W/PANEL_H in
+   page.tsx so the canvas leader line lands on the panel edge. */
+.sm-readout {
+  position: absolute;
+  width: 252px;
+  pointer-events: none;
+  z-index: 10;
+  font-family: var(--font-space-mono), ui-monospace, monospace;
+  color: #eaeaea;
+  background: rgba(8, 12, 18, 0.78);
+  border: 1px solid rgba(245, 245, 240, 0.16);
+  padding: 12px 14px 11px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.sm-readout.is-visible {
+  opacity: 1;
+  transform: none;
+  /* Entry runs as an animation because the element mounts with this class
+     already applied — a transition alone would never fire. */
+  animation: sm-readout-in 0.45s ease;
+}
+
+@keyframes sm-readout-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Faint scanlines for the instrument feel */
+.sm-readout::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.sm-readout-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  padding-bottom: 7px;
+  margin-bottom: 9px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  white-space: nowrap;
+}
+
+.sm-cursor {
+  display: inline-block;
+  width: 6px;
+  height: 10px;
+  background: #fff;
+  animation: sm-blink 1s steps(1) infinite;
+}
+
+@keyframes sm-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.sm-readout-mag {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: #fff;
+  margin-bottom: 11px;
+  white-space: nowrap;
+}
+
+.sm-readout-rows {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.sm-readout-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 10px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.sm-k {
+  color: rgba(255, 255, 255, 0.42);
+  text-transform: uppercase;
+}
+
+.sm-v {
+  color: #e9e9e9;
+}
+
+.sm-readout-ref {
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 7px;
+  white-space: nowrap;
+}
