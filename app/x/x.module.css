@@ -1,3 +1,10 @@
+/* This route's UI was designed dark; the site went light mode, so scope a
+   full-bleed dark background to /x alone via the route layout below. */
+.page {
+  min-height: 100vh;
+  background: #09090b;
+}
+
 .wrap {
   max-width: 1320px;
   margin: 0 auto;
