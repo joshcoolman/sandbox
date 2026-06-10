@@ -6,6 +6,7 @@ import './styles.css';
 
 const CELL_SIZE = 30;
 const MESH_PADDING = 80;
+const MESH_PADDING_TOP = 140; // header is ~130px tall; extra clearance to match bottom gap
 const ROW_SPACING = CELL_SIZE * (Math.sqrt(3) / 2);
 const ALPHA_BUCKETS = 12;
 const TERRAIN_T = 1.4;
@@ -34,9 +35,9 @@ function terrain(nx: number, ny: number, t: number): number {
 function buildMesh(W: number, H: number) {
   // Mesh fits within viewport minus padding; subtract half-cell for odd-row hex offset
   const cols = Math.floor((W - MESH_PADDING * 2 - CELL_SIZE / 2) / CELL_SIZE) + 1;
-  const rows = Math.floor((H - MESH_PADDING * 2) / ROW_SPACING) + 1;
+  const rows = Math.floor((H - MESH_PADDING_TOP - MESH_PADDING) / ROW_SPACING) + 1;
   const startX = MESH_PADDING;
-  const startY = MESH_PADDING;
+  const startY = MESH_PADDING_TOP;
 
   const nodes = [];
   for (let row = 0; row < rows; row++) {
