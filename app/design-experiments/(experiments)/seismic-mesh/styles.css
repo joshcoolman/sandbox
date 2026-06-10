@@ -8,10 +8,22 @@
   justify-content: center;
 }
 
-.seismic-mesh-canvas {
-  display: block;
+/* Magnetic backdrop — sits beneath the mesh, untouched by click-warp. */
+.seismic-grid-canvas {
+  position: absolute;
+  inset: 0;
   width: 100vw;
   height: 100vh;
+  z-index: 0;
+}
+
+.seismic-mesh-canvas {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
 }
 
 /* Seismic telemetry readout — width/height must track PANEL_W/PANEL_H in

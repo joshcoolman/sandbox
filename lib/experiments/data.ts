@@ -6,7 +6,7 @@ export const experiments: Experiment[] = [
     date: 'June 10, 2026',
     title: 'Seismic Mesh',
     subtitle: 'A Fable 5 experiment — click to trigger a quake: the mountain rises, freezes at peak, and telemetry decodes in beside it.',
-    description: 'An experiment with the new Fable 5 model. A hexagonal mesh viewed from directly above, colored topographically by live elevation. Clicking triggers a seismic cinematic: a mountain rises at the click point, a ripple radiates outward through the mesh, and the surface freezes at peak while an ASCII telemetry readout decodes in beside the epicenter — magnitude, coordinates, depth — before everything releases and melts back to flat. Shift-click for a quick dent. Perspective projection turns Z displacement into foreshortening; the ambient ripple keeps the surface shimmering even while frozen.',
+    description: 'An experiment with the new Fable 5 model. A hexagonal mesh viewed from directly above. At rest it sits flat and a single solid color; clicking triggers a seismic cinematic where a mountain rises at the click point, a ripple radiates outward through the mesh, and the surface freezes at peak — topographic color blooms across the elevation while an ASCII telemetry readout decodes in beside the epicenter (magnitude, coordinates, depth) before everything releases and melts back to flat. Shift-click for a quick dent. Behind the mesh, a separate field of magnetic lines — pinned to the exact mesh node positions — rotates to swirl around the cursor, adding depth without ever being touched by the warp. Perspective projection turns Z displacement into foreshortening.',
     screenshot: '/screenshots/seismic-mesh.png',
     tags: ['Fable 5', 'Physics', 'Interactive', '3D', 'Generative'],
     theme: 'dark',

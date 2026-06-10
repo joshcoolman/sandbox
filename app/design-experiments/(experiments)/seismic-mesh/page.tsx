@@ -7,13 +7,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { DecodeText } from '@/app/components/DecodeText';
 import { makeReadout, type Readout } from './data/readout';
+import { SeismicGrid } from './components/SeismicGrid';
+import { CELL_SIZE, meshGrid } from './meshLayout';
 import './styles.css';
 
-const CELL_SIZE = 30;
-const MESH_PADDING = 80;
-const MESH_PADDING_TOP = 140; // header is ~130px tall; extra clearance to match bottom gap
-const ROW_SPACING = CELL_SIZE * (Math.sqrt(3) / 2);
-const TERRAIN_T = 1.4;
+// Resting elevation — uniform across the flat mesh, so the surface is one solid
+// color at rest. Deformation shifts it up (extrude → warm) or down (depress →
+// cool), so the topographic spectrum only appears where the mesh is warped.
+const BASE_ELEV = 0.5;
 
 // Camera directly above
 const CAM_Z = 2200;
@@ -26,8 +27,10 @@ const BLAST_FORCE = CAM_Z * (1 - Z_DAMPING);
 const BLAST_SIGMA = CELL_SIZE * 1.5;
 const Z_NEIGHBOR_K = 0.004;
 
-// Ambient ripple — purely visual, doesn't touch node.z
-const RIPPLE_AMP = 55;    // depth units (~2.5% of CAM_Z)
+// Ambient ripple — purely visual, doesn't touch node.z.
+// Set to 0: the resting mesh stays flat/static so it doesn't compete with the
+// SeismicGrid backdrop's motion. Restore (~55) to bring the breathing back.
+const RIPPLE_AMP = 0;     // depth units (~2.5% of CAM_Z at 55)
 const RIPPLE_K = 0.008;   // spatial frequency
 const RIPPLE_SPEED = 0.0004; // radians per ms
 
@@ -101,34 +104,17 @@ function panelPos(x: number, y: number, W: number, H: number) {
   return { left, top, flipped };
 }
 
-function terrain(nx: number, ny: number, t: number): number {
-  const x = nx * 7;
-  const y = ny * 5;
-  const h1 = Math.sin(x * 0.8 + t * 0.9) * Math.cos(y * 0.6 + t * 0.7);
-  const h2 = Math.sin(x * 1.5 - y * 1.1 + t * 0.5) * 0.5;
-  const h3 = Math.cos(x * 0.4 + y * 1.3 + t * 0.3) * 0.35;
-  const h4 = Math.sin(x * 2.2 + y * 0.7 + t * 0.8) * 0.15;
-  return (h1 + h2 + h3 + h4) / 2.0;
-}
-
 function buildMesh(W: number, H: number) {
-  // Mesh fits within viewport minus padding; subtract half-cell for odd-row hex offset
-  const cols = Math.floor((W - MESH_PADDING * 2 - CELL_SIZE / 2) / CELL_SIZE) + 1;
-  const rows = Math.floor((H - MESH_PADDING_TOP - MESH_PADDING) / ROW_SPACING) + 1;
-  const startX = MESH_PADDING;
-  const startY = MESH_PADDING_TOP;
+  // Node positions come from the shared lattice (meshLayout) so the SeismicGrid
+  // backdrop lines up exactly with these nodes.
+  const { cols, rows, points } = meshGrid(W, H);
 
   const nodes = [];
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const rx = startX + col * CELL_SIZE + (row % 2) * (CELL_SIZE / 2);
-      const ry = startY + row * ROW_SPACING;
-      nodes.push({
-        x: rx, y: ry,       // fixed — never change
-        z: 0, vz: 0,        // depth and velocity
-        nx: rx / W, ny: ry / H,
-      });
-    }
+  for (const p of points) {
+    nodes.push({
+      x: p.x, y: p.y,     // fixed — never change
+      z: 0, vz: 0,        // depth and velocity
+    });
   }
 
   const edges: [number, number][] = [];
@@ -197,7 +183,6 @@ export default function SeismicMesh() {
     if (!ctx) return;
 
     let mesh = buildMesh(window.innerWidth, window.innerHeight);
-    let heights = mesh.nodes.map(n => terrain(n.nx, n.ny, TERRAIN_T));
     let fadeTimeout = 0;
 
     function resize() {
@@ -208,7 +193,6 @@ export default function SeismicMesh() {
       canvas.style.height = window.innerHeight + 'px';
       ctx.scale(devicePixelRatio, devicePixelRatio);
       mesh = buildMesh(window.innerWidth, window.innerHeight);
-      heights = mesh.nodes.map(n => terrain(n.nx, n.ny, TERRAIN_T));
     }
     resize();
     window.addEventListener('resize', resize);
@@ -292,9 +276,9 @@ export default function SeismicMesh() {
       const H = window.innerHeight;
       const { nodes, edges, adjacency } = mesh;
 
+      // Transparent — the container background (#050505) and the SeismicGrid
+      // layer beneath show through. Only clear; do not paint an opaque fill.
       ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#050505';
-      ctx.fillRect(0, 0, W, H);
 
       // Cinematic state machine — all phase timing lives here, no timers
       const cin = cinematicRef.current;
@@ -388,7 +372,9 @@ export default function SeismicMesh() {
         px[i] = W / 2 + (node.x - W / 2) * scale;
         py[i] = H / 2 + (node.y - H / 2) * scale;
         // renderZ negative = toward camera = high
-        const e = 0.5 + heights[i] * 0.28 + (-renderZ / CAM_Z) * 0.9;
+        // Elevation comes only from deformation, so the resting mesh is one
+        // solid color and the topo spectrum appears only where it's warped.
+        const e = BASE_ELEV + (-renderZ / CAM_Z) * 0.9;
         elev[i] = e < 0 ? 0 : e > 1 ? 1 : e;
       }
 
@@ -484,6 +470,7 @@ export default function SeismicMesh() {
 
   return (
     <div className="seismic-mesh-container">
+      <SeismicGrid />
       <canvas ref={canvasRef} className="seismic-mesh-canvas" />
       {overlay && pos && (
         <div
