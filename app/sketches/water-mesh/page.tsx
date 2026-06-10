@@ -1,17 +1,14 @@
-// sketch: Node-net with topographic height field and cinematic click blast physics.
+// sketch: Aerial seismic mesh — static topographic ground, blast physics on click.
 'use client';
 
 import { useEffect, useRef } from 'react';
 import './styles.css';
 
-const CELL_SIZE = 30;     // halved from 58 — double the node density
+const CELL_SIZE = 30;
 const BLEED = 2;
-const AMPLITUDE = 6;
-const SPEED = 0.00055;
-const TERRAIN_SPEED = 0.00018;
-const SPRING_K = 0.012;   // lazy return — no snap-back
-const DAMPING = 0.962;    // low friction so displacement travels far; K is too weak to oscillate
+const DAMPING = 0.97;     // high — displacement travels far, settles slowly
 const ALPHA_BUCKETS = 12;
+const TERRAIN_T = 1.4;    // frozen terrain snapshot
 
 function terrain(nx: number, ny: number, t: number): number {
   const x = nx * 7;
@@ -23,27 +20,25 @@ function terrain(nx: number, ny: number, t: number): number {
   return (h1 + h2 + h3 + h4) / 2.0;
 }
 
+const ROW_SPACING = CELL_SIZE * (Math.sqrt(3) / 2);
+
 function buildMesh(W: number, H: number) {
-  const cols = Math.ceil(W / CELL_SIZE) + Math.ceil(BLEED * 2) + 1;
-  const rows = Math.ceil(H / CELL_SIZE) + Math.ceil(BLEED * 2) + 1;
+  const cols = Math.ceil(W / CELL_SIZE) + BLEED * 2 + 2;
+  const rows = Math.ceil(H / ROW_SPACING) + BLEED * 2 + 2;
   const startX = -(BLEED * CELL_SIZE);
-  const startY = -(BLEED * CELL_SIZE);
+  const startY = -(BLEED * ROW_SPACING);
 
   const nodes = [];
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
-      const rx = startX + col * CELL_SIZE;
-      const ry = startY + row * CELL_SIZE;
+      const rx = startX + col * CELL_SIZE + (row % 2) * (CELL_SIZE / 2);
+      const ry = startY + row * ROW_SPACING;
       nodes.push({
         restX: rx, restY: ry,
         x: rx,     y: ry,
         vx: 0,     vy: 0,
         nx: rx / W,
         ny: ry / H,
-        freqX: 0.7 + (col * 0.17 + row * 0.11) % 0.6,
-        freqY: 0.6 + (col * 0.13 + row * 0.19) % 0.6,
-        phaseX: (col * 1.3 + row * 2.1) % (Math.PI * 2),
-        phaseY: (col * 2.7 + row * 0.9) % (Math.PI * 2),
       });
     }
   }
@@ -52,10 +47,18 @@ function buildMesh(W: number, H: number) {
   const idx = (r: number, c: number) => r * cols + c;
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
+      // Horizontal neighbor
       if (col < cols - 1) edges.push([idx(row, col), idx(row, col + 1)]);
-      if (row < rows - 1) edges.push([idx(row, col), idx(row + 1, col)]);
-      if (col < cols - 1 && row < rows - 1) {
-        edges.push([idx(row, col), idx(row + 1, col + 1)]);
+      if (row < rows - 1) {
+        if (row % 2 === 0) {
+          // Even row: lower-left and lower-right
+          if (col > 0) edges.push([idx(row, col), idx(row + 1, col - 1)]);
+          edges.push([idx(row, col), idx(row + 1, col)]);
+        } else {
+          // Odd row: lower-left and lower-right
+          edges.push([idx(row, col), idx(row + 1, col)]);
+          if (col < cols - 1) edges.push([idx(row, col), idx(row + 1, col + 1)]);
+        }
       }
     }
   }
@@ -83,9 +86,10 @@ export default function WaterMesh() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let t = 0;
-    let tt = 0;
     let mesh = buildMesh(window.innerWidth, window.innerHeight);
+
+    // Pre-compute static terrain heights — recomputed only on resize
+    let heights: number[] = mesh.nodes.map(n => terrain(n.nx, n.ny, TERRAIN_T));
 
     function resize() {
       if (!canvas) return;
@@ -95,6 +99,7 @@ export default function WaterMesh() {
       canvas.style.height = window.innerHeight + 'px';
       ctx.scale(devicePixelRatio, devicePixelRatio);
       mesh = buildMesh(window.innerWidth, window.innerHeight);
+      heights = mesh.nodes.map(n => terrain(n.nx, n.ny, TERRAIN_T));
     }
     resize();
     window.addEventListener('resize', resize);
@@ -102,7 +107,6 @@ export default function WaterMesh() {
     function handleClick(e: MouseEvent) {
       const W = window.innerWidth;
       const H = window.innerHeight;
-      // Radius reaches the farthest corner from the click point
       const dx = Math.max(e.clientX, W - e.clientX);
       const dy = Math.max(e.clientY, H - e.clientY);
       const maxRadius = Math.sqrt(dx * dx + dy * dy) * 1.05;
@@ -110,14 +114,13 @@ export default function WaterMesh() {
         x: e.clientX, y: e.clientY,
         startTime: performance.now(),
         maxRadius,
-        duration: 2400,
-        force: 7,
-        waveWidth: 55,
+        duration: 2800,
+        force: e.shiftKey ? -0.8 : 0.8,
+        waveWidth: 60,
       });
     }
     window.addEventListener('click', handleClick);
 
-    // Pre-allocate bucket arrays so we don't allocate on every frame
     const buckets: { ax: number; ay: number; bx: number; by: number }[][] =
       Array.from({ length: ALPHA_BUCKETS }, () => []);
 
@@ -131,18 +134,13 @@ export default function WaterMesh() {
       ctx.fillStyle = '#050505';
       ctx.fillRect(0, 0, W, H);
 
-      t  += SPEED * 16;
-      tt += TERRAIN_SPEED * 16;
-
       // Apply blast forces
       blastsRef.current = blastsRef.current.filter(blast => {
         const elapsed = timestamp - blast.startTime;
         const progress = elapsed / blast.duration;
         if (progress >= 1) return false;
-        // Ease-out cubic so the ring decelerates as it expands
         const eased = 1 - Math.pow(1 - progress, 3);
         const waveRadius = blast.maxRadius * eased;
-        // Force fades to zero over the second half of the animation
         const forceMultiplier = Math.max(0, 1 - progress * 2);
 
         for (const node of nodes) {
@@ -161,19 +159,13 @@ export default function WaterMesh() {
         return true;
       });
 
-      // Physics update
+      // Physics — no spring, nodes stay where blasts leave them
       for (const node of nodes) {
-        const targetX = node.restX + Math.sin(t * node.freqX + node.phaseX) * AMPLITUDE;
-        const targetY = node.restY + Math.sin(t * node.freqY + node.phaseY) * AMPLITUDE;
-        node.vx += (targetX - node.x) * SPRING_K;
-        node.vy += (targetY - node.y) * SPRING_K;
         node.vx *= DAMPING;
         node.vy *= DAMPING;
         node.x += node.vx;
         node.y += node.vy;
       }
-
-      const heights = nodes.map(n => terrain(n.nx, n.ny, tt));
 
       // Blast ring visual
       for (const blast of blastsRef.current) {
@@ -191,7 +183,7 @@ export default function WaterMesh() {
         }
       }
 
-      // Batch edges by alpha bucket — one path per bucket instead of per edge
+      // Batch edges by alpha bucket
       for (let b = 0; b < ALPHA_BUCKETS; b++) buckets[b].length = 0;
 
       for (const [a, b] of edges) {
@@ -214,7 +206,7 @@ export default function WaterMesh() {
         ctx.stroke();
       }
 
-      // Nodes — smaller at this density
+      // Nodes
       for (let i = 0; i < nodes.length; i++) {
         const h = heights[i];
         const r = 0.8 + ((h + 1) / 2) * 1.4;
