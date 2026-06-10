@@ -42,6 +42,8 @@
 .header {
   padding-top: 8px;
   margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
 }
 
 .headerRow {
@@ -83,6 +85,8 @@
 
 .footer {
   margin-top: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .footerRow {

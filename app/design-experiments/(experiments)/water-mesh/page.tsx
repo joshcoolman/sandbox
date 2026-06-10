@@ -1,5 +1,4 @@
 // experiment: Hexagonal mesh with Z-axis deformation — aerial perspective, click to dent.
-// Lives outside (experiments)/ route group because it's fullscreen and conflicts with the shared layout wrapper.
 'use client';
 
 import { useEffect, useRef } from 'react';
