@@ -34,6 +34,20 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### War Room
+
+**June 12, 2026**
+
+[![War Room](./public/screenshots/war-room.png)](/design-experiments/war-room)
+
+A sci-fi command-center HUD in the spirit of WarGames, Iron Man, and the Ambrosia DEFCON screensaver. Eight live panels share one animation clock: a DEFCON theater map launches great-circle strikes on its own schedule (click anywhere to fire your own), a dot-matrix globe spins beside a wireframe satellite running movie-style inspection maneuvers, a green-phosphor teletype hammers out an endless ASCII pinout schematic, and a Nokia-style LCD tracks the DEFCON condition in dot-matrix pixels. Click a feed in the cycling target roster and the room reacts — a dossier unfolds with a high-contrast scanline-raster portrait buried in resolving data, the map crosshairs the target, and the globe rotates to face them. One baked Natural Earth dataset powers both map and globe; the whole wall is canvas 2D, no dependencies.
+
+`Fable 5` `HUD` `Canvas` `Sci-Fi` `Generative`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/war-room) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/war-room)**
+
+---
+
 ### Seismic Mesh
 
 **June 10, 2026**

@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### War Room — sci-fi command-center HUD experiment
+
+**Date:** 2026-06-12
+
+New design experiment: a dense wall of eight live HUD panels (WarGames / Iron Man / Ambrosia-DEFCON-screensaver lineage), built and planned in one Fable 5 session. One shared rAF scheduler with a virtual clock that pauses on tab-hide drives every panel; ambient event channels (strikes, log chatter, glitch flicker, DEFCON shifts) poll that clock — no setInterval anywhere. The DEFCON theater map bakes Natural Earth 110m coastlines into a 19KB delta-encoded TS module (`data/coastlines.ts`, regen command in header) shared with the rotating dot-matrix globe — one data spine, two projections. Slerp-sampled great-circle strikes with dateline splitting launch on their own schedule; clicking the map fires a manual strike from the nearest base. Engaging a roster mugshot phases three reactions off a single `engagedAt` timestamp: a dossier unfolds (scanline-raster portrait revealed behind a scan beam — `lib/scanline.ts`), the map crosshairs the target, and the globe eases to face their longitude. Three display technologies share the wall: cyan vector glass, a green-phosphor terminal scrolling procedural ASCII pinout schematics, and a Nokia-style LCD with a hand-built 5×7 pixel font. Panels are deliberately composable — each fills its container via `useCanvasPanel` (DPR, ResizeObserver, IntersectionObserver pause), chrome is separate from content, and `page.tsx` is pure composition (~75 lines). Canvas 2D throughout, zero new dependencies.
+
+---
+
 ### Step Sequencer v2 — three-layer techno groovebox
 
 **Date:** 2026-06-10

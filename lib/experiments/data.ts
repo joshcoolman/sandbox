@@ -2,6 +2,16 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'war-room',
+    date: 'June 12, 2026',
+    title: 'War Room',
+    subtitle: 'A wall of live HUD panels — DEFCON map, spinning globe, target dossiers — running itself like a movie command center.',
+    description: 'A sci-fi command-center HUD in the spirit of WarGames, Iron Man, and the Ambrosia DEFCON screensaver. Eight live panels share one animation clock: a DEFCON theater map launches great-circle strikes on its own schedule (click anywhere to fire your own), a dot-matrix globe spins beside a tumbling wireframe satellite, a green-phosphor terminal scrolls an endless ASCII pinout schematic, and a Nokia-style LCD tracks the DEFCON condition in dot-matrix pixels. Click a mugshot in the target roster and the room reacts — a dossier unfolds with a scanline-raster portrait, the map crosshairs the target, and the globe rotates to face them. One baked Natural Earth dataset powers both map and globe; the whole wall is canvas 2D, no dependencies.',
+    screenshot: '/screenshots/war-room.png',
+    tags: ['Fable 5', 'HUD', 'Canvas', 'Sci-Fi', 'Generative'],
+    theme: 'dark',
+  },
+  {
     slug: 'seismic-mesh',
     date: 'June 10, 2026',
     title: 'Seismic Mesh',
