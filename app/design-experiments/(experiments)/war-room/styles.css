@@ -52,34 +52,51 @@
   .wr-area-lcd      { grid-area: 3 / 7 / 4 / 9; }
 }
 
-@media (min-width: 640px) and (max-width: 1099.5px) {
+/* Three-column stage: the wall's right side already IS three nice columns
+   (orbital/asset stack, schematic, roster) — the map just relocates to the
+   top, full width and shorter. Every panel survives. */
+@media (min-width: 700px) and (max-width: 1099.5px) {
   .war-room {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas:
+      'map     map      map'
+      'globe   schem    roster'
+      'sat     schem    roster'
+      'ticker  spectrum lcd';
+    grid-template-rows: minmax(42vh, auto) minmax(215px, auto) minmax(215px, auto) minmax(150px, auto);
   }
-  .wr-area-map      { grid-column: 1 / -1; min-height: 50vh; }
-  .wr-area-globe,
-  .wr-area-sat      { min-height: 250px; }
-  .wr-area-schem,
-  .wr-area-roster   { min-height: 400px; }
-  .wr-area-ticker   { grid-column: 1 / -1; min-height: 160px; }
-  .wr-area-spectrum,
-  .wr-area-lcd      { min-height: 150px; }
+  .wr-area-map      { grid-area: map; }
+  .wr-area-globe    { grid-area: globe; }
+  .wr-area-sat      { grid-area: sat; }
+  .wr-area-schem    { grid-area: schem; }
+  .wr-area-roster   { grid-area: roster; }
+  .wr-area-ticker   { grid-area: ticker; }
+  .wr-area-spectrum { grid-area: spectrum; }
+  .wr-area-lcd      { grid-area: lcd; }
 }
 
-@media (max-width: 639.5px) {
+/* Two-column stack, top to bottom: map -> event log -> SIGINT + condition
+   -> asset + orbital -> bus diagnostic + roster (the tall pair anchors the
+   bottom). Nothing is hidden at any width. */
+@media (max-width: 699.5px) {
   .war-room {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'map      map'
+      'ticker   ticker'
+      'spectrum lcd'
+      'sat      globe'
+      'schem    roster';
+    grid-template-rows: minmax(40vh, auto) minmax(130px, auto) minmax(150px, auto) minmax(230px, auto) minmax(430px, auto);
   }
-  .wr-area-map      { min-height: 46vh; }
-  .wr-area-globe    { min-height: 260px; }
-  .wr-area-schem    { min-height: 320px; }
-  .wr-area-roster   { min-height: 150px; }
-  .wr-area-ticker   { min-height: 150px; }
-  .wr-area-lcd      { min-height: 140px; }
-  .wr-area-sat,
-  .wr-area-spectrum { display: none; }
-  .wr-roster        { flex-direction: row; }
-  .wr-mug           { min-width: 96px; }
+  .wr-area-map      { grid-area: map; }
+  .wr-area-ticker   { grid-area: ticker; }
+  .wr-area-spectrum { grid-area: spectrum; }
+  .wr-area-lcd      { grid-area: lcd; }
+  .wr-area-sat      { grid-area: sat; }
+  .wr-area-globe    { grid-area: globe; }
+  .wr-area-schem    { grid-area: schem; }
+  .wr-area-roster   { grid-area: roster; }
 }
 
 /* ---------- panel chrome ---------- */
