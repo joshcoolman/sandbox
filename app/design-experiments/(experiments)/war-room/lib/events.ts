@@ -20,22 +20,28 @@ type Channel = {
 
 export function createAmbientChannels(hud: HudStore, rng: () => number, calm = false): TickFn {
   const pick = <T,>(arr: readonly T[]): T => arr[Math.floor(rng() * arr.length)]
+  const shuffled = <T,>(arr: readonly T[]): T[] => {
+    const a = [...arr]
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1))
+      ;[a[i], a[j]] = [a[j], a[i]]
+    }
+    return a
+  }
 
   function fireStrike(clock: Clock) {
-    // WarGames climax cadence: every fire is 1 bird with a good chance of a
-    // salvo behind it. The ticker only hears about a fraction — at this rate
-    // logging every launch would drown the channel.
-    let count = 0
-    do {
-      const from = pick(BASES)
-      const others = BASES.filter(b => b !== from)
-      const to = rng() < 0.4 ? pick(others) : pick(HOTSPOTS)
-      const strike = hud.launchStrike(from, to, clock.t + count * (60 + rng() * 140), 2600 + rng() * 1400)
-      if (rng() < 0.3) {
-        hud.pushLog(`LAUNCH ${strike.id} ${from.name} > ${sectorCode(to.lat, to.lon)}`, 'warn', clock.t)
-      }
-      count++
-    } while (rng() < 0.35 && count < 4)
+    // WarGames climax cadence: every fire is a tight salvo — 3-4 birds
+    // converging on one target in rapid succession, landing a few px apart so
+    // the blast bubbles overlap (vs. earlier shots that stacked on the exact
+    // spot). Each bird launches from a DIFFERENT base, so the trajectories read
+    // as separate arcs fanning into the impact cluster. The ticker only hears
+    // about a fraction — logging every bird would drown it.
+    const to = rng() < 0.4 ? pick(BASES) : pick(HOTSPOTS)
+    const origins = shuffled(BASES).filter(b => b !== to) // distinct bases, never the target itself
+    const lead = hud.launchCluster(i => origins[i % origins.length], to, clock.t, 2600 + rng() * 1400, rng)
+    if (rng() < 0.3) {
+      hud.pushLog(`LAUNCH ${lead.id} ${origins[0].name} > ${sectorCode(to.lat, to.lon)}`, 'warn', clock.t)
+    }
   }
 
   function fireDefcon(clock: Clock) {

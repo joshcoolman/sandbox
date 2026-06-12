@@ -536,11 +536,27 @@
   padding-top: 7px;
 }
 
+/* Compact layouts: don't inline the dossier into the grid — flowed inline it's
+   easy to miss while scrolling. Float it as a centered modal over a dimmed
+   backdrop (100vmax shadow) so an engage always reads as a popup. The wide dim
+   margin around the card doubles as a generous "click outside to dismiss" tap
+   target, and z-index lifts it above the CRT layer for legibility. */
 @media (max-width: 1099.5px) {
   .wr-dossier {
-    position: static;
-    grid-column: 1 / -1;
-    width: auto;
+    position: fixed;
+    z-index: 50;
+    top: 50%;
+    left: 50%;
+    width: min(320px, calc(100vw - 80px));
+    transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 0 100vmax rgba(2, 5, 8, 0.72),
+      0 0 60px rgba(0, 0, 0, 0.7),
+      inset 0 0 30px rgba(var(--wr-amber-rgb), 0.04);
+  }
+  /* keep it centered through the release fade (base rule nudges translateY) */
+  .wr-dossier.is-releasing {
+    transform: translate(-50%, calc(-50% + 5px));
   }
   .wr-dossier::after { display: none; }
 }

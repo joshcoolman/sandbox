@@ -35,40 +35,44 @@ export function shortestAngleDiff(target: number, current: number): number {
 
 export type GreatCircle = { pts: Float32Array; breaks: number[] }
 
+// How hard arcs bow toward the top, and the ceiling on that bow. Tuned for the
+// WarGames look — long shots sail off the top edge and curve back in.
+const BOW_GAIN = 1.5
+const BOW_CAP = 0.9
+
 /**
- * Sample the great circle between two points as normalized equirect (u,v)
- * pairs. `breaks` marks sample indices where the path crosses the dateline so
- * the map can stroke it as separate segments instead of a smear.
+ * Stylized strike arc (WarGames homage) — deliberately NOT a true great
+ * circle. A smooth quadratic that bows toward the top of the map, taller for
+ * longer shots, and free to sail off the top edge and back. This trades
+ * geographic accuracy (which the equirect projection renders as ugly pole
+ * spikes / flat "square" tops near 90°N) for clean, believable arcs. `breaks`
+ * still marks seam crossings so a shot that wraps the dateline strokes as
+ * separate segments instead of a smear.
  */
-export function greatCircle(from: LatLon, to: LatLon, n = 64): GreatCircle {
-  const a = latLonToVec3(from.lat, from.lon)
-  const b = latLonToVec3(to.lat, to.lon)
-  const dot = Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]))
-  const omega = Math.acos(dot)
+export function strikeArc(from: LatLon, to: LatLon, n = 64): GreatCircle {
+  const [u0, v0] = project(from.lon, from.lat)
+  let [u1, v1] = project(to.lon, to.lat)
+  // take the short way around the seam (keep the control span within half the map)
+  if (u1 - u0 > 0.5) u1 -= 1
+  else if (u1 - u0 < -0.5) u1 += 1
+
+  const chord = Math.hypot(u1 - u0, v1 - v0)
+  const bow = Math.min(BOW_CAP, chord * BOW_GAIN)
+  const cu = (u0 + u1) / 2
+  const cv = (v0 + v1) / 2 - bow // control point lifted toward the top (v can go < 0 = above frame)
+
   const pts = new Float32Array((n + 1) * 2)
   const breaks: number[] = []
   let prevU = 0
-
   for (let i = 0; i <= n; i++) {
     const t = i / n
-    let x: number, y: number, z: number
-    if (omega < 1e-4) {
-      x = a[0] + (b[0] - a[0]) * t
-      y = a[1] + (b[1] - a[1]) * t
-      z = a[2] + (b[2] - a[2]) * t
-    } else {
-      const s1 = Math.sin((1 - t) * omega) / Math.sin(omega)
-      const s2 = Math.sin(t * omega) / Math.sin(omega)
-      x = s1 * a[0] + s2 * b[0]
-      y = s1 * a[1] + s2 * b[1]
-      z = s1 * a[2] + s2 * b[2]
-    }
-    const lat = toDeg(Math.asin(Math.max(-1, Math.min(1, z))))
-    const lon = toDeg(Math.atan2(y, x))
-    const [u, v] = project(lon, lat)
-    if (i > 0 && Math.abs(u - prevU) > 0.5) breaks.push(i)
-    prevU = u
-    pts[i * 2] = u
+    const mt = 1 - t
+    const u = mt * mt * u0 + 2 * mt * t * cu + t * t * u1
+    const v = mt * mt * v0 + 2 * mt * t * cv + t * t * v1
+    const uw = ((u % 1) + 1) % 1 // wrap into [0,1]; seam crossings become breaks
+    if (i > 0 && Math.abs(uw - prevU) > 0.5) breaks.push(i)
+    prevU = uw
+    pts[i * 2] = uw
     pts[i * 2 + 1] = v
   }
   return { pts, breaks }

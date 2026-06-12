@@ -17,7 +17,7 @@ import { CIN } from '../lib/hud'
 import { project, unproject, easeInOutSine, sectorCode, fmtLatLon } from '../lib/geo'
 
 type MapRect = { x: number; y: number; w: number; h: number }
-const IMPACT_LIFE = 6000 // solid blast bubble: grow fast, linger, fade
+const IMPACT_LIFE = 3200 // solid blast bubble: grow fast, fade fast (the board runs much busier now)
 const TRAIL_LIFE = 9500 // full-arc afterglow after arrival
 
 function fitMapRect(w: number, h: number): MapRect {
@@ -132,6 +132,13 @@ export function MapPanel() {
     ctx.clearRect(0, 0, w, h)
     ctx.drawImage(baseRef.current.cv, 0, 0, w, h)
 
+    // Mask every live layer to the map frame: the high arcs sail off the top
+    // and vanish AT the border, instead of bleeding into the panel margin.
+    ctx.save()
+    ctx.beginPath()
+    ctx.rect(mx, my, mw, mh)
+    ctx.clip()
+
     // --- strikes (WarGames climax style) ---------------------------------
     // In flight: the FULL traversed arc stays lit behind the head. After
     // arrival the whole arc persists as afterglow, fading over TRAIL_LIFE.
@@ -170,7 +177,16 @@ export function MapPanel() {
       if (prog >= 1) {
         strike.arrivedAt = clock.t
         const [u, v] = project(strike.to.lon, strike.to.lat)
-        hud.impacts.push({ u, v, at: clock.t })
+        // scatter salvo birds a few px so their blast bubbles overlap instead
+        // of stacking exactly (offset is in screen px -> normalize by map size)
+        const off = strike.impactOffsetPx
+        hud.impacts.push({
+          u: off ? u + off.x / mw : u,
+          v: off ? v + off.y / mh : v,
+          at: clock.t,
+          // each blast gets its own fade clock so a salvo doesn't wink out as a group
+          life: IMPACT_LIFE * (0.7 + Math.random() * 1.0),
+        })
         if (Math.random() < 0.25) {
           hud.pushLog(`IMPACT CONFIRMED ${sectorCode(strike.to.lat, strike.to.lon)}`, 'alert', clock.t)
         }
@@ -224,13 +240,13 @@ export function MapPanel() {
     for (let i = impacts.length - 1; i >= 0; i--) {
       const imp = impacts[i]
       const age = clock.t - imp.at
-      if (age > IMPACT_LIFE) {
+      if (age > imp.life) {
         impacts.splice(i, 1)
         continue
       }
       const x = mx + imp.u * mw
       const y = my + imp.v * mh
-      const fade = Math.pow(1 - age / IMPACT_LIFE, 1.2)
+      const fade = Math.pow(1 - age / imp.life, 1.2)
       const grow = 1 - Math.pow(1 - Math.min(1, age / 500), 3) // easeOutCubic
       const r = Math.max(1, mw * 0.042 * grow)
 
@@ -345,6 +361,8 @@ export function MapPanel() {
         ctx.fillText(full.slice(0, chars), x + 22, y - 10)
       }
     }
+
+    ctx.restore() // end map-frame clip
   })
 
   // Click anywhere on the map: a bird launches from a RANDOM base toward
