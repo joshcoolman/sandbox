@@ -110,10 +110,14 @@ function buildBase(w: number, h: number, dpr: number, rect: MapRect, fonts: Pane
   return cv
 }
 
+type ClickPing = { u: number; v: number; at: number }
+const CLICK_PING_LIFE = 550
+
 export function MapPanel() {
   const { hud, scheduler } = useHud()
   const baseRef = useRef<{ cv: HTMLCanvasElement; w: number; h: number } | null>(null)
   const rectRef = useRef<MapRect>({ x: 0, y: 0, w: 1, h: 1 })
+  const clicksRef = useRef<ClickPing[]>([])
 
   const canvasRef = useCanvasPanel((ctx, { w, h }, clock, fonts) => {
     // re-bake static base when panel size changes
@@ -259,6 +263,35 @@ export function MapPanel() {
       }
     }
 
+    // --- click reticles: instant feedback on every map click --------------
+    const clicks = clicksRef.current
+    for (let i = clicks.length - 1; i >= 0; i--) {
+      const ping = clicks[i]
+      const age = clock.t - ping.at
+      if (age > CLICK_PING_LIFE) {
+        clicks.splice(i, 1)
+        continue
+      }
+      const x = mx + ping.u * mw
+      const y = my + ping.v * mh
+      const f = age / CLICK_PING_LIFE
+      const a = 1 - f
+      // designation cross
+      ctx.strokeStyle = `rgba(225, 250, 252, ${(a * 0.9).toFixed(3)})`
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(x - 7, y)
+      ctx.lineTo(x + 7, y)
+      ctx.moveTo(x, y - 7)
+      ctx.lineTo(x, y + 7)
+      ctx.stroke()
+      // collapsing acquisition ring
+      ctx.strokeStyle = `rgba(57, 215, 224, ${(a * 0.7).toFixed(3)})`
+      ctx.beginPath()
+      ctx.arc(x, y, 14 * (1 - f) + 3, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+
     // --- engagement crosshair -------------------------------------------
     const engagement = hud.frame.engagement
     if (engagement) {
@@ -314,6 +347,10 @@ export function MapPanel() {
     }
   })
 
+  // Click anywhere on the map: a bird launches from a RANDOM base toward
+  // exactly where you clicked. Fast flight + an instant reticle at the
+  // click point, so rapid-fire clicking reads immediately and you can
+  // saturate the board with impacts.
   const onClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       const canvas = e.currentTarget
@@ -323,19 +360,11 @@ export function MapPanel() {
       const v = (e.clientY - bounds.top - my) / mh
       if (u < 0 || u > 1 || v < 0 || v > 1) return
       const to = unproject(u, v)
-      let nearest = BASES[0]
-      let best = Infinity
-      for (const base of BASES) {
-        const dLon = Math.min(Math.abs(base.lon - to.lon), 360 - Math.abs(base.lon - to.lon))
-        const d = (base.lat - to.lat) ** 2 + dLon ** 2
-        if (d < best) {
-          best = d
-          nearest = base
-        }
-      }
+      const from = BASES[Math.floor(Math.random() * BASES.length)]
       const now = scheduler.now()
-      const strike = hud.launchStrike(nearest, to, now, 2000 + Math.random() * 800)
-      hud.pushLog(`MANUAL LAUNCH ${strike.id} ${nearest.name} > ${sectorCode(to.lat, to.lon)}`, 'warn', now)
+      clicksRef.current.push({ u, v, at: now })
+      const strike = hud.launchStrike(from, to, now, 1200 + Math.random() * 700)
+      hud.pushLog(`MANUAL LAUNCH ${strike.id} ${from.name} > ${sectorCode(to.lat, to.lon)}`, 'warn', now)
     },
     [hud, scheduler],
   )
