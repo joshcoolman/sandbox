@@ -325,52 +325,106 @@
   border-radius: 0;
 }
 
-/* Video digest entries: thumbnail left, title + description right */
-.prose p:has(img) {
-  position: relative;
-  min-height: 90px;
-  padding-left: 176px;
-  margin-bottom: var(--news-s-5);
-  transition: padding-left 0.15s ease;
+/* ── Video entries ──────────────────────────────────────────────── */
+
+.section {
+  margin-bottom: var(--news-s-6);
 }
 
-/* Only the image-wrapping anchor is pinned to the thumbnail slot; resource
-   links (anchors without an img) flow in a list under the description. */
-.prose p:has(img) a:has(img) {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Date divider: when a batch of videos came in. */
+.dateDivider {
+  margin: var(--news-s-6) 0 var(--news-s-5);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Thumbnail (with a date/duration row under it) left, text right. */
+.entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 16px;
+  margin-bottom: var(--news-s-5);
+}
+
+.entryLeft {
+  width: 160px;
+}
+
+.thumb {
+  display: block;
   line-height: 0;
 }
 
-/* Resource links: a plain vertical list of full, clickable URLs under the
-   description (each anchor is forced onto its own line). */
-.prose p:has(img) a:not(:has(img)) {
-  display: block;
-  width: fit-content;
-  max-width: 100%;
-  margin-top: 2px;
-  font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  line-height: 1.7;
-  color: var(--accent);
-  text-decoration: none;
-  word-break: break-all;
-}
-
-.prose p:has(img) a:not(:has(img)):hover {
-  text-decoration: underline;
-}
-
-.prose img {
-  display: block;
+.thumb img {
   width: 160px;
   max-width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: var(--radius-md);
-  margin: 0;
   object-fit: cover;
   background: var(--surface-sunken);
+}
+
+/* YouTube-style meta row under the thumbnail: date left, duration pill right. */
+.thumbMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+  font-family: var(--font-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+
+.metaDate {
+  color: var(--text-faint);
+}
+
+/* Clickable duration pill — opens the video (people reach for it). */
+.metaDur {
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid var(--border);
+  background: var(--surface-raised);
+  color: var(--text-muted);
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+}
+
+.metaDur:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.entryBody {
+  min-width: 0;
+}
+
+.entryTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.entryChannel {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.entryDesc {
+  margin: 7px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-body);
 }
 
 .prose hr {
@@ -385,145 +439,53 @@
   position: relative;
 }
 
-/* Trash toggle, injected into each video entry; hidden until editing */
-.trashBtn {
+/* Edit mode: one per-entry "Remove" toggle that builds a destructive
+   "remove these" prompt (copied to the clipboard). No other controls. */
+.removeBtn {
   position: absolute;
-  left: 0;
-  top: 31px;
+  top: 0;
+  right: 0;
   display: none;
+  height: 26px;
+  padding: 0 11px;
   align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface-raised);
-  color: #d06a6a;
-  cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
-}
-
-.trashBtn:hover {
-  background: #2a1414;
-  border-color: #5a2a2a;
-  color: #ff6b6b;
-}
-
-/* Ban-channel toggle, stacked under the trash button; future-only (the entry
-   itself is untouched, so the toggled state lives on the button). */
-.banBtn {
-  position: absolute;
-  left: 0;
-  top: 65px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
   border: var(--border-width) solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface-raised);
   color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
   cursor: pointer;
   transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
 }
 
-.banBtn:hover {
-  background: #221a10;
-  border-color: #5a4424;
-  color: #e0a44a;
-}
-
-.banBtn[aria-pressed='true'] {
-  background: #2a1f10;
-  border-color: #7a5a24;
-  color: #f0b84a;
-}
-
-/* Editing on: open a gutter for the trash button, shift the thumbnail right */
-.editing .prose p:has(img) {
-  padding-left: 216px;
-}
-
-.editing .prose p:has(img) > a:has(img) {
-  left: 40px;
-}
-
-.editing .trashBtn,
-.editing .banBtn {
-  display: flex;
-}
-
-/* inline "x" injected after each resource link */
-.linkBtn {
-  display: none;
-  vertical-align: middle;
-  margin-left: 4px;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  border: var(--border-width) solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
-  color: var(--text-body);
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-}
-
-.linkBtn:hover {
-  border-color: #e5484d;
-  color: #e5484d;
-}
-
-.editing .linkBtn {
+.editing .removeBtn {
   display: inline-flex;
 }
 
-/* a resource link struck out for targeted removal */
-.editing a[data-link-removed='true'] {
-  text-decoration: line-through;
-  color: var(--text-faint);
-  opacity: 0.6;
-}
-
-/* Marked-for-deletion: grayed out with a "Deleted" overlay, undeletable */
-.prose p[data-deleted='true'] {
-  color: var(--text-faint);
-}
-
-.prose p[data-deleted='true'] strong {
-  color: var(--text-faint);
-}
-
-.prose p[data-deleted='true'] > a:has(img) {
-  filter: grayscale(1);
-  opacity: 0.3;
-}
-
-.prose p[data-deleted='true'] > a:has(img)::after {
-  content: 'Deleted';
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.removeBtn:hover {
+  border-color: #5a2a2a;
   color: #ff6b6b;
-  background: rgba(0, 0, 0, 0.45);
-  border-radius: var(--radius-md);
 }
 
-.prose p[data-deleted='true'] .trashBtn {
+.removeBtn[aria-pressed='true'] {
   background: #2a1414;
   border-color: #5a2a2a;
   color: #ff6b6b;
+}
+
+/* Marked for removal: dimmed + struck through until you act on the prompt. */
+.entryMarked .entryTitle,
+.entryMarked .entryChannel,
+.entryMarked .entryDesc {
+  color: var(--text-faint);
+  text-decoration: line-through;
+}
+
+.entryMarked .thumb img {
+  filter: grayscale(1);
+  opacity: 0.4;
 }
 
 /* "Edit recorded" toast */
@@ -615,21 +577,16 @@
     font-size: 22px;
   }
 
-  .prose p,
-  .prose li {
-    font-size: 14.5px;
+  .entry {
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
   }
 
-  .prose p:has(img) {
-    padding-left: 136px;
-    min-height: 68px;
+  .entryLeft {
+    width: 120px;
   }
 
-  .editing .prose p:has(img) {
-    padding-left: 176px;
-  }
-
-  .prose img {
+  .thumb img {
     width: 120px;
   }
 }

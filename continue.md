@@ -1,33 +1,36 @@
-# Continue: Step Sequencer v2 — three-layer techno groovebox
-
-Previous continue.md (Seismic Mesh / MeshCanvas) is fully committed and shipped — superseded.
+# Continue: /ai-news skill + /news page redesign
 
 ## What was being worked on
+A big iterative reshape of the **`/ai-news` skill** (YouTube curation) and the **`/news` page** that renders its output. All uncommitted on `main`. Build + typecheck both pass. User is about to clear context, test the skill with a fresh query, then commit everything.
 
-Upgrading `app/design-experiments/(experiments)/step-sequencer/` from a 16×8 pentatonic toy to a 16×11 three-layer groovebox: better techno generation, real synthesis, layer mutes, tone switches, swing, and a pre-seeded pattern on load. Plan approved via plan mode (saved at `~/.claude/plans/app-design-experiments-experiments-step-sprightly-cupcake.md`).
+## Changes made so far
 
-## Changes made (all working-tree, NOT committed)
+**`scripts/yt-ai-news.py`** (fetch tool → now also renders the review UI)
+- Casts **wide by default**: no Shorts filter, no language filter (opt back in with `--min-seconds N` / `--english-only`). `--max` default 25.
+- New `--html PATH` / `--out PATH`: writes a self-contained interactive review page (`news/.review/index.html`) + full candidate JSON (`news/.review/candidates.json`). `news/.review/` is gitignored/disposable.
+- The HTML (`_HTML_TEMPLATE` + `render_review_html`): thumbnail grid, signal badges, **click card = open video / click the circle = keep**, **Noise→Signal slider** (client `signalScore`, percentile cutoff; kept cards always visible), text filter, **LAST VIEWED** yellow marker on last-clicked, **PUBLISHED** blue marker (dimmed, non-selectable) for ids already in `news/feed.md` via `load_published_ids()`, live "keep list" textarea + Copy. No "View /news" link (removed — file:// can't know the port). No link/Resources extraction anymore.
+- **Additive board**: each run merges into the existing candidates.json (dedup by id), re-renders from the union; `--fresh` overwrites.
 
-- **New `lib/voices.ts`**: synth voices — `playKick` (sine 150→45Hz drop + noise click), `playClap` (two staggered bandpass noise bursts), `playHat` (highpass noise), `playBass` (tones: `sub`/`saw`/`acid` — acid = resonant lowpass sweep Q9 1400→160Hz), `playLead` (tones: `soft`/`sqr`/`saw` — saw = two oscs detuned ±7c). Shared noise buffer via `WeakMap<AudioContext, AudioBuffer>`.
-- **New `lib/rows.ts`**: `ROW_DEFS` (11 rows: lead E5/D5/C5/A4/G4, bass C3/G2/C2, drums HAT/CLP/KCK), hues (lead 340–250, bass 230–200, drums amber 52/40/26), `LEAD_ROWS`/`BASS_ROWS`/`DRUM_ROWS` index maps, `Section` type.
-- **New `lib/generate.ts`** (rewritten mid-session per Josh's visual-pattern insight — he hand-drew a staircase pattern that sounded great): stamp/period/phase generation. Small stamp shapes (`LEAD_SHAPES` diagonals/pairs/singles) repeated at period 4 or 8 with per-row phase offsets; three archetypes `cascade` (kick→clap→hat diagonal staircase, bass two-row stagger at phase 0/1), `classic` (backbeat clap, offbeat hats), `sparse` — module-level `lastArchetype` prevents back-to-back repeats. Kick 4-on-floor is the only fixed musical anchor. Repeats mutate harder in bars 3–4 (0/0/0.2/0.35) so loops drift like fills. `enforceCoverage` caps polyphony (≤2 lead, ≤4 total per column, sheds lead then non-root bass) and a richness floor re-stamps if lead < 5 notes. Verified by simulating patterns with `npx tsx -e` (22–32 notes, good variety). Also `makeEmptyGrid`, `normalizeGrid` (pads/truncates stale grids).
-- **`hooks/useStepSequencer.ts` reworked**: per-layer gain buses (lead/bass/drums) → master gain 0.5 → DynamicsCompressor → destination; dotted-eighth feedback delay on lead bus, retuned on BPM change via `setTargetAtTime`. New controller fields: `leadTone`/`bassTone` + `setLeadTone`/`setBassTone`, `swing`/`setSwing` (odd 16ths delayed by `swing * stepDur`, accent scheme 1.15/0.85/1). Default BPM now 124. No `initialGrid` → seeds `generateTechnoPattern()` in a mount `useEffect` (hydration-safe; SSR renders empty grid). `NOTE_FREQS` export removed (no external consumers). NOTE: mutes were built then removed per Josh — "not for musicians", tone switching is the interesting control, mutes are not. Buses kept for delay routing/balance.
-- **`components/Sequencer.tsx`**: rows driven by `ROW_DEFS`; section divider gaps via `.sectionStart`; header strip = label left + two segmented tone pills right (`[SOFT|SQR|SAW]` violet active, `[SUB|SAW|ACID]` blue active — radiogroup/radio semantics); transport gains SWING slider (0–60, purple accent) before BPM (now 90px, blue).
-- **Monono compat**: `monono/data/starter-pattern.ts` ported to 11 rows (melody on lead rows, old E4 offbeats → HAT, C4 anchor → KCK + C2 sub, no clap — kept gentle/J-pop). Monono imports via the step-sequencer barrel `index.ts` (unchanged).
-- **Docs/SEO**: updated `lib/experiments/data.ts` entry (subtitle/description/tags, Chiptune→Techno), `README.md` section, `public/llms.txt`, `public/llms-full.txt`, new entry in `docs/01-progress.md`.
+**`.claude/skills/ai-news/SKILL.md`** — rewritten to: freeform steering (`/ai-news <anything>`, any topic), one fast fetch → open page → echo `file://` path, browse→pick→commit-only-keepers. New entry format `**Title** — Channel (date · N min)` where `N = max(1, round(duration_sec/60))`. "Clearing the board" = `rm -rf news/.review`. Removal flow is **feed.md-only** (no ledger flips).
+
+**`/news` rendering (rebuilt from MDX to a real parser+component)**
+- `lib/news/parseFeed.ts` (NEW) — parses feed body → `[{date, entries:[{id,title,channel,published,durationMin,description,watchUrl,thumbUrl}]}]`.
+- `app/(news)/_components/NewsFeedView.tsx` (NEW, client) — renders entries: **left** = thumbnail + meta row (date bottom-left, **duration pill** bottom-right; pill is an `<a>` that opens the video in a new tab); **right** = title/channel/description. Folds in **dead-simple edit mode**: each entry gets one "Remove" toggle → builds + copies a destructive "remove these from `news/feed.md`" prompt. Consumes `useNewsEdit()` (provider is in `app/(news)/layout.tsx`).
+- **Deleted** `NewsContent.tsx` + `NewsEditableContent.tsx` (replaced). `page.tsx` now renders `<NewsFeedView content={feed.content} />`.
+- `news.module.css` — new `.entry` grid, `.thumbMeta`/`.metaDate`/`.metaDur` (small pill, hover accent), `.removeBtn`, `.entryMarked`; pruned old `.prose p:has(img)` + all the downvote/ban/link edit-gutter rules + the mobile `.prose p:has(img)` rules.
+
+**Data** — `news/feed.md` rebuilt: 9 entries under `## June 11, 2026` in the new `(date · N min)` format (4 Fable 5 + 5 loop-discourse videos). `news/.ledger.json` reset to those 9 `posted` records (+ `blockedChannels: n8n`, `blockedLinks`). `.gitignore` += `news/.review/`.
 
 ## Key decisions
-
-- Mutes implemented as bus-gain ramps (not skipping notes in the scheduler) — instant and click-free.
-- Drum gains fixed (kick 0.5, clap 0.17, hat 0.08·accent); lead 0.085, bass 0.17 — tuned through the compressor, may need ear-tuning.
-- Per Josh: "tune by extremes" memory — if he wants effect tuning (swing, delay wet 0.18, acid Q), jump to exaggerated values first.
+- Review page is **file://**, self-contained, server-independent (deliberately — avoids the port/dev-server dependency).
+- **Ledger is a record, not a gate**: signals shown in the review UI, never auto-filter. Only `blockedChannels`/`blockedLinks` are hard filters. PUBLISHED detection reads `feed.md`, not the ledger.
+- Edit mode is purely destructive (build a remove prompt); dropped downvote/ban-channel/per-link/taste-tracking.
+- Runs are **additive** onto one board until the user says "clear the review" (→ `rm -rf news/.review`).
 
 ## Outstanding work
-
-- **Josh has not listened yet** — awaiting his review of generation quality and voice balance in dev server.
-- Screenshot `public/screenshots/step-sequencer.png` is stale (shows 8-row grid) — refresh via `/ship-experiment` or manually when shipping.
-- Not committed — commit after Josh approves the sound.
+- User will **test the skill fresh** (e.g. `/ai-news <new query>`) then say **commit**. On "commit": `git add -A`, thorough message, `git push` (per global workflow). Nothing else pending.
+- Optional future cleanup (not requested): dormant link-extraction helpers in `yt-ai-news.py`; leftover generic `.prose` rules in `news.module.css`.
 
 ## Git state
-
-Branch `main`, clean before session. All above changes uncommitted (9 modified files + new untracked `step-sequencer/lib/`). `npm run typecheck` and `npm run build` both pass.
+- Branch `main`, **all uncommitted, not pushed**. Modified: SKILL.md, .gitignore, news.module.css, page.tsx, .ledger.json, feed.md, yt-ai-news.py (NewsContent.tsx + NewsEditableContent.tsx deleted). Untracked: `app/(news)/_components/NewsFeedView.tsx`, `lib/news/parseFeed.ts`.
+- **`ai-news-refactor.md`** (untracked, repo root) is the **user's own** handoff doc — not part of this work; leave it / let the user decide whether to commit it.

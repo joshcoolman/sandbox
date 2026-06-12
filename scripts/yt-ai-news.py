@@ -17,9 +17,17 @@ Usage:
 Options:
   --days N         lookback window in days (default 2)
   --order ORDER    search order: viewCount | date | relevance (default viewCount)
-  --max N          results per query, 1-50 (default 15)
-  --min-seconds N  drop videos shorter than N seconds, 0 disables (default 90)
+  --max N          results per query, 1-50 (default 25)
+  --min-seconds N  drop videos shorter than N seconds, 0 disables (default 0)
+  --english-only   drop non-English videos (off by default — show everything)
   --no-subs        skip subscriptions (pure discovery; no OAuth needed)
+  --html PATH      write a self-contained interactive review page to PATH
+  --out PATH       write the full candidate JSON to PATH (for the commit step)
+
+By default the script casts wide: no Shorts filter, no language filter, no
+quality gating. It just fetches, enriches with signals, sorts by velocity, and
+hands the caller everything. Curation happens visually in the --html page; the
+caller commits only what the user keeps.
 """
 
 import os
@@ -404,10 +412,6 @@ def enrich_videos(videos, blocked_hosts=()):
             v["duration_sec"] = parse_duration(cd.get("duration"))
             v["channel_id"] = sn.get("channelId")
             v["language"] = sn.get("defaultAudioLanguage") or sn.get("defaultLanguage")
-            # Full description is only available here (the snippet); _base_video truncates
-            # to 250 chars. Use it for link extraction only — never store the full text
-            # (token bloat), just the extracted links.
-            v["links"] = extract_links(sn.get("description", ""), self_id=v["id"], blocked_hosts=blocked_hosts)
 
 
 def enrich_channels(videos):
@@ -452,6 +456,19 @@ def add_derived(videos):
 # --- Blocked-channel filter (from the ledger) ---
 
 LEDGER_FILE = Path(__file__).resolve().parent.parent / "news" / ".ledger.json"
+FEED_FILE = Path(__file__).resolve().parent.parent / "news" / "feed.md"
+
+_VIDEO_ID_RE = re.compile(r"(?:vi/|watch\?v=)([A-Za-z0-9_-]{6,})")
+
+
+def load_published_ids():
+    """Video ids already in the public feed (news/feed.md) — so the review page can
+    mark them PUBLISHED and non-selectable. feed.md is the source of truth: a video
+    removed via the /news Edit button drops out here and becomes selectable again."""
+    try:
+        return set(_VIDEO_ID_RE.findall(FEED_FILE.read_text()))
+    except FileNotFoundError:
+        return set()
 
 
 def load_blocked_channels():
@@ -472,6 +489,55 @@ def load_blocked_channels():
     return names, ids
 
 
+def load_channel_keep_rates():
+    """Read the ledger's videos[] → per-channel posted/deleted tallies.
+
+    Keyed by channelId when a record has one, else by lowercased channel name
+    (historical records carry only the name; newer ones also carry channel_id,
+    so accuracy improves over time). Returns { key: {"posted": n, "deleted": m} }.
+    Tolerates a missing/malformed ledger (returns {})."""
+    tally = {}
+    try:
+        data = json.loads(LEDGER_FILE.read_text())
+    except (FileNotFoundError, ValueError):
+        return tally
+    for rec in data.get("videos", []):
+        status = rec.get("status")
+        if status not in ("posted", "deleted"):
+            continue
+        keys = []
+        if rec.get("channel_id"):
+            keys.append(rec["channel_id"])
+        if rec.get("channel"):
+            keys.append(rec["channel"].strip().lower())
+        for key in keys:
+            t = tally.setdefault(key, {"posted": 0, "deleted": 0})
+            t[status] += 1
+    return tally
+
+
+def attach_keep_rates(videos, tally):
+    """Attach keep_posted/keep_deleted/channel_keep_rate to each candidate.
+
+    Match by channel_id, falling back to lowercased channel name. keep_rate is
+    posted/(posted+deleted) only when there are >=2 prior appearances — a single
+    appearance is noise, not a track record — else None."""
+    for v in videos:
+        t = None
+        cid = v.get("channel_id")
+        if cid and cid in tally:
+            t = tally[cid]
+        else:
+            name = (v.get("channel") or "").strip().lower()
+            t = tally.get(name)
+        posted = t["posted"] if t else 0
+        deleted = t["deleted"] if t else 0
+        total = posted + deleted
+        v["keep_posted"] = posted
+        v["keep_deleted"] = deleted
+        v["channel_keep_rate"] = round(posted / total, 2) if total >= 2 else None
+
+
 def load_blocked_link_hosts():
     """Read blockedLinks from the ledger → set of normalized host suffixes. Each
     entry blocks that domain and all its subdomains in extracted resource links."""
@@ -487,6 +553,261 @@ def load_blocked_link_hosts():
     return hosts
 
 
+# --- Interactive review page ---
+
+_HTML_TEMPLATE = r"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0d0d0f; color: #e7e7ea;
+    font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: #0d0d0fee;
+    backdrop-filter: blur(8px); border-bottom: 1px solid #26262c; padding: 14px 16px; }
+  header h1 { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
+  header .sub { color: #9a9aa2; font-size: 12px; }
+  header .sub b { color: #5ad17f; }
+  .controls { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+  #filter { flex: 1; min-width: 200px; max-width: 360px; padding: 7px 10px;
+    background: #17171b; color: #e7e7ea; border: 1px solid #34343c; border-radius: 7px; font-size: 13px; }
+  .slider { display: flex; align-items: center; gap: 8px; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .05em; user-select: none; }
+  .slider input[type=range] { width: 150px; accent-color: #5ad17f; cursor: pointer; }
+  .slider .lbl-noise { color: #6a6a72; }
+  .slider .lbl-signal { color: #5ad17f; }
+  main#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px; padding: 16px; padding-bottom: 230px; }
+  .card { position: relative; background: #17171b; border: 1px solid #26262c; border-radius: 10px;
+    overflow: hidden; cursor: pointer; transition: border-color .12s, transform .12s; }
+  .card:hover { border-color: #44444e; }
+  .card:hover img { opacity: .82; }
+  .card.kept { border-color: #5ad17f; box-shadow: 0 0 0 1px #5ad17f inset; }
+  /* Transient "last viewed" marker — helps you find your place after closing a video tab. */
+  .card.last { border-color: #f5c518; box-shadow: 0 0 0 1px #f5c518 inset; }
+  .card .lastlabel { position: absolute; top: 0; left: 0; z-index: 2; display: none;
+    background: #f5c518; color: #0d0d0f; font-size: 10px; font-weight: 700; letter-spacing: .04em;
+    padding: 3px 7px; border-bottom-right-radius: 7px; }
+  .card.last .lastlabel { display: block; }
+  /* Already in the public feed — shown for context, dimmed, and not selectable. */
+  .card.published img { opacity: .45; }
+  .card.published { cursor: default; }
+  .card .publabel { position: absolute; top: 0; left: 0; z-index: 2; background: #4aa3df;
+    color: #0d0d0f; font-size: 10px; font-weight: 700; letter-spacing: .04em; padding: 3px 7px;
+    border-bottom-right-radius: 7px; }
+  .card img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #000;
+    transition: opacity .12s; }
+  /* The check circle is the ONLY toggle — clicking the card opens the video. */
+  .card .check { position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%;
+    background: #0d0d0fd9; border: 1.5px solid #6a6a74; color: transparent; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700;
+    transition: transform .1s, background .1s, border-color .1s; }
+  .card .check:hover { transform: scale(1.12); border-color: #5ad17f; color: #5ad17f88; }
+  .card.kept .check { background: #5ad17f; border-color: #5ad17f; color: #0d0d0f; }
+  .meta { padding: 10px 11px 12px; }
+  .title { font-weight: 600; font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden; }
+  .chan { color: #9a9aa2; font-size: 12px; margin-top: 5px; }
+  .badges { margin-top: 9px; display: flex; flex-wrap: wrap; gap: 5px; }
+  .badge { font-size: 10.5px; background: #222228; color: #c7c7cf; border-radius: 5px; padding: 2px 6px; }
+  #tray { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: #111114;
+    border-top: 1px solid #26262c; padding: 11px 16px 14px; }
+  .tray-head { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #9a9aa2; margin-bottom: 7px; }
+  .tray-head b { color: #e7e7ea; }
+  .tray-head .spacer { flex: 1; }
+  button { background: #23232a; color: #e7e7ea; border: 1px solid #34343c; border-radius: 6px;
+    padding: 5px 13px; font-size: 12px; cursor: pointer; }
+  button:hover { border-color: #55555f; }
+  button.done { background: #5ad17f; color: #0d0d0f; border-color: #5ad17f; }
+  #prompt { width: 100%; height: 110px; background: #0d0d0f; color: #e7e7ea; border: 1px solid #26262c;
+    border-radius: 8px; padding: 9px; font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; resize: vertical; }
+  .hint { margin-top: 6px; font-size: 11px; color: #6a6a72; }
+</style>
+</head>
+<body>
+<header>
+  <h1>__TITLE__</h1>
+  <div class="sub">Click a card to open the video. Click the circle to keep it.
+    <b id="count">0</b> kept · <span id="shown">0</span>/<span id="total">0</span> shown ·
+    <span id="pub">0</span> already published. Copy the list below and paste it back into the chat.</div>
+  <div class="controls">
+    <input id="filter" placeholder="Filter by title or channel…" autocomplete="off">
+    <div class="slider" title="Drag right to hide lower-signal videos (low like-ratio, low velocity, non-English, weak track record). Kept cards always stay visible.">
+      <span class="lbl-noise">Noise</span>
+      <input id="signal" type="range" min="0" max="100" value="0">
+      <span class="lbl-signal">Signal</span>
+    </div>
+  </div>
+</header>
+<main id="grid"></main>
+<aside id="tray">
+  <div class="tray-head"><b>Keep list</b><span class="spacer"></span>
+    <button id="clear">Clear picks</button><button id="copy">Copy</button></div>
+  <textarea id="prompt" readonly placeholder="Nothing kept yet — click some cards above."></textarea>
+  <div class="hint">These are the only videos that will be added to the public feed.</div>
+</aside>
+<script>
+const CANDIDATES = __DATA__;
+const fmt = n => n == null ? "—" : (n >= 1e6 ? (n/1e6).toFixed(1)+"M" : n >= 1e3 ? (n/1e3).toFixed(1)+"k" : String(n));
+const dur = s => s == null ? "live" : (s >= 3600 ? Math.floor(s/3600)+"h"+Math.round(s%3600/60)+"m" : Math.round(s/60)+"m");
+// Composite "signal" score [0,1] from the same signals shown on the card. Higher = more
+// signal. Only used by the Noise→Signal slider to thin the view; never drops data.
+function signalScore(v) {
+  let s = 0;
+  const lr = v.like_ratio == null ? 0.02 : v.like_ratio;       // engagement quality
+  s += 0.45 * Math.min(lr / 0.08, 1);
+  const vpd = v.views_per_day || 0;                            // momentum (log-scaled)
+  s += 0.30 * Math.min(Math.log(vpd + 1) / Math.log(1e6), 1);
+  s += 0.15 * (v.channel_keep_rate == null ? 0.5 : v.channel_keep_rate);  // track record (neutral if unknown)
+  s += 0.10 * (v.views != null ? 1 : 0);                       // has real stats at all
+  const lang = (v.language || "").toLowerCase();               // non-English reads as noise
+  if (lang && !lang.startsWith("en")) s *= 0.4;
+  return s;
+}
+const kept = new Set();
+const grid = document.getElementById("grid");
+document.getElementById("total").textContent = CANDIDATES.length;
+document.getElementById("pub").textContent = CANDIDATES.filter(v => v.in_feed).length;
+
+CANDIDATES.forEach(v => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.dataset.id = v.id;
+  card.dataset.search = ((v.title || "") + " " + (v.channel || "")).toLowerCase();
+  card.dataset.score = signalScore(v).toFixed(5);
+
+  const img = document.createElement("img");
+  img.loading = "lazy"; img.alt = "";
+  img.src = "https://img.youtube.com/vi/" + v.id + "/mqdefault.jpg";
+
+  const check = document.createElement("div");
+  check.className = "check"; check.textContent = "✓";
+  check.title = "Keep / unkeep";
+
+  const lastLabel = document.createElement("div");
+  lastLabel.className = "lastlabel"; lastLabel.textContent = "LAST VIEWED";
+
+  const meta = document.createElement("div"); meta.className = "meta";
+  const t = document.createElement("div"); t.className = "title"; t.textContent = v.title || "";
+  const c = document.createElement("div"); c.className = "chan";
+  c.textContent = (v.channel || "") + (v.published_relative ? " · " + v.published_relative : "");
+
+  const badges = document.createElement("div"); badges.className = "badges";
+  const add = txt => { const b = document.createElement("span"); b.className = "badge"; b.textContent = txt; badges.appendChild(b); };
+  add(fmt(v.views_per_day) + "/day");
+  add(fmt(v.views) + " views");
+  add(fmt(v.subs) + " subs");
+  add(dur(v.duration_sec));
+  if (v.like_ratio != null) add(Math.round(v.like_ratio * 100) + "% likes");
+  if (v.source) add(v.source);
+  if (v.channel_keep_rate != null) add("keep " + v.channel_keep_rate);
+
+  meta.append(t, c, badges);
+  if (v.in_feed) {
+    // Already in the public feed — visible for context, dimmed, and NOT selectable.
+    card.classList.add("published");
+    const pub = document.createElement("div");
+    pub.className = "publabel"; pub.textContent = "PUBLISHED"; pub.title = "Already in /news";
+    card.append(img, pub, meta);
+    card.addEventListener("click", () => window.open(v.url, "_blank", "noopener"));
+  } else {
+    card.append(img, check, lastLabel, meta);
+    // Whole card opens the video and becomes "last viewed"; only the circle toggles keep.
+    card.addEventListener("click", () => {
+      document.querySelectorAll(".card.last").forEach(c => c.classList.remove("last"));
+      card.classList.add("last");
+      window.open(v.url, "_blank", "noopener");
+    });
+    check.addEventListener("click", e => { e.stopPropagation(); toggle(v.id, card); });
+  }
+  grid.appendChild(card);
+});
+
+function toggle(id, card) {
+  if (kept.has(id)) { kept.delete(id); card.classList.remove("kept"); }
+  else { kept.add(id); card.classList.add("kept"); }
+  updatePrompt();
+  applyFilters();
+}
+
+function updatePrompt() {
+  const lines = CANDIDATES.filter(v => kept.has(v.id))
+    .map(v => "- " + v.id + " — " + (v.title || "") + " — " + (v.channel || ""));
+  document.getElementById("prompt").value = lines.length
+    ? "Keep these in the AI News feed:\n" + lines.join("\n") : "";
+  document.getElementById("count").textContent = kept.size;
+}
+
+document.getElementById("copy").addEventListener("click", () => {
+  const ta = document.getElementById("prompt");
+  if (!ta.value) return;
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (e) {}
+  if (navigator.clipboard) navigator.clipboard.writeText(ta.value).catch(() => {});
+  const btn = document.getElementById("copy");
+  btn.textContent = "Copied"; btn.classList.add("done");
+  setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("done"); }, 1200);
+});
+
+document.getElementById("clear").addEventListener("click", () => {
+  kept.clear();
+  document.querySelectorAll(".card.kept").forEach(c => c.classList.remove("kept"));
+  updatePrompt();
+  applyFilters();
+});
+
+// --- Text filter + Noise→Signal slider (view-only; kept cards always stay visible) ---
+const cards = Array.from(grid.children);
+const sortedScores = cards.map(c => +c.dataset.score).sort((a, b) => a - b);
+const filterEl = document.getElementById("filter");
+const signalEl = document.getElementById("signal");
+
+function cutoff() {
+  // 0 = show everything; pulling right raises the score floor up to the ~92nd percentile.
+  const t = (+signalEl.value / 100) * 0.92;
+  if (t <= 0) return -Infinity;
+  return sortedScores[Math.floor(t * (sortedScores.length - 1))];
+}
+
+function applyFilters() {
+  const q = filterEl.value.toLowerCase().trim();
+  const cut = cutoff();
+  let shown = 0;
+  cards.forEach(c => {
+    const isKept = c.classList.contains("kept");
+    const passText = !q || c.dataset.search.includes(q);
+    const passSignal = (+c.dataset.score) >= cut;
+    const vis = isKept || (passText && passSignal);
+    c.style.display = vis ? "" : "none";
+    if (vis) shown++;
+  });
+  document.getElementById("shown").textContent = shown;
+}
+
+filterEl.addEventListener("input", applyFilters);
+signalEl.addEventListener("input", applyFilters);
+applyFilters();
+</script>
+</body>
+</html>
+"""
+
+
+def render_review_html(videos, title="AI News review"):
+    """Build a self-contained interactive contact sheet from enriched candidates.
+
+    The page embeds the candidate list, renders a thumbnail grid, lets the user
+    click to keep, and builds a copy-paste 'keep list' the caller acts on. No
+    build step, no external deps — just open the file in a browser."""
+    data = json.dumps(videos, ensure_ascii=False).replace("</", "<\\/")
+    safe_title = (title or "AI News review").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return _HTML_TEMPLATE.replace("__TITLE__", safe_title).replace("__DATA__", data)
+
+
 # --- Main ---
 
 def main():
@@ -494,10 +815,15 @@ def main():
     parser.add_argument("queries", nargs="*", help="discovery search queries")
     parser.add_argument("--days", type=int, default=2)
     parser.add_argument("--order", choices=["viewCount", "date", "relevance"], default="viewCount")
-    parser.add_argument("--max", type=int, default=15, dest="max_results")
-    parser.add_argument("--min-seconds", type=int, default=90, dest="min_seconds")
+    parser.add_argument("--max", type=int, default=25, dest="max_results")
+    parser.add_argument("--min-seconds", type=int, default=0, dest="min_seconds")
+    parser.add_argument("--english-only", action="store_true")
     parser.add_argument("--no-subs", action="store_true")
     parser.add_argument("--reset-auth", action="store_true")
+    parser.add_argument("--html", dest="html_path", help="write interactive review page here")
+    parser.add_argument("--out", dest="out_path", help="write full candidate JSON here")
+    parser.add_argument("--fresh", action="store_true",
+                        help="start a clean board (overwrite); default merges into the existing --out set")
     args = parser.parse_args()
 
     if args.reset_auth:
@@ -520,6 +846,7 @@ def main():
 
     blocked_names, blocked_ids = load_blocked_channels()
     blocked_link_hosts = load_blocked_link_hosts()
+    keep_rate_tally = load_channel_keep_rates()
     skipped_blocked = 0
 
     seen = set()
@@ -566,6 +893,7 @@ def main():
     enrich_videos(videos, blocked_link_hosts)
     enrich_channels(videos)
     add_derived(videos)
+    attach_keep_rates(videos, keep_rate_tally)
 
     # --- Drop blocked channels by channelId (post-enrichment; catches renames) ---
     if blocked_ids:
@@ -575,7 +903,7 @@ def main():
     if skipped_blocked:
         print(f"Skipped {skipped_blocked} from blocked channels.", file=sys.stderr)
 
-    # --- Light gating (caller does the real curation) ---
+    # --- Optional gating (off by default — caller curates visually) ---
     kept = []
     dropped_short = dropped_lang = 0
     for v in videos:
@@ -583,14 +911,36 @@ def main():
         if args.min_seconds and dur is not None and 0 < dur < args.min_seconds:
             dropped_short += 1
             continue
-        lang = v.get("language")
-        if lang and not lang.lower().startswith("en"):
-            dropped_lang += 1
-            continue
+        if args.english_only:
+            lang = v.get("language")
+            if lang and not lang.lower().startswith("en"):
+                dropped_lang += 1
+                continue
         kept.append(v)
 
     # Most momentum first; unknown velocity sinks to the bottom.
     kept.sort(key=lambda x: x.get("views_per_day") or -1, reverse=True)
+
+    # Additive board: unless --fresh, merge this run's results into the existing review
+    # set (dedup by id, this run's fresher records win). Lets several /ai-news runs
+    # accumulate onto one review page until the user clears it.
+    review = kept
+    if not args.fresh and args.out_path and Path(args.out_path).exists():
+        try:
+            prior = json.loads(Path(args.out_path).read_text())
+        except (ValueError, OSError):
+            prior = []
+        seen_now = {v["id"] for v in kept}
+        merged = kept + [v for v in prior if v.get("id") not in seen_now]
+        merged.sort(key=lambda x: x.get("views_per_day") or -1, reverse=True)
+        added = len(merged) - len(prior)
+        print(f"Additive: {len(kept)} fetched, {added} net-new -> {len(merged)} on the board.", file=sys.stderr)
+        review = merged
+
+    # Flag videos already in the public feed so the review page marks them PUBLISHED.
+    published_ids = load_published_ids()
+    for v in review:
+        v["in_feed"] = v["id"] in published_ids
 
     subs_n = sum(1 for v in kept if v["source"] == "subscription")
     disc_n = sum(1 for v in kept if v["source"] == "discovery")
@@ -599,7 +949,25 @@ def main():
         f"dropped {dropped_short} short, {dropped_lang} non-English.",
         file=sys.stderr,
     )
-    print(json.dumps(kept, indent=2))
+
+    # --- Output (the review set = this run merged with the existing board) ---
+    if args.out_path:
+        Path(args.out_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out_path).write_text(json.dumps(review, indent=2))
+        print(f"Wrote {len(review)} candidates -> {args.out_path}", file=sys.stderr)
+    if args.html_path:
+        title = "AI News review"
+        if queries:
+            title = "AI News review — " + ", ".join(queries[:4]) + ("…" if len(queries) > 4 else "")
+        Path(args.html_path).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.html_path).write_text(render_review_html(review, title))
+        print(f"Wrote review page ({len(review)} candidates) -> {args.html_path}", file=sys.stderr)
+    if not args.html_path and not args.out_path:
+        # Legacy: dump JSON to stdout for direct piping (this run only).
+        print(json.dumps(kept, indent=2))
+    else:
+        # Keep stdout terse so the page path is the takeaway, not a wall of JSON.
+        print(args.html_path or args.out_path)
 
 
 if __name__ == "__main__":

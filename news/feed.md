@@ -2,40 +2,40 @@
 title: "AI News"
 ---
 
-## May 29, 2026
+## June 11, 2026
 
-**The New Claude Code Feature Going Viral Right Now** — Ray Amjad (May 29)
-A walkthrough of the Claude Code feature everyone's talking about this week and how to actually fold it into your workflow.
-[![](https://img.youtube.com/vi/kJ8FTPykawU/mqdefault.jpg)](https://youtube.com/watch?v=kJ8FTPykawU)
+**Anthropic begged the world to stop AI… then shipped this** — Fireship (Jun 11 · 5 min)
+Fireship's rapid-fire take on Anthropic's Fable 5 launch — the irony of the messaging and what actually shipped.
+[![](https://img.youtube.com/vi/1PBRhm5ZnjU/mqdefault.jpg)](https://youtube.com/watch?v=1PBRhm5ZnjU)
 
-**The 5-Tool Fix for Claude Code's Worst Habits** — Sean Kochel (May 29)
-Five concrete tools/config changes to curb Claude Code's most annoying failure modes instead of fighting them by hand.
-[![](https://img.youtube.com/vi/hqcZZuvBUSY/mqdefault.jpg)](https://youtube.com/watch?v=hqcZZuvBUSY)
+**Claude Fable 5 is making motion design, coding, and prototyping faster than ever** — Aevy Video School (Jun 11 · 1 min)
+A quick clip showing Fable 5 speeding up motion design, coding, and prototyping in one pass.
+[![](https://img.youtube.com/vi/5HglEwMexRo/mqdefault.jpg)](https://youtube.com/watch?v=5HglEwMexRo)
 
-**The Year AI Videos Changed Everything** — Jeremy Carrasco (May 28)
-A grounded retrospective on how generative video actually crossed from gimmick to usable over the past year.
-[![](https://img.youtube.com/vi/Frxsg02sqqo/mqdefault.jpg)](https://youtube.com/watch?v=Frxsg02sqqo)
+**Claude Fable 5 Built a $10K Website in Minutes** — Zubair Trabzada | AI Workshop (Jun 10 · 15 min)
+Walks through using Fable 5 to build a high-end client website fast, framed as a value play.
+[![](https://img.youtube.com/vi/1UmjkWlqKe0/mqdefault.jpg)](https://youtube.com/watch?v=1UmjkWlqKe0)
 
-## May 28, 2026
+**Claude Fable 5 - Full 319 page Breakdown** — AI Explained (Jun 10 · 34 min)
+Pulls 20+ substantive nuggets from Anthropic's 319-page Fable 5 report — beyond the demos, what the model card and benchmarks actually reveal.
+[![](https://img.youtube.com/vi/haK1KoQWm18/mqdefault.jpg)](https://youtube.com/watch?v=haK1KoQWm18)
 
-**Google Omni vs Runway vs Seedance: Which AI Video Tool Wins?** — Theoretically Media (May 28)
-Head-to-head on the same prompts across Google Omni, Runway Aleph 2, and Seedance 2.0 to see which generative-video tool actually holds up.
-[![](https://img.youtube.com/vi/Y0_DJJuFs9w/mqdefault.jpg)](https://youtube.com/watch?v=Y0_DJJuFs9w)
+**Claude Code Creator: "Write Loops, Not Prompts"** — Sean Kochel (Jun 9 · 20 min)
+Unpacks the Claude Code creator's argument that you should program agent loops rather than craft one-off prompts, and what that looks like in practice.
+[![](https://img.youtube.com/vi/EH2MMQTaPEA/mqdefault.jpg)](https://youtube.com/watch?v=EH2MMQTaPEA)
 
-**Claude Opus 4.8 Is Too Smart… and TOO HONEST** — Wes Roth (May 28)
-Looks at Opus 4.8's behavior and where its candor surfaces in real use, beyond the headline benchmark gains.
-[![](https://img.youtube.com/vi/F_6go08nHv4/mqdefault.jpg)](https://youtube.com/watch?v=F_6go08nHv4)
+**Why Everyone is Talking About Agentic Loops?** — Prompt Engineering (Jun 9 · 11 min)
+Breaks down what an agentic "loop" actually is and why it's trending — the shift from step-by-step prompting to self-correcting agents.
+[![](https://img.youtube.com/vi/7BrxIBkX3mg/mqdefault.jpg)](https://youtube.com/watch?v=7BrxIBkX3mg)
 
-**Agentic Workflows Have Changed EVERYTHING in 2026 (DEATH Of The Senior Dev?)** — Modern Software Engineering (May 27)
-Dave Farley on how agentic tooling reshapes the senior engineer's role rather than erasing it.
-[![](https://img.youtube.com/vi/utBeUmDPApk/mqdefault.jpg)](https://youtube.com/watch?v=utBeUmDPApk)
+**Here we go again...** — Maximilian Schwarzmüller (Jun 9 · 8 min)
+A working developer's skeptical take on the "Loop Engineering" trend — whether it's a real shift away from prompting or just rebranded hype.
+[![](https://img.youtube.com/vi/J2ZE6XGCYb0/mqdefault.jpg)](https://youtube.com/watch?v=J2ZE6XGCYb0)
 
-**Harness Engineering: What Separates Top Agentic Engineers Right Now** — Cole Medin (May 28)
-Unpacks what "the harness" actually is — the scaffolding around a coding model — and why it matters more than the model itself.
-[![](https://img.youtube.com/vi/ulNsa0sD8N0/mqdefault.jpg)](https://youtube.com/watch?v=ulNsa0sD8N0)
+**Loop Engineering Just Killed Prompting** — Sebastian Hardy | AI Marketing (Jun 10 · 1 min)
+The strong version of the claim: prompting is dead, and loop engineering — small scheduled programs wrapping agent intelligence — is the new skill.
+[![](https://img.youtube.com/vi/agBtJXnxASQ/mqdefault.jpg)](https://youtube.com/watch?v=agBtJXnxASQ)
 
-**Can Cursor's HARDCORE Review Skill Stop The Slop?** — Matt Pocock (May 28)
-Tests an aggressive automated code-review skill that pushes for structural refactors, not just style nits.
-[![](https://img.youtube.com/vi/mh5XZ-L5SFQ/mqdefault.jpg)](https://youtube.com/watch?v=mh5XZ-L5SFQ)
-
-## May 19, 2026
+**Loop Engineering Explained** — What's AI by Louis-François Bouchard (Jun 10 · 14 min)
+A clear primer on loop engineering — structuring the iterate-act-observe cycle that agentic systems run on.
+[![](https://img.youtube.com/vi/NjXIIH9vcv0/mqdefault.jpg)](https://youtube.com/watch?v=NjXIIH9vcv0)

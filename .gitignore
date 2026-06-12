@@ -12,6 +12,9 @@ pnpm-lock.yaml
 .claude/worktrees/
 .claude/scheduled_tasks.lock
 
+# ai-news disposable review page (regenerated each run)
+news/.review/
+
 # Next.js
 .next/
 out/

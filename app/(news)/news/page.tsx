@@ -1,11 +1,11 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getFeed } from '@/lib/news/loadNews'
-import NewsContent from '../_components/NewsContent'
-import NewsEditableContent from '../_components/NewsEditableContent'
+import NewsFeedView from '../_components/NewsFeedView'
 import NewsEditToggle from '../_components/NewsEditToggle'
 import styles from '../news.module.css'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'AI News',
   description: 'A running feed of curated AI videos worth watching',
 }
@@ -25,9 +25,7 @@ export default function NewsPage() {
           <NewsEditToggle />
         </header>
         <article>
-          <NewsEditableContent>
-            <NewsContent content={feed.content} />
-          </NewsEditableContent>
+          <NewsFeedView content={feed.content} />
         </article>
       </div>
     </div>
