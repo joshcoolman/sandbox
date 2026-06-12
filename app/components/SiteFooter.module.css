@@ -69,3 +69,17 @@
   display: block;
   color: var(--text-muted);
 }
+
+.themeToggle {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.themeToggle:hover {
+  color: var(--accent);
+}

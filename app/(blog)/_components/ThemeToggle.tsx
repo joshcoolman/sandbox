@@ -9,7 +9,14 @@ const STORAGE_KEY = 'site-theme'
 // Global light/dark toggle. Sets data-theme on <html> so every base-site surface
 // (home, blog, docs, news) responds; persists across navigation via localStorage.
 // The no-FOUC inline script in app/layout.tsx applies the saved value before paint.
-export default function ThemeToggle() {
+// className/size let it adapt to its host (blog header vs. site footer).
+export default function ThemeToggle({
+  className,
+  size = 14,
+}: {
+  className?: string
+  size?: number
+}) {
   const [isLight, setIsLight] = useState(false)
 
   useEffect(() => {
@@ -26,11 +33,11 @@ export default function ThemeToggle() {
 
   return (
     <button
-      className={styles.themeToggle}
+      className={className ?? styles.themeToggle}
       onClick={toggle}
       aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
     >
-      {isLight ? <Moon size={14} /> : <Sun size={14} />}
+      {isLight ? <Moon size={size} /> : <Sun size={size} />}
     </button>
   )
 }
