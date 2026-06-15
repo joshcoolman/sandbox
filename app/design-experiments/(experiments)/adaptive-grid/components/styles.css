@@ -38,6 +38,17 @@
   display: grid;
   /* grid-template-columns / -rows are set inline (JS-measured square cells) */
 }
+/* faint topographic watermark — sits under the grid lines and everything else */
+.ag-sheet::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url('/design-experiments/topographic.jpg') center / cover;
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+  pointer-events: none;
+}
 .ag-sheet > * {
   position: relative;
   z-index: 1;
