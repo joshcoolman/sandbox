@@ -10,6 +10,8 @@ export const experiments: Experiment[] = [
     screenshot: '/screenshots/adaptive-grid.png',
     tags: ['Swiss', 'Grid System', 'Typography', 'Responsive', 'Layout'],
     theme: 'light',
+    bgTop: '#f6f5f2',
+    bgBottom: '#edece7',
   },
   {
     slug: 'war-room',

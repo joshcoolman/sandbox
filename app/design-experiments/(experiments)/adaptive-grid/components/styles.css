@@ -18,7 +18,9 @@
 
   font-family: var(--ag-display), system-ui, sans-serif;
   color: var(--ag-ink);
-  background: radial-gradient(120% 120% at 50% 0%, #f6f5f2 0%, #e9e7e2 100%);
+  /* transparent so the layout frame's light bg (bgTop/bgBottom in data.ts)
+     shows through — chrome and stage become one continuous surface */
+  background: transparent;
   min-height: 100%;
   padding: clamp(20px, 4vw, 56px) clamp(16px, 4vw, 56px) 80px;
   display: flex;
