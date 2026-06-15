@@ -1,0 +1,162 @@
+.panel {
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 10px;
+	padding: 14px 16px;
+	font-size: 12px;
+	color: #8a8fa8;
+	background: rgba(255, 255, 255, 0.02);
+}
+
+.panel[data-problem="true"] {
+	border-color: rgba(255, 100, 80, 0.25);
+	background: rgba(255, 60, 40, 0.04);
+}
+
+/* Diagnostic section */
+
+.diagnostic {
+	margin-bottom: 12px;
+}
+
+.diagnosticTitle {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: #ff7a5a;
+	margin-bottom: 10px;
+}
+
+.checklist {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.checkItem {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.checkRow {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+}
+
+.checkItem[data-ok="true"] .checkIcon {
+	color: #4ade80;
+}
+
+.checkItem[data-ok="false"] .checkIcon {
+	color: #ff7a5a;
+}
+
+.checkIcon {
+	font-size: 11px;
+	width: 14px;
+	display: inline-block;
+	flex-shrink: 0;
+}
+
+.checkLabel {
+	display: inline;
+	color: #c8cad8;
+	font-weight: 500;
+}
+
+.checkItem[data-ok="true"] .checkLabel {
+	color: #6c7290;
+}
+
+.checkDetail {
+	color: #8a8fa8;
+	line-height: 1.4;
+}
+
+.checkNote {
+	margin: 0;
+	margin-left: 14px;
+	padding: 8px 10px;
+	background: rgba(255, 255, 255, 0.03);
+	border-left: 2px solid rgba(255, 122, 90, 0.3);
+	border-radius: 0 4px 4px 0;
+	color: #8a8fa8;
+	line-height: 1.55;
+}
+
+.checkFix {
+	display: block;
+	margin-left: 14px;
+	padding: 5px 8px;
+	background: rgba(0, 0, 0, 0.3);
+	border: 1px solid rgba(255, 255, 255, 0.07);
+	border-radius: 5px;
+	font-family: ui-monospace, "SF Mono", monospace;
+	font-size: 11px;
+	color: #e8e9f3;
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+/* Toggle */
+
+.toggle {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	color: #6c7290;
+	font-size: 11px;
+	font-family: inherit;
+	transition: color 0.15s;
+}
+
+.toggle:hover {
+	color: #8a8fa8;
+}
+
+.toggleIcon {
+	font-size: 10px;
+	line-height: 1;
+}
+
+/* Orientation */
+
+.orientation {
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.orientationList {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	line-height: 1.55;
+	color: #8a8fa8;
+}
+
+.orientationList li strong {
+	color: #c8cad8;
+	font-weight: 600;
+}
+
+.orientationList li code {
+	font-family: ui-monospace, "SF Mono", monospace;
+	font-size: 10.5px;
+	background: rgba(255, 255, 255, 0.06);
+	padding: 1px 4px;
+	border-radius: 3px;
+	color: #c8cad8;
+}

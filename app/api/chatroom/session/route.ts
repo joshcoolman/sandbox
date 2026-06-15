@@ -26,7 +26,7 @@ const NAMESPACE = "chatroom";
 const SESSION_LIMIT = 6;
 const GLOBAL_SOFT_CAP_USD = 16;
 const TICKET_TTL_MS = 60_000;
-const DEV = process.env.NODE_ENV === "development";
+const DEV = process.env.NODE_ENV === "development" || !!process.env.NEXT_PUBLIC_CHATROOM_WSS_URL?.startsWith("ws://localhost");
 
 export async function GET(request: Request) {
 	const wssUrl = process.env.NEXT_PUBLIC_CHATROOM_WSS_URL;
@@ -42,6 +42,38 @@ export async function GET(request: Request) {
 			{ error: "config_missing", code: "config_missing" },
 			{ status: 500 },
 		);
+	}
+
+	// In dev, ping the worker before proceeding so we can surface specific
+	// setup problems (Wrangler not running, missing .dev.vars keys) instead of
+	// a silent WebSocket failure in the browser.
+	if (DEV) {
+		const healthUrl = wssUrl.replace(/^ws/, "http") + "/healthz";
+		try {
+			const health = await fetch(healthUrl, { signal: AbortSignal.timeout(2000) });
+			if (!health.ok) throw new Error("unhealthy");
+			const data = (await health.json().catch(() => null)) as {
+				ok: boolean;
+				checks?: { ticket_secret?: boolean; gateway_key?: boolean };
+			} | null;
+			if (data?.checks && !data.checks.ticket_secret) {
+				return NextResponse.json(
+					{ error: "worker_missing_key", key: "TICKET_SECRET", fix: "Add TICKET_SECRET to workers/chatroom/.dev.vars and restart wrangler" },
+					{ status: 503 },
+				);
+			}
+			if (data?.checks && !data.checks.gateway_key) {
+				return NextResponse.json(
+					{ error: "worker_missing_key", key: "VERCEL_AI_GATEWAY_KEY", fix: "Add VERCEL_AI_GATEWAY_KEY to workers/chatroom/.dev.vars and restart wrangler" },
+					{ status: 503 },
+				);
+			}
+		} catch {
+			return NextResponse.json(
+				{ error: "worker_unreachable", fix: "cd workers/chatroom && npx wrangler dev" },
+				{ status: 503 },
+			);
+		}
 	}
 
 	const ip = getClientIp(request);

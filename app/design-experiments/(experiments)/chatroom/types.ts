@@ -22,14 +22,15 @@ export type HelloEvent = {
 };
 
 export type MessageEvent_ = { type: "message"; message: WireMessage };
-export type EndedEvent = { type: "ended"; reason: "turn_cap" | "global_cap" };
+export type EndedEvent = { type: "ended"; reason: "turn_cap" | "global_cap" | "llm_failed" };
+export type LlmErrorEvent = { type: "llm_error"; code: "gateway_auth" | "gateway_funds" | "gateway_rate_limit" | "gateway_error" | "gateway_unreachable" };
 export type PhaseEvent = {
 	type: "phase";
 	phase: "opening" | "awaiting_user" | "nudging" | "responding" | "idle";
 };
 export type TopicChangeRejectedEvent = { type: "topic_change_rejected"; reason: "limit" | "invalid" };
 export type TypingEvent = { type: "typing"; agentId: string | null; name?: string };
-export type ServerEvent = HelloEvent | MessageEvent_ | EndedEvent | PhaseEvent | TopicChangeRejectedEvent | TypingEvent;
+export type ServerEvent = HelloEvent | MessageEvent_ | EndedEvent | PhaseEvent | TopicChangeRejectedEvent | TypingEvent | LlmErrorEvent;
 
 // Client → server events
 export type SayEvent = { type: "say"; author: string; content: string };
@@ -42,10 +43,11 @@ export type EndedReason =
 	| EndedEvent["reason"]
 	| "session_exhausted"
 	| "config_missing"
-	| "session_failed";
+	| "session_failed"
+	| "llm_failed";
 
 export type SessionResponse = { roomId: string; wssUrl: string; ticket: string };
-export type SessionError = { code?: EndedReason; error?: string };
+export type SessionError = { code?: EndedReason; error?: string; key?: string; fix?: string };
 
 export const SPRING = {
 	type: "spring" as const,

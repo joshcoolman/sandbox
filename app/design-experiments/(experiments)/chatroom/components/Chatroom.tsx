@@ -15,6 +15,7 @@ import type {
 } from "../types";
 import { AgentAvatar } from "./AgentAvatar";
 import { Composer } from "./Composer";
+import { DevPanel } from "./DevPanel";
 import { BookOpen } from "lucide-react";
 import { HowItWorksModal } from "./HowItWorksModal";
 import { IdentityChip } from "./IdentityChip";
@@ -23,7 +24,10 @@ import { MessageRow, TypingRow } from "./MessageRow";
 import { TopicChangeModal } from "./TopicChangeModal";
 import styles from "../page.module.css";
 
-const IS_DEV = process.env.NODE_ENV === "development";
+const IS_DEV =
+	process.env.NODE_ENV === "development" ||
+	process.env.NEXT_PUBLIC_CHATROOM_WSS_URL?.startsWith("ws://localhost") ||
+	(typeof window !== "undefined" && window.location.hostname === "localhost");
 const PING_INTERVAL_MS = 25_000;
 
 export function Chatroom() {
@@ -42,6 +46,8 @@ export function Chatroom() {
 	const [topicChangeError, setTopicChangeError] = useState<string | null>(null);
 	const [mode, setMode] = useState<"dev" | "prod">("prod");
 	const [typingAgent, setTypingAgent] = useState<{ agentId: string; name: string } | null>(null);
+	const [sessionError, setSessionError] = useState<{ error: string; key?: string; fix?: string } | null>(null);
+	const [llmError, setLlmError] = useState<{ code: string } | null>(null);
 	const wsRef = useRef<WebSocket | null>(null);
 	const identityRef = useRef<Identity | null>(null);
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -75,9 +81,14 @@ export function Chatroom() {
 			if (!sessionRes.ok) {
 				if (cancelled) return;
 				const body = (await sessionRes.json().catch(() => null)) as SessionError | null;
-				const code: EndedReason = body?.code ?? "session_failed";
-				setStatus("ended");
-				setEndedReason(code);
+				if (IS_DEV && body?.error && (body.error === "worker_unreachable" || body.error === "worker_missing_key")) {
+					setSessionError({ error: body.error, key: body.key, fix: body.fix });
+					setStatus("error");
+				} else {
+					const code: EndedReason = body?.code ?? "session_failed";
+					setStatus("ended");
+					setEndedReason(code);
+				}
 				return;
 			}
 			const session = (await sessionRes.json()) as SessionResponse;
@@ -143,6 +154,8 @@ export function Chatroom() {
 				} else if (parsed.type === "ended") {
 					setStatus("ended");
 					setEndedReason(parsed.reason);
+				} else if (parsed.type === "llm_error") {
+					if (IS_DEV) setLlmError({ code: parsed.code });
 				}
 			});
 
@@ -254,6 +267,10 @@ export function Chatroom() {
 					)}
 				</div>
 			</header>
+
+			{IS_DEV && (
+				<DevPanel status={status} sessionError={sessionError} llmError={llmError} />
+			)}
 
 			<ul className={styles.messages}>
 				<AnimatePresence initial={false}>

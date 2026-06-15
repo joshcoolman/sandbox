@@ -482,6 +482,14 @@ export class ChatroomDO extends DurableObject<Env> {
 			});
 		} catch (err) {
 			console.error("[chatroom] LLM call failed", err);
+			const gatewayStatus = (err as Record<string, unknown>).gatewayStatus as number | undefined;
+			const llmCode =
+				gatewayStatus === 401 ? "gateway_auth"
+				: gatewayStatus === 402 ? "gateway_funds"
+				: gatewayStatus === 429 ? "gateway_rate_limit"
+				: gatewayStatus != null ? "gateway_error"
+				: "gateway_unreachable";
+			this.broadcast({ type: "llm_error", code: llmCode });
 			// Canned fallback for nudge keeps the room alive without a retry.
 			if (kind === "nudge") {
 				reply = { content: pickTemplate(NUDGE_TEMPLATES, room.userName ?? "") };
@@ -835,7 +843,9 @@ async function callLLM(
 
 	if (!res.ok) {
 		const body = await res.text().catch(() => "<no body>");
-		throw new Error(`gateway ${res.status}: ${body.slice(0, 200)}`);
+		const err = new Error(`gateway ${res.status}: ${body.slice(0, 200)}`);
+		(err as unknown as Record<string, unknown>).gatewayStatus = res.status;
+		throw err;
 	}
 
 	const json = (await res.json()) as AnthropicResponse;
@@ -905,7 +915,16 @@ export default {
 		}
 
 		if (url.pathname === "/healthz") {
-			return new Response("ok", { status: 200, headers: CORS_HEADERS });
+			return new Response(
+				JSON.stringify({
+					ok: true,
+					checks: {
+						ticket_secret: !!env.TICKET_SECRET,
+						gateway_key: !!env.VERCEL_AI_GATEWAY_KEY,
+					},
+				}),
+				{ status: 200, headers: { ...CORS_HEADERS, "Content-Type": "application/json" } },
+			);
 		}
 
 		const match = url.pathname.match(/^\/rooms\/([^/]+)\/(ws|messages)\/?$/);
