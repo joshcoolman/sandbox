@@ -510,15 +510,6 @@ Rapid visual prototyping -- paint with code. Two files (page.tsx + styles.css), 
 **`/design-experiment`**
 Create a new design experiment in the sandbox. Scaffolds the route, page, and styles following project conventions.
 
-**`/design-audit`**
-Audit a design experiment's CSS for color and type consistency. Extracts every color and font-size, flags near-duplicates, suggests unifications. Interactive -- select which fixes to apply.
-
-**`/animation-audit`**
-Audit a design experiment for entrance animations, stagger timing, and interaction feedback. Proposes spring presets for consistency and wires up click-to-replay.
-
-**`/ts-handoff`**
-Light TypeScript cleanup to make components handoff-ready. Catches real bugs and hygiene issues without over-engineering. The final pass before shipping.
-
 **`/promote`**
 Make a design experiment importable. Runs the full quality pipeline, extracts components, designs a public API, and creates a barrel export.
 
@@ -536,27 +527,10 @@ Draft a blog post from conversation context. Creates markdown with a placeholder
 **`/note`**
 Quick-fire a sticky note from the command line. Everything after `/note` becomes a new markdown file with auto-derived filename and rotating color.
 
-**`/yt-review`**
-Personal tooling -- safe to ignore. Reviews recent YouTube watch history in an in-browser overlay (thumbnails + how much you watched) and batch-adds the ones you pick to the Recommended page. Needs the claude-in-chrome MCP and a logged-in YouTube session. See the [skills guide](docs/guide/04-skills.md) for how to run it yourself.
-
-**Asset Generation:**
-
-**`/gen-image`**
-Generate raster images via FAL.ai -- avatars, icons, illustrations, hero art. Pass a description and N, get PNGs saved into the current experiment's public folder. Requires the FAL MCP in your Claude environment.
-
-**`/gen-sprite`**
-Generate NES-style pixel-art game assets via GenZen (gpt-image-1.5). Auto-detects layout from the description: 4×4 character sprite sheet, N×1 sequential strip, or single standalone image.
-
 **Utilities:**
 
 **`/sanity-check`**
 Quick React/TypeScript/Next.js code review from a senior engineer perspective. Catches common issues and suggests practical improvements.
-
-**`/supabase`**
-Supabase CLI wrapper for database operations: schema migrations, TypeScript type generation, edge function deployment, and postgres best practices.
-
-**`/bitmap-to-vector`**
-Convert raster images (PNG, JPG, etc.) to clean, icon-ready SVG vectors using potrace. Auto-detects threshold and polarity, strips bounding rectangles, outputs `fill="currentColor"` SVGs ready for inline use or CSS masks.
 
 **`/vercel-react-best-practices`**
 Packaged copy of Vercel Engineering's React/Next.js performance guidelines (MIT-licensed). Auto-triggers when writing or refactoring React/Next.js code — acts as a domain reference rather than a workflow command.
@@ -568,19 +542,12 @@ Skills are invoked with a slash command in Claude Code:
 ```bash
 /sketch A breathing app with animated circles  # Rapid visual prototype
 /design-experiment Interactive color palette    # Scaffold new experiment
-/design-audit crossfit-bento                    # Audit colors and type
-/animation-audit crossfit-bento                 # Add entrance animations
-/ts-handoff crossfit-bento                      # TypeScript cleanup
 /promote sticky-notes                           # Extract reusable component
 /ship-experiment                                # Ship the current experiment
 /link https://example.com Great tool        # Add recommended link
 /blog-post "Design as Dialogue"                 # Draft a blog post
 /note Remember to update the docs               # Quick sticky note
 /sanity-check                                   # Review current code
-/supabase migrate "add users table"             # Database migration
-/bitmap-to-vector logo.png                      # Vectorize an image
-/gen-image 4 avatars of robot designers         # Generate raster assets
-/gen-sprite kobold enemy walk cycle             # Generate pixel-art sprite
 ```
 
 ### Skill Location

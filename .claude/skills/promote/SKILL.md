@@ -55,10 +55,10 @@ Contact Sheet Assessment:
   Barrel export:  No index.ts
   TypeScript:     Has interfaces but some hacks
 
-  Pipeline status:
-    /design-audit     — not run (global CSS, no audit trail)
-    /animation-audit  — not run (no motion)
-    /ts-handoff       — not run (no CSS Modules, unresolved type issues)
+  Pipeline status (what still needs doing):
+    CSS consistency  — global CSS, not yet audited for color/type drift
+    Motion           — none (decide whether it benefits)
+    TypeScript       — no CSS Modules, unresolved type issues
 ```
 
 Based on this assessment, determine which pipeline passes are needed. Present the plan to the user.
@@ -110,13 +110,14 @@ Skip this step if CSS Modules are already in place.
 
 ### Step 3: TypeScript Cleanup
 
-Apply the same checks as `/ts-handoff`:
+Do a light TypeScript handoff pass:
 - Props API clarity (does the component do what its types suggest?)
 - Parser/transform safety
-- Client/server boundary directives
+- Client/server boundary directives (`'use client'` where needed)
 - Animation-specific checks (if motion is present)
+- No `any`; export the public types
 
-Skip this step if ts-handoff has already been run.
+Skip this step if the TypeScript is already clean.
 
 ### Step 4: Animation (Optional)
 
@@ -124,12 +125,12 @@ Not every experiment needs animation. Suggest it only if:
 - The experiment has visual elements that would benefit (charts, grids, lists)
 - The user wants the promoted version to include motion
 
-If yes, apply the same approach as `/animation-audit`:
+If yes, add motion directly:
 - Card/section entrance stagger
 - Component-specific animations (counters, draws, waves)
 - Click-to-replay where appropriate
 
-Skip if animation-audit has already been run, or if the experiment doesn't benefit from it.
+Skip if motion is already wired up, or if the experiment doesn't benefit from it.
 
 ### Step 5: Design Public API
 

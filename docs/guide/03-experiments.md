@@ -8,18 +8,13 @@ Experiments are where ideas become pages. Each one is a self-contained route wit
 
 ## The Lifecycle
 
-An experiment typically moves through five stages:
+An experiment typically moves through four stages:
 
 **Sketch** -- `/sketch` creates a two-file prototype: `page.tsx` and `styles.css`. Describe what you want or paste a reference image, and iterate on the visual feedback. No architecture, no overthinking. The goal is to get something on screen fast.
 
 **Formalize** -- `/design-experiment` converts a sketch into gallery-ready structure. It adds the experiment to the gallery data, organizes files, and ensures the build passes. Still not shipped -- the user reviews first.
 
-**Polish** -- Three audit commands tighten things up:
-- `/design-audit` scans for near-duplicate colors and orphan type sizes, proposing a tighter system
-- `/animation-audit` inventories existing motion and suggests entrance animations, stagger timing, and interaction feedback
-- `/ts-handoff` does a light TypeScript review -- real bugs, props API clarity, client/server boundaries
-
-**Promote** -- `/promote` makes an experiment importable. It runs the needed audit passes, extracts components to their own files, converts to CSS Modules, and creates a barrel export. The experiment stays where it lives -- it becomes both demo page and component library.
+**Promote** -- `/promote` makes an experiment importable, folding all the polish passes into one job: it tightens CSS for color/type consistency, adds entrance motion where it helps, does a light TypeScript review (real bugs, props API clarity, client/server boundaries), extracts components to their own files, converts to CSS Modules, and creates a barrel export. The experiment stays where it lives -- it becomes both demo page and component library.
 
 **Ship** -- `/ship-experiment` takes a screenshot (1280x720), updates the gallery ordering and homepage, auto-commits, and pushes to GitHub for deploy. Now it's live.
 

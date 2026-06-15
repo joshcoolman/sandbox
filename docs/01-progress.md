@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Skill cull — trimmed the slash-command menu
+
+**Date:** 2026-06-14
+
+The `.claude/skills/` set had drifted wide, so it was audited by usage and trimmed to the surfaces actually in active use: design-experiment, ship-experiment, sketch, note, ai-news, blog-post, link, sanity-check, promote, write-a-skill, and the vercel-react-best-practices reference. Thirteen skills were retired from this repo — prune, supabase, start-from-scratch, design-audit, replace, restyle, yt-review, animation-audit, gen-image, gen-sprite, bitmap-to-vector, grill-me, ts-handoff — and parked in a private `claude-skills` cold-store repo rather than deleted, so any of them can be restored later. `/promote` absorbed the three retired audit passes (design-audit, animation-audit, ts-handoff) inline, since it was their main caller. README, CLAUDE.md's Feature Map, and the skills/experiments guide docs were updated to match. Older progress entries below still reference some retired skills — left intact as historical record.
+
+---
+
 ### War Room — sci-fi command-center HUD experiment
 
 **Date:** 2026-06-12

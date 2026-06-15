@@ -47,7 +47,7 @@ Word you'd say -> where it lives -> the skill for it. Rows are durable surfaces 
 |--------------|-------------------------|-----------------------------------------------------------------------|----------|
 | AI News feed | `app/(news)/`           | `_components/NewsEditableContent.tsx` (edit mode) - `news/feed.md` (content) - `lib/news/` | `/ai-news` |
 | Blog         | `app/(blog)/blog/`      | --                                                                    | `/blog-post` |
-| Link Worthy  | `app/(blog)/recommended/` | `loadRecommended.ts`                                                | `/link`, `/replace` |
+| Link Worthy  | `app/(blog)/recommended/` | `loadRecommended.ts`                                                | `/link` |
 | Sticky notes | `app/(blog)/notes/`     | --                                                                    | `/note` |
 | X broadcast  | `app/x/`                | `lib/x/` (derived queue + state) - `x-state.json` (committed ledger) - local-only, Web Intent posting | -- |
 | Experiments  | `app/design-experiments/` | `(experiments)/` (real, in `data.ts`) - `page.tsx` (gallery)        | `/design-experiment`, `/ship-experiment` |

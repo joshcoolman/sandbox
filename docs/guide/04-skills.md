@@ -30,12 +30,6 @@ Saves a link with a comment to the Link Worthy collection.
 
 Creates a markdown file in `app/(blog)/recommended/items/`. For YouTube and GitHub links, thumbnails are auto-fetched at build time. For generic web links, the command takes a screenshot (1200x630) and saves it to `public/screenshots/linked/`. Titles are pulled from Open Graph metadata if not provided.
 
-### /yt-review
-
-Reviews recent YouTube watch history and batch-adds the keepers to Link Worthy. Run it with no arguments -- it connects to your logged-in Chrome (via the claude-in-chrome MCP), opens your watch history, and injects a full-screen overlay: today's videos as a checklist with thumbnails and how much of each you watched. Toggle the ones worth saving (click, Space, or arrow keys), type "done", and it dedupes against existing links, writes one markdown file per pick to `app/(blog)/recommended/items/`, builds once to fetch thumbnails, and pushes. The overlay is the interesting bit -- when chat-native multi-select couldn't show thumbnails, the UI moved into the page itself, and the selection comes back by reading the DOM on your word rather than polling.
-
-This one is personal tooling and **can safely be ignored** -- it's how the repo owner curates Link Worthy from what he watches, not a feature of the site. To run it yourself you need two things: the [claude-in-chrome](https://www.anthropic.com/news/claude-for-chrome) MCP connected to a Chrome where you're logged into YouTube, and the Link Worthy structure this repo already has (it writes to `app/(blog)/recommended/items/`). With those in place it works as-is. Two caveats: it's scrape-based, so the YouTube DOM selectors in `overlay.js` will eventually need updating, and the output is coupled to this repo's link format -- point the file-write step elsewhere to reuse it in another project.
-
 ### /blog-post
 
 Drafts a longer post from conversation context. Reads existing posts to match the site's voice, creates markdown with frontmatter at `blog/{slug}.md`, and copies a placeholder hero image. Not auto-committed -- there's always a review step before publishing.
@@ -58,23 +52,9 @@ The release command. Takes a screenshot at 1280x720, updates the gallery orderin
 
 ## Refinement
 
-These commands tighten the quality of an experiment. They can run independently or as part of the `/promote` pipeline.
-
-### /design-audit
-
-Scans an experiment's CSS for color and type inconsistencies. Surfaces near-duplicate colors (is `#f4f4f4` really different from `#f5f5f5`?), orphan font sizes, and opportunities to unify the design system. Proposes specific changes and implements them atomically after approval. Keeps the visual character intact -- just more consistent.
-
-### /animation-audit
-
-Inventories existing motion and identifies what's missing. Proposes a motion plan: entrance animations, stagger timing, interaction feedback (hover lifts, click responses). Suggests spring presets and implements Framer Motion animations. Adds click-to-replay for demonstrating motion patterns.
-
-### /ts-handoff
-
-Light TypeScript cleanup from a practical perspective. Checks for real bugs, props API clarity, state patterns, and client/server boundary issues. Suggests CSS Modules conversion for portability. The question it answers: "Is this code ready to hand off?" Not strict -- just hygienically sound.
-
 ### /promote
 
-The full quality pipeline. Assesses an experiment's readiness, runs whichever audit passes are needed (design, animation, TypeScript), extracts components to their own files, converts to CSS Modules, and creates a barrel export (`index.ts`). After promotion, the experiment is importable by other parts of the site:
+The full quality pipeline, with all the polish folded into one job. Assesses an experiment's readiness, then runs whichever passes are needed: tightening CSS for color/type consistency, adding entrance motion where it helps, and a light TypeScript review (real bugs, props API clarity, client/server boundaries). It then extracts components to their own files, converts to CSS Modules, and creates a barrel export (`index.ts`). After promotion, the experiment is importable by other parts of the site:
 
 ```tsx
 import { RetroTechPanel } from '@/app/design-experiments/(experiments)/retro-tech'
@@ -88,32 +68,6 @@ The experiment stays where it lives. It becomes both a demo page and a component
 
 A senior engineer code review for React, TypeScript, and Next.js. Scans for component size issues, unnecessary client bundles, type safety gaps, Next.js convention mismatches, and accessibility problems. Presents findings as an interactive checklist of improvements to apply. Tone: helpful colleague, not a linter.
 
-### /replace
-
-Updates a blog post's hero image. Find a post by name, provide a source image, and the command crops it to the blog's standard 1.87:1 aspect ratio and replaces the existing hero at `public/blog/{slug}.jpg`.
-
-### /bitmap-to-vector
-
-Converts raster images (PNG, JPG) to clean SVG vectors using potrace-based tracing. Output uses `fill="currentColor"` for theme-aware coloring. Useful for logos, icons, and illustrations that need to work at any size.
-
-## Asset Generation
-
-These skills create visual assets directly into an experiment's folder.
-
-### /gen-image
-
-Generates raster images via FAL.ai -- avatars, icons, illustrations, hero art. Takes a text description (and optionally a reference image), produces N PNG outputs into the current experiment's `public/` folder. Replaces the workflow of cropping from Unsplash or commissioning art for prototypes. Requires the FAL MCP to be installed in the user's Claude environment.
-
-### /gen-sprite
-
-Generates NES-style pixel-art game assets via GenZen (gpt-image-1.5). Auto-detects layout from the description: `character` (4×4 animated sprite sheet), `strip` (N×1 sequential states like walk/attack frames), or `single` (one standalone image). Useful for any game asset -- enemies, items, effects, tiles, pickups, UI elements.
-
-## Infrastructure
-
-### /supabase
-
-Wraps the Supabase CLI for database operations: schema migrations, TypeScript type generation, edge function deployment, and postgres best practices. Provides opinionated, safe workflows for common Supabase tasks so the CLI's surface area doesn't have to live in working memory.
-
 ## References
 
 ### /vercel-react-best-practices
@@ -122,12 +76,8 @@ A reference skill rather than a workflow skill -- a packaged copy of Vercel Engi
 
 ## Process
 
-These skills operate on the workflow itself rather than on site content -- one stress-tests a plan, the other scaffolds new skills.
-
-### /grill-me
-
-Interviews you about a plan one question at a time, with a recommended answer attached to each question. Walks the decision tree of a design until ambiguity is resolved. Use before `/sketch` or `/design-experiment` when the brief is vague enough that prototyping would burn iterations on resolvable questions. Ported verbatim from Matt Pocock's skills repo.
+These skills operate on the workflow itself rather than on site content.
 
 ### /write-a-skill
 
-Scaffolds a new sandbox skill. Asks what the skill does and what should trigger it, then drafts a single-file `SKILL.md` with sandbox conventions baked in: terse voice, no emojis, `name` + `description` frontmatter only. Splits into progressive-disclosure reference files when the skill grows past ~150 lines (see `supabase/` for the working example). Adapted from Matt Pocock's `write-a-skill` with his glossary/ADR assumptions removed.
+Scaffolds a new sandbox skill. Asks what the skill does and what should trigger it, then drafts a single-file `SKILL.md` with sandbox conventions baked in: terse voice, no emojis, `name` + `description` frontmatter only. Splits into progressive-disclosure reference files when the skill grows past ~150 lines. Adapted from Matt Pocock's `write-a-skill` with his glossary/ADR assumptions removed.

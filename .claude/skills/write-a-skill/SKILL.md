@@ -11,7 +11,7 @@ Author a new skill in `sandbox/.claude/skills/<name>/`. Bias toward small, narra
 
 ```
 /write-a-skill A skill that scaffolds a Storybook story for an experiment
-/write-a-skill grill-me, but for ship-readiness — interview me about whether the experiment is ready to ship
+/write-a-skill A skill that interviews me about whether an experiment is ready to ship
 ```
 
 ## Process
@@ -67,7 +67,7 @@ Stay single-file by default. Split when:
 - The skill has distinct phases (e.g. "the routing logic" vs "the deep how-to") that load at different times
 - A reference is genuinely large and rarely needed every invocation
 
-When splitting, use the progressive-disclosure pattern: SKILL.md routes ("for X, see [X.md]"), reference files explain. See `supabase/` in this repo for a working example.
+When splitting, use the progressive-disclosure pattern: SKILL.md routes ("for X, see [X.md]"), reference files explain the detail that only some invocations need.
 
 ### 4. Review with user
 
