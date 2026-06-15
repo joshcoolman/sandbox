@@ -34,6 +34,20 @@ Experiments degrade gracefully without their keys set — Monono, for example, s
 
 ## Experiments
 
+### Adaptive Grid
+
+**June 14, 2026**
+
+[![Adaptive Grid](./public/screenshots/adaptive-grid.png)](/design-experiments/adaptive-grid)
+
+A Swiss/International-style poster built on a strict square grid: a base layer of grid lines, a markings layer of black crosshairs and orange corner brackets, solid color blocks, and the typography — every element placed on the same grid tracks, so nothing drifts. It anchors to an eight-column square module with a one-column margin on each side. Responsiveness is a reflow, not a resize: the six-column content area collapses to three, type holds a fixed size, and the body paragraph snaps to a whole number of square cells so sections never overlap.
+
+`Swiss` `Grid System` `Typography` `Responsive` `Layout`
+
+**[View Live →](https://www.joshcoolman.com/design-experiments/adaptive-grid) | [View Code →](https://github.com/joshcoolman/sandbox/tree/main/app/design-experiments/(experiments)/adaptive-grid)**
+
+---
+
 ### War Room
 
 **June 12, 2026**

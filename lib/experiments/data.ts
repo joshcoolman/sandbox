@@ -2,6 +2,16 @@ import type { Experiment } from '@/app/types/experiments'
 
 export const experiments: Experiment[] = [
   {
+    slug: 'adaptive-grid',
+    date: 'June 14, 2026',
+    title: 'Adaptive Grid',
+    subtitle: 'A strict Swiss grid poster on a square module — lines, crosshair markings, and color blocks that reflow six columns down to three.',
+    description: 'A Swiss/International-style poster built on a strict square grid: a base layer of grid lines, a markings layer of black crosshairs and orange corner brackets, solid color blocks, and the typography — every element placed on the same grid tracks, so nothing drifts. It anchors to an eight-column square module with a one-column margin on each side. Responsiveness is a reflow, not a resize: the six-column content area collapses to three, type holds a fixed size, and the body paragraph snaps to a whole number of square cells so sections never overlap.',
+    screenshot: '/screenshots/adaptive-grid.png',
+    tags: ['Swiss', 'Grid System', 'Typography', 'Responsive', 'Layout'],
+    theme: 'light',
+  },
+  {
     slug: 'war-room',
     date: 'June 12, 2026',
     title: 'War Room',

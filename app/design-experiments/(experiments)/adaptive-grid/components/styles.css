@@ -1,0 +1,263 @@
+/* ─────────────────────────────────────────────────────────
+   Adaptive Grid — strict Swiss poster on a SQUARE module.
+   Margin column on each side; the content area is 6 columns,
+   reflowing to 3 at the narrow breakpoint. Rows are sized in JS
+   to equal the column width, so cells stay square at either
+   column count. Grid lines, crosshairs, brackets and color
+   blocks all sit on the same grid tracks. Type is a FIXED size
+   and reflows into fewer columns rather than scaling down.
+   ───────────────────────────────────────────────────────── */
+
+.ag-stage {
+  --ag-ink: #141414;
+  --ag-paper: #ffffff;
+  --ag-orange: #ff5a1f;
+  --ag-line: rgba(20, 20, 20, 0.13);
+  --ag-text-pad: 5px; /* gap between text and the grid lines it sits against */
+  --ag-block-inset: 4px; /* gap between solid blocks / photo and the grid lines */
+
+  font-family: var(--ag-display), system-ui, sans-serif;
+  color: var(--ag-ink);
+  background: radial-gradient(120% 120% at 50% 0%, #f6f5f2 0%, #e9e7e2 100%);
+  min-height: 100%;
+  padding: clamp(20px, 4vw, 56px) clamp(16px, 4vw, 56px) 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Poster / square grid ─────────────────────────────── */
+.ag-poster {
+  width: min(720px, 100%);
+  background: var(--ag-paper);
+  box-shadow: 0 30px 70px -40px rgba(20, 20, 20, 0.5);
+  outline: 1px solid rgba(20, 20, 20, 0.12);
+}
+.ag-sheet {
+  position: relative;
+  display: grid;
+  /* grid-template-columns / -rows are set inline (JS-measured square cells) */
+}
+.ag-sheet > * {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+/* Layer 01 — grid lines drawn as real grid tracks */
+.ag-gridline {
+  z-index: 0;
+  pointer-events: none;
+  background: var(--ag-line);
+}
+.ag-vline {
+  width: 1px;
+}
+.ag-hline {
+  height: 1px;
+}
+
+/* ── Margin labels (SPEC / 07.4 / UNIT / AD-47) ───────── */
+.ag-corner {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  padding: 0 7px;
+  font-family: var(--ag-mono), monospace;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.ag-corner--r {
+  justify-content: flex-end;
+}
+
+/* ── Orange bars (header / footer) ────────────────────── */
+.ag-bar {
+  display: flex;
+  align-items: center;
+  margin: var(--ag-block-inset); /* pop in slightly from the grid lines, like the photo */
+  background: var(--ag-orange);
+  padding: 0 14px;
+}
+.ag-bar .t {
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+  line-height: 1.02;
+}
+
+/* ── Status row ───────────────────────────────────────── */
+.ag-status {
+  align-self: center;
+  margin: 0;
+  padding-inline: var(--ag-text-pad);
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.16;
+}
+.ag-status--r {
+  text-align: right;
+}
+
+/* ── Hero ─────────────────────────────────────────────── */
+.ag-hero {
+  margin: 0;
+  z-index: 3;
+  color: var(--ag-paper);
+  align-self: center;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: space-between;
+  align-content: center;
+  gap: 0 2rem;
+  padding: 0 1rem;
+  font-weight: 900;
+  font-size: 6.375rem; /* 102px */
+  line-height: 0.86;
+  letter-spacing: -0.04em;
+}
+.ag-hero span {
+  display: block;
+}
+.ag-hero span:nth-child(even) {
+  text-align: right;
+}
+
+/* hero background image — fills the bracket box, edge to edge */
+.ag-hero-img {
+  z-index: 1;
+  margin: var(--ag-block-inset); /* slight gap between the photo edge and the grid lines */
+  background-image: url('/adaptive-grid/trees.jpg');
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+/* hero corner brackets — markings, centered on grid lines, over the image */
+.ag-brackets {
+  z-index: 2;
+  pointer-events: none;
+}
+.ag-brackets .b {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--ag-orange);
+}
+.ag-brackets .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+.ag-brackets .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+.ag-brackets .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+.ag-brackets .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+/* ── Body row ─────────────────────────────────────────── */
+.ag-para {
+  align-self: start;
+  margin: 0;
+  padding: var(--ag-text-pad) var(--ag-text-pad) 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  text-align: justify;
+  hyphens: auto;
+}
+.ag-restricted {
+  align-self: start;
+  margin: 0;
+  padding: var(--ag-text-pad) var(--ag-text-pad) 0;
+  text-align: right;
+  font-weight: 800;
+  font-size: 1.1rem;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+}
+
+/* ── Feed / clearance row ─────────────────────────────── */
+.ag-feed {
+  align-self: center;
+  margin: 0;
+  padding-inline: var(--ag-text-pad);
+  font-weight: 700;
+  font-size: 0.9rem;
+  line-height: 1.16;
+}
+.ag-r1 {
+  align-self: center;
+  padding-inline: var(--ag-text-pad);
+  font-weight: 900;
+  font-size: 2.25rem;
+  letter-spacing: -0.02em;
+}
+.ag-clearance {
+  align-self: center;
+  justify-self: stretch; /* fill the two columns */
+  display: flex;
+  align-items: center;
+  margin-inline: var(--ag-block-inset); /* same side gap as the orange bars */
+  background: var(--ag-ink);
+  color: var(--ag-paper);
+  font-family: var(--ag-mono), monospace;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  padding: 6px 12px;
+  white-space: nowrap;
+}
+
+/* ── Layer 02 — crosshairs (sit on grid intersections) ── */
+.ag-plus {
+  --s: 18px;
+  place-self: start;
+  width: 0;
+  height: 0;
+  z-index: 3;
+}
+.ag-plus::before,
+.ag-plus::after {
+  content: '';
+  position: absolute;
+  background: var(--ag-ink);
+  transform: translate(-50%, -50%);
+}
+.ag-plus::before {
+  width: 1.5px;
+  height: var(--s);
+}
+.ag-plus::after {
+  width: var(--s);
+  height: 1.5px;
+}
+
+/* ── Narrow breakpoint — step down only the oversized display type;
+      body / labels keep their size and just reflow into 3 columns ── */
+.ag-poster[data-narrow='true'] .ag-bar .t {
+  font-size: 1.05rem;
+}
+.ag-poster[data-narrow='true'] .ag-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 0;
+  padding: 0;
+  font-size: 2.2rem;
+  line-height: 0.9;
+}
+.ag-poster[data-narrow='true'] .ag-hero span {
+  text-align: center;
+}
+/* 2025 — its own centered line on the row below the hero, over the photo */
+.ag-hero-year {
+  z-index: 3;
+  align-self: center;
+  justify-self: center;
+  color: var(--ag-paper);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.3em;
+  padding-left: 0.3em; /* offset trailing letter-spacing so it reads centered */
+}
+.ag-poster[data-narrow='true'] .ag-r1 {
+  font-size: 1.6rem;
+}

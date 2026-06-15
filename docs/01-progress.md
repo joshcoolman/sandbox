@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### Adaptive Grid — strict square-grid Swiss poster experiment
+
+**Date:** 2026-06-14
+
+A new design experiment exploring strict grid adherence as the subject itself. An eight-column square module (one margin column each side, six-column content area) with row height measured in JS to equal column width, so cells stay perfectly square. Composed as explicit layers — grid lines, black crosshair markings, orange corner brackets, color blocks, type — all placed on the same `fr` grid tracks (not a CSS background), so nothing drifts sub-pixel and the markings land exactly on the lines. Responsiveness is a reflow rather than a resize: the content area collapses six columns to three at the narrow breakpoint and type holds a fixed size; the body paragraph measures itself and snaps to a whole number of square cells (`ceil(height / cell)`), shifting later sections down by whole rows so nothing overlaps. Solid blocks and a forest hero photo share a 4px inset off the grid lines. Narrow view reframes the hero as a conference treatment (FIELD / ECOLOGY / 2025). Built iteratively as a design dialogue; the early layer-toggle controls were removed once the grid was locked.
+
+---
+
 ### Skill cull — trimmed the slash-command menu
 
 **Date:** 2026-06-14
