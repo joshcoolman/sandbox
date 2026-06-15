@@ -220,7 +220,7 @@
 /* ── Layer 02 — crosshairs (sit on grid intersections) ── */
 .ag-plus {
   --s: 18px;
-  place-self: start;
+  align-self: start; /* sits on the row grid line; justify-self set inline */
   width: 0;
   height: 0;
   z-index: 3;

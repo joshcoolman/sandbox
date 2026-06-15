@@ -13,9 +13,13 @@ type Place = [col: string, row: string]
 
 interface Layout {
   cols: number
+  colTemplate: string // grid-template-columns
+  colUnits: number // total fr units across the template (for square-cell row height)
   rows: number
   crossCols: number[]
   crossRows: number[]
+  crossJustify: 'start' | 'center' // start = on the content line; center = mid-column
+
   spec: Place
   headerBar: Place
   code1: Place
@@ -45,9 +49,12 @@ function buildWide(p: number): Layout {
   const rows = footer + 1 // + bottom-margin row
   return {
     cols: 8,
+    colTemplate: 'repeat(8, 1fr)',
+    colUnits: 8,
     rows,
     crossCols: [2, 5, 8],
     crossRows: [3, 4, paraStart, spacer],
+    crossJustify: 'start',
     spec: ['1', '2'],
     headerBar: ['2 / 8', '2'],
     code1: ['8', '2'],
@@ -80,9 +87,13 @@ function buildNarrow(p: number): Layout {
   const rows = footer + 1
   return {
     cols: 5,
+    // half-width side margins; the 3 content columns expand toward the edge
+    colTemplate: '0.5fr 1fr 1fr 1fr 0.5fr',
+    colUnits: 4,
     rows,
-    crossCols: [2, 5],
+    crossCols: [1, 5], // the half-margin columns
     crossRows: [3, 4, paraStart, footer - 1],
+    crossJustify: 'center', // centered inside the half-margin columns
     spec: ['1', '2'],
     headerBar: ['2 / 5', '2'],
     code1: ['5', '2'],
@@ -144,7 +155,7 @@ export function AdaptiveGrid() {
 
   const narrow = width > 0 && width < BREAKPOINT
   const L = narrow ? buildNarrow(paraRows) : buildWide(paraRows)
-  const cell = width > 0 ? width / L.cols : 0
+  const cell = width > 0 ? width / L.colUnits : 0
   const { v, h } = gridLines(L.cols, L.rows)
 
   // Snap the body paragraph to a whole number of square cells: measure its
@@ -158,7 +169,7 @@ export function AdaptiveGrid() {
   }, [width, narrow, cell])
 
   const sheetStyle: CSSProperties = {
-    gridTemplateColumns: `repeat(${L.cols}, 1fr)`,
+    gridTemplateColumns: L.colTemplate,
     gridTemplateRows: `repeat(${L.rows}, ${cell || 1}px)`,
   }
 
@@ -175,11 +186,15 @@ export function AdaptiveGrid() {
           ))}
 
           {/* ── Header bar ──────────────────────────── */}
-          <span className="ag-corner t" style={place(L.spec)}>SPEC</span>
+          {!narrow && (
+            <span className="ag-corner t" style={place(L.spec)}>SPEC</span>
+          )}
           <div className="ag-bar block" style={place(L.headerBar)}>
             <span className="t">Adaptive systems for changing landscapes</span>
           </div>
-          <span className="ag-corner ag-corner--r t" style={place(L.code1)}>07.4</span>
+          {!narrow && (
+            <span className="ag-corner ag-corner--r t" style={place(L.code1)}>07.4</span>
+          )}
 
           {/* ── Status row ──────────────────────────── */}
           <p className="ag-status t" style={place(L.statusL)}>
@@ -244,11 +259,15 @@ export function AdaptiveGrid() {
           </span>
 
           {/* ── Footer bar ──────────────────────────── */}
-          <span className="ag-corner t" style={place(L.unit)}>UNIT</span>
+          {!narrow && (
+            <span className="ag-corner t" style={place(L.unit)}>UNIT</span>
+          )}
           <div className="ag-bar block" style={place(L.footerBar)}>
             <span className="t">Built for the long work of reading the land</span>
           </div>
-          <span className="ag-corner ag-corner--r t" style={place(L.code2)}>AD–47</span>
+          {!narrow && (
+            <span className="ag-corner ag-corner--r t" style={place(L.code2)}>AD–47</span>
+          )}
 
           {/* Layer 02 — crosshair markings */}
           {L.crossRows.map((r) =>
@@ -256,7 +275,7 @@ export function AdaptiveGrid() {
               <span
                 key={`${c}-${r}`}
                 className="ag-plus marks"
-                style={{ gridColumn: `${c}`, gridRow: `${r}` }}
+                style={{ gridColumn: `${c}`, gridRow: `${r}`, justifySelf: L.crossJustify }}
                 aria-hidden
               />
             ))
