@@ -6,6 +6,12 @@ This is a personal design lab where Josh Coolman explores visual design, typogra
 
 Source: https://github.com/joshcoolman/sandbox
 
+## Agent Knowledge (OKF)
+
+For agents: an [Open Knowledge Format](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) bundle describing every design experiment as a navigable tree of frontmatter-markdown concepts, each with `resource` (live demo) and `source` (GitHub) pointers so you can pull an implementation. Entry point:
+
+- [OKF Bundle Index](https://www.joshcoolman.com/okf/index.md): Start here, then traverse the per-experiment concept links.
+
 ## Design Experiments
 
 - [Adaptive Grid](https://www.joshcoolman.com/design-experiments/adaptive-grid): A Swiss/International-style poster on a strict square grid — grid lines, black crosshair markings, orange corner brackets, color blocks, and type, every element placed on the same grid tracks so nothing drifts. Anchored to an eight-column square module with a one-column margin each side. Responsiveness is a reflow, not a resize: the six-column content area collapses to three, type holds a fixed size, and the body paragraph snaps to a whole number of square cells so sections never overlap. A forest photo fills the hero frame, edge-to-edge inside the brackets.

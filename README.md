@@ -458,6 +458,16 @@ A self-published architectural review of this repo lives at [joshcoolman.com/abo
 
 ---
 
+## Agent Knowledge (OKF)
+
+This site publishes an [Open Knowledge Format](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) bundle at [`/okf/index.md`](https://www.joshcoolman.com/okf/index.md) so a visiting AI agent can discover and reuse the design experiments without crawling the repo. OKF is a minimal, agent-friendly standard — a tree of frontmatter-markdown concept documents served as plain HTTP, no SDK required. Each concept describes one experiment and carries `resource` (live demo) and `source` (GitHub) pointers, so an agent can read what something is, then pull the implementation.
+
+It's generated at build from the typed experiment registry (`lib/experiments/data.ts`) by `lib/okf/bundle.ts`, served as prerendered markdown by `app/okf/[file]/route.ts`, and surfaced to agents through `llms.txt` and the sitemap. New experiments flow in automatically — no extra step.
+
+**[View OKF Index →](https://www.joshcoolman.com/okf/index.md)**
+
+---
+
 ## Structure
 
 ```

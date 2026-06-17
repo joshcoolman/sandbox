@@ -8,6 +8,12 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### OKF bundle — agent-queryable knowledge layer
+
+Published an [Open Knowledge Format](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) bundle at `/okf/` so a visiting agent can discover and reuse the design experiments without crawling the repo. Generated at build from the typed `experiments` registry (`lib/okf/bundle.ts`), served as prerendered markdown by `app/okf/[file]/route.ts`: `index.md`, `log.md`, and one concept per experiment. Each concept exposes `resource` (live demo) and `source` (GitHub) pointers — discovery layer, not inlined code. Wired into discovery via `llms.txt`, `llms-full.txt`, and the sitemap so a cold agent landing on `joshcoolman.com/llms.txt` finds the bundle first.
+
+---
+
 ### Adaptive Grid — strict square-grid Swiss poster experiment
 
 **Date:** 2026-06-14
