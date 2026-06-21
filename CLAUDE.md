@@ -1,5 +1,9 @@
 Next.js design experiments sandbox. Each experiment is a self-contained route.
 
+## Working conventions
+
+- **End every file-touching turn with an uncommitted-changes readout.** After any response that creates or edits files, close with a list of clickable markdown links mirroring `git status` -- every file with pending changes (created *and* modified), each as `[path](path)`. Derive it from `git status`, not from recall of what changed this turn. It's the fast way to jump back into the work and to see where things stand on any machine. ("The readout rule" refers to this.)
+
 ## Commands
 
 ```bash

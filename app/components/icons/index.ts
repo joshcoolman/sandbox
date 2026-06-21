@@ -1,0 +1,5 @@
+export { GitHubIcon } from './GitHubIcon'
+export { XIcon } from './XIcon'
+export { LinkedInIcon } from './LinkedInIcon'
+export { YouTubeIcon } from './YouTubeIcon'
+export { BlueskyIcon } from './BlueskyIcon'

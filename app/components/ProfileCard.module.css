@@ -11,6 +11,22 @@
   padding: 1.25rem 1.5rem;
 }
 
+.photoLink {
+  flex-shrink: 0;
+  display: block;
+  line-height: 0;
+  border-radius: var(--radius-circle);
+  transition: opacity var(--dur-base) ease;
+}
+
+.photoLink:hover {
+  opacity: 0.9;
+}
+
+.photoLink:hover .photo {
+  border-color: var(--accent);
+}
+
 .photo {
   flex-shrink: 0;
   width: 120px;
@@ -18,6 +34,7 @@
   border-radius: var(--radius-circle);
   object-fit: cover;
   border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: border-color var(--dur-base) ease;
 }
 
 .body {

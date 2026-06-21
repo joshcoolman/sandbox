@@ -329,6 +329,5 @@
 
   .secondarySection {
     grid-template-columns: 1fr;
-    max-width: 360px;
   }
 }
