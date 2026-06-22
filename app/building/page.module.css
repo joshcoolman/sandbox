@@ -1,0 +1,210 @@
+.main {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text-body);
+  font-family: var(--font-serif);
+  padding: 0 40px;
+  -webkit-font-smoothing: antialiased;
+}
+/* Serif (Fraunces) is the reading default -- never the sans --font-body. */
+
+.wrap {
+  flex: 1 0 auto;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 80px 0 96px;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 40px;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--text-faint);
+  text-decoration: none;
+  transition: color var(--dur-fast) ease;
+}
+
+.backLink:hover {
+  color: var(--text-muted);
+}
+
+.footer {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* Typography for title/dek/section comes from the shared house roles
+   (.house-title / .house-dek / .house-section); these carry only layout. */
+.title {
+  margin: 0;
+}
+
+.lede {
+  margin: 20px 0 0;
+  max-width: 600px;
+}
+
+.section {
+  margin-top: 64px;
+}
+
+.sectionTitle {
+  margin: 0;
+}
+
+.sectionIntro {
+  margin: 8px 0 28px;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: var(--surface-raised);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: transform var(--dur-base) var(--ease),
+    border-color var(--dur-base) var(--ease);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-soft);
+}
+
+.cardLink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+/* Stretched overlay: the whole card navigates to the detail page. The GitHub
+   link sits above it (z-index 2) as the only thing that escapes outward. */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-space-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  border: var(--border-width) solid transparent;
+}
+
+.badgeDev {
+  color: var(--accent);
+  border-color: var(--accent-soft);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.badgeShipped {
+  color: var(--text-muted);
+  border-color: var(--border);
+  background: var(--surface-sunken);
+}
+
+.cardName {
+  margin: 12px 0 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.cardDesc {
+  margin: 6px 0 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-body);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* Clamp to three lines so the description has a fixed max height; the footer
+   below keeps a 60px minimum gap from it. */
+
+.cardFooter {
+  margin-top: auto;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+/* margin-top:auto pins the footer to the bottom of the (grid-stretched) card;
+   padding-top guarantees >=60px between a full 3-line description and the
+   labels, even on the tallest card in the row. */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-family: var(--font-space-mono);
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+  padding: 2px 7px;
+  border: var(--border-width) solid var(--border-soft);
+  border-radius: var(--radius-sm);
+}
+
+.repoLink {
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--dur-base) var(--ease);
+}
+/* z-index lifts the one outbound link above the card's stretched overlay so it
+   stays independently clickable. */
+
+.repoLink:hover {
+  color: var(--accent);
+}
+
+.repoLink svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 768px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .main {
+    padding: 0 24px;
+  }
+}

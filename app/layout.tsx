@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
-import { Hanken_Grotesk, Fraunces, Space_Mono } from 'next/font/google'
+import { Hanken_Grotesk, Fraunces, Space_Mono, Bitter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
+import './styles/house.css'
 
 // Paper & Ink — Swiss grotesque for display/UI, high-contrast serif for prose.
 const hanken = Hanken_Grotesk({
@@ -24,6 +25,14 @@ const spaceMono = Space_Mono({
   weight: ['400', '700'],
   display: 'swap',
   variable: '--font-space-mono',
+})
+
+// Display title font (the one Hanken slot, now swapped to Bitter).
+const bitter = Bitter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-bitter',
 })
 
 export const metadata: Metadata = {
@@ -74,7 +83,7 @@ export default function RootLayout({
       lang="en"
       data-theme="light"
       suppressHydrationWarning
-      className={`${hanken.variable} ${fraunces.variable} ${spaceMono.variable}`}
+      className={`${hanken.variable} ${fraunces.variable} ${spaceMono.variable} ${bitter.variable}`}
     >
       <head>
         {/* Apply saved theme before paint to avoid a flash of the wrong theme. */}

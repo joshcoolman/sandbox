@@ -2,7 +2,6 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import remarkGfm from 'remark-gfm'
 import rehypeSlug from 'rehype-slug'
 import CodeBlock from '../../(docs)/_components/CodeBlock'
-import styles from '../blog.module.css'
 
 interface BlogContentProps {
   content: string
@@ -23,7 +22,7 @@ const components = {
 
 export default function BlogContent({ content }: BlogContentProps) {
   return (
-    <div className={styles.prose}>
+    <div className="prose">
       <MDXRemote
         source={content}
         options={{

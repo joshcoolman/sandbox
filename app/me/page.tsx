@@ -19,15 +19,15 @@ export default function AboutMePage() {
           Home
         </CurtainLink>
         <header>
-          <h1 className={styles.title}>Hello, my name is Josh.</h1>
-          <p className={styles.lede}>
+          <h1 className={`${styles.title} house-title`}>Hello, my name is Josh.</h1>
+          <p className={`${styles.lede} house-dek`}>
             I&apos;m a designer-developer in Portland, Oregon, currently coding in
             public and figuring out what software looks like when you build it
             with AI, rather than around it.
           </p>
         </header>
 
-        <div className={styles.prose}>
+        <div className={`${styles.proseWrap} prose`}>
           <p>
             I came up through graphic design, moved into frontend development, and
             spent a good stretch of my career shipping products at Silicon Valley

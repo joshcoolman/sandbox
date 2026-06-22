@@ -69,6 +69,25 @@
   color: var(--text-muted);
 }
 
+.about {
+  font-family: var(--font-serif);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.about a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-soft);
+  transition: border-color var(--dur-base) var(--ease);
+}
+/* Inline accent links mirror the /me prose link treatment -- quiet underline
+   that firms up on hover. */
+
+.about a:hover {
+  border-bottom-color: var(--accent);
+}
+
 .links {
   display: flex;
   gap: 0.75rem;

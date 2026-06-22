@@ -32,9 +32,13 @@
   --accent-contrast: #f7f5ef; /* ink on an accent fill */
   --accent-soft: rgba(143, 82, 58, 0.12); /* accent borders / tints */
 
-  /* Font roles — alias the next/font variables loaded in layout.tsx.
-     Display/UI = Hanken Grotesk (Swiss grotesque); prose = Fraunces (serif). */
-  --font-display: var(--font-hanken), 'Hanken Grotesk', system-ui, sans-serif;
+  /* Font roles — alias the next/font variables loaded in layout.tsx. These are
+     VALUES; the typographic ROLES (which one means body/heading/title/label)
+     live in house.css. Display/UI = Hanken Grotesk; reading = Fraunces (serif).
+     NOTE: --font-body is the UI/chrome default (sans) and is NOT the reading
+     body — long-form reading is serif via house.css `.prose` / `--font-serif`.
+     Don't set --font-body on reading surfaces; use --font-serif. */
+  --font-display: var(--font-bitter), 'Bitter', Georgia, serif;
   --font-serif: var(--font-fraunces), 'Fraunces', 'Georgia', serif;
   --font-body: var(--font-hanken), 'Hanken Grotesk', system-ui, sans-serif;
   --font-sans: var(--font-hanken), 'Helvetica Neue', system-ui, sans-serif;

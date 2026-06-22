@@ -35,6 +35,16 @@ export default function ProfileCard() {
           {role} <span className={styles.metaAccent}>&middot;</span> {location}
         </span>
         {tagline && <span className={styles.tagline}>{tagline}</span>}
+        <span className={styles.about}>
+          More about{" "}
+          <CurtainLink href="/me" curtainTransition>
+            me
+          </CurtainLink>{" "}
+          and what I&apos;m{" "}
+          <CurtainLink href="/building" curtainTransition>
+            building
+          </CurtainLink>
+        </span>
         <div className={styles.links}>
           {links.x && <XIcon href={links.x} className={styles.link} />}
           {links.linkedin && <LinkedInIcon href={links.linkedin} className={styles.link} />}
