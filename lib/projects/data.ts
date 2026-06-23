@@ -9,7 +9,7 @@ export const projects: Project[] = [
   {
     slug: 'palette-forge',
     name: 'Palette Forge',
-    description: 'Image or seed color in, accessible light + dark palettes out.',
+    description: 'Image in, four distinct accessible light + dark UI palettes out — surprise me.',
     repo: 'https://github.com/joshcoolman/palette-forge',
     status: 'in-development',
     tags: ['Agent-first', 'BYO-key', 'Built in public'],

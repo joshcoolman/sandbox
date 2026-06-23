@@ -52,7 +52,14 @@ export function getProjectContent(slug: string): ProjectContent {
     })
   }
 
-  entries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  entries.sort((a, b) => {
+    const byDate = new Date(b.date).getTime() - new Date(a.date).getTime()
+    if (byDate !== 0) return byDate
+    // Same-day entries get a deterministic order by slug (readdir order isn't
+    // stable across machines). Entries usually land on different days; for
+    // strict within-day recency, give them distinct dates.
+    return a.slug.localeCompare(b.slug)
+  })
 
   return { brief, entries }
 }

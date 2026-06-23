@@ -9,6 +9,8 @@ Turn a project repo's raw working log into an editorial progress entry on its `/
 
 The raw `log/` in each project repo is a faithful, jargon-heavy record (the "why" behind the diffs). The sandbox tells the *story*. This skill bridges them: it reads the raw material and drafts a consumable entry. It never publishes the raw log verbatim.
 
+**Log shape (current):** repos keep **one file per date** — `log/YYYY-MM-DD.md` — holding many short recap-shaped beats (Changed / recap / **Why**), newest at the bottom. A single day's file can cover the whole arc. This skill maps **one log date → one editorial entry**, picking the 2-3 strongest beats from that day rather than narrating all of them.
+
 ## Usage
 
 ```
@@ -20,13 +22,13 @@ The raw `log/` in each project repo is a faithful, jargon-heavy record (the "why
 
 1. Resolve the project slug. It must exist in `lib/projects/data.ts` with status `in-development`. The repo is a sibling clone at `../<slug>/`.
 2. Read the source material:
-   - Raw entries: `../<slug>/log/*.md` (skip `log/README.md`).
+   - Daily logs: `../<slug>/log/YYYY-MM-DD.md` (skip `log/README.md`).
    - Recent history: `git -C ../<slug> log --pretty=format:"%h | %ad | %s" --date=short` (last ~15).
    - Framing, if needed: `../<slug>/README.md`, `../<slug>/docs/OVERVIEW.md`, `../<slug>/docs/SPEC.md`.
-3. Determine what's new since the last published entry by comparing dates against existing files in `content/building/<slug>/`.
-4. Draft ONE editorial entry covering the new ground.
-5. Write it to `content/building/<slug>/YYYY-MM-DD-slug.md` (today's date — run `date +%Y-%m-%d`). If that filename exists, append `-2`, `-3`, etc.
-6. Show the draft and stop. Do NOT commit — Josh edits first.
+3. Find the uncovered log dates: list `log/*.md` dates, list the dates already published in `content/building/<slug>/`, and target the log dates that have no entry yet. (One log date → one editorial entry. If a published entry exists for a date but the log gained material since, regenerate that one entry rather than adding a second for the same date.)
+4. For each uncovered log date, draft ONE editorial entry — pick the **2-3 strongest beats** from that day (reversals and free-verifier catches first); don't narrate every beat. Honor the ~200-300 word skim budget below.
+5. Write each to `content/building/<slug>/YYYY-MM-DD-<headline-slug>.md`, where the date is the **log date** (not today's), and `<headline-slug>` is a short slug from the entry's headline. One entry per date keeps the timeline ordering clean (the loader sorts by date).
+6. Show the draft(s) and stop. Do NOT commit — Josh edits first.
 
 If the repo has no `log/` yet, fall back to README/SPEC + git history and say so.
 
@@ -46,6 +48,7 @@ Editorial body in the documentary beat (see below).
 
 - `phase` = where the project is in its arc (match the dominant phase of the work covered).
 - `verdict` = use `reversed` when the entry's main story is an approach tried and abandoned (the highest-value beats). Omit if it doesn't apply.
+- **Sub-sections inside the body use `###` (h3), not `##`.** The entry title already renders at the section-head (h2) size, so a `##` in the body competes with it; `###` sits correctly beneath.
 
 ## The documentary beat (the body)
 
@@ -59,6 +62,7 @@ Shape each entry as a story, not a changelog:
 
 ## Voice
 
+- **Short and skimmable.** A reader should get the gist running their eye down the page — highlight-first, not an essay. Tight paragraphs (2-4 sentences), the lead sentence carrying the point. Aim for ~200-300 words total. Cut anything that isn't a meaningful highlight.
 - Editorial and consumable. Technical terms are fine; this isn't dumbed down. But it is NOT the raw log.
 - **Cut the insider noise.** Drop file paths, exact error codes, tool/config quirks, port numbers — anything that only matters to someone in the code. Keep the reasoning and the human story.
 - Lead with the strongest beat. If the free verifier caught a real bug, or a confident approach collapsed, open there.
