@@ -34,6 +34,17 @@ Creates a markdown file in `app/(blog)/recommended/items/`. For YouTube and GitH
 
 Drafts a longer post from conversation context. Reads existing posts to match the site's voice, creates markdown with frontmatter at `blog/{slug}.md`, and copies a placeholder hero image. Not auto-committed -- there's always a review step before publishing.
 
+## Projects
+
+### /update-my-work
+
+Keeps the `/building` page in sync with your public GitHub repos. Audits them with `gh`, then reconciles the catalog in `lib/projects/data.ts` -- adds new repos, refreshes drift, drops any that went private. For each repo it regenerates a plain-fact detail: a one-line tagline, the tech stack, what it does, a curated ASCII structure, and a few highlights. No editorial storytelling, one source of truth. Report-first -- it shows findings grouped Add / Update / Remove before writing anything.
+
+```
+/update-my-work                # sync every public repo
+/update-my-work palette-forge  # refresh one
+```
+
 ## Design Pipeline
 
 These commands move experiments from idea to shipped work. They're designed to be used in sequence, though you can skip stages or use them independently.

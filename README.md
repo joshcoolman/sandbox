@@ -551,6 +551,11 @@ Draft a blog post from conversation context. Creates markdown with a placeholder
 **`/note`**
 Quick-fire a sticky note from the command line. Everything after `/note` becomes a new markdown file with auto-derived filename and rotating color.
 
+**Site:**
+
+**`/update-my-work`**
+Sync the `/building` page to your public GitHub repos. Audits them with `gh`, then adds new repos, refreshes what changed, and drops any that went private -- regenerating each repo's plain-fact detail (what it does, an ASCII structure, highlights) in `lib/projects/data.ts`. Report-first.
+
 **Utilities:**
 
 **`/sanity-check`**
@@ -571,6 +576,7 @@ Skills are invoked with a slash command in Claude Code:
 /link https://example.com Great tool        # Add recommended link
 /blog-post "Design as Dialogue"                 # Draft a blog post
 /note Remember to update the docs               # Quick sticky note
+/update-my-work                                 # Sync /building from public repos
 /sanity-check                                   # Review current code
 ```
 

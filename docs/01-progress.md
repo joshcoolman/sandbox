@@ -8,6 +8,14 @@ This file tracks major changes and milestones in the project.
 
 ---
 
+### /building rebuilt as a plain public-repo catalog
+
+**Date:** 2026-07-05
+
+Replaced the verbose editorial detail pages (prose briefs + dated log-entry storytelling) with a straightforward, fact-first model: each public repo on `/building` shows what it does, a curated ASCII structure, and a few highlights, all from one typed source (`lib/projects/data.ts`). Collapsed the shipped/in-development split into a single list. Retired the whole editorial layer -- deleted `content/building`, `loadBuildingContent.ts`, and the `building-log` skill -- and replaced the old `refresh-building` audit skill with `update-my-work`, which syncs the catalog from the public GitHub repos (report-first, one source of truth). README, CLAUDE.md's Feature Map, and the skills guide were updated to match.
+
+---
+
 ### OKF bundle — agent-queryable knowledge layer
 
 Published an [Open Knowledge Format](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) bundle at `/okf/` so a visiting agent can discover and reuse the design experiments without crawling the repo. Generated at build from the typed `experiments` registry (`lib/okf/bundle.ts`), served as prerendered markdown by `app/okf/[file]/route.ts`: `index.md`, `log.md`, and one concept per experiment. Each concept exposes `resource` (live demo) and `source` (GitHub) pointers — discovery layer, not inlined code. Wired into discovery via `llms.txt`, `llms-full.txt`, and the sitemap so a cold agent landing on `joshcoolman.com/llms.txt` finds the bundle first.
