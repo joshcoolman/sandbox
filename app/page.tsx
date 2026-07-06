@@ -7,7 +7,6 @@ import HomeExperimentCard from "./components/HomeExperimentCard";
 import HomeExperimentPlaceholderCard from "./components/HomeExperimentPlaceholderCard";
 import HomeScrollRestore from "./components/HomeScrollRestore";
 import ProfileCard from "./components/ProfileCard";
-import LocalOnlyCard from "./components/LocalOnlyCard";
 import { getAllPosts } from "@/lib/blog/loadBlog";
 import { getRecentDocs } from "@/lib/docs/loadDocs";
 import { getAllRecommendations } from "@/app/(blog)/recommended/loadRecommended";
@@ -212,8 +211,6 @@ export default async function Home() {
               </CurtainLink>
             </div>
           </div>
-
-          <LocalOnlyCard />
 
           <SiteFooter className={styles.homeFooter} />
         </div>

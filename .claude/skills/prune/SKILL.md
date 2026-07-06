@@ -24,7 +24,7 @@ Find and (after confirmation) remove dead code in the sandbox. The hazard isn't 
 ## Safelist — never flag these
 
 - `app/sketches/**` — intentionally unlinked from the site (CLAUDE.md). Not dead code.
-- Anything under `app/(blog)/`, `app/(news)/`, `app/(docs)/`, `app/x/` content — these are content surfaces, not experiments.
+- Anything under `app/(blog)/`, `app/(docs)/`, `app/x/` content — these are content surfaces, not experiments.
 - A shared component that *any* file imports — confirm with the usage check before flagging (the `EditorialBrief` → `retro-tech` lesson).
 - `layout.tsx` / `layout.module.css` in the experiments route group.
 

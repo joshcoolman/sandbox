@@ -21,7 +21,6 @@ export default function SiteFooter({ className }: { className?: string }) {
           <CurtainLink href="/design-experiments" className={styles.navLink} curtainTransition curtainReverse>Design</CurtainLink>
           <CurtainLink href="/blog" className={styles.navLink} curtainTransition>Blog</CurtainLink>
           <CurtainLink href="/docs" className={styles.navLink} curtainTransition>Docs</CurtainLink>
-          <CurtainLink href="/news" className={styles.navLink} curtainTransition>News</CurtainLink>
           <CurtainLink href="/recommended" className={styles.navLink} curtainTransition>
             <Heart size={10} fill="currentColor" strokeWidth={0} aria-hidden="true" />
             Link Worthy

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useIsLocal } from '@/app/(news)/_components/NewsEditContext'
+import { useIsLocal } from './useIsLocal'
 import { tweetIntentUrl } from '@/lib/x/intent'
 import { X_CHAR_LIMIT, type XQueueItem, type XPostedItem } from '@/lib/x/types'
 import styles from './x.module.css'

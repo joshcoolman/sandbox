@@ -105,12 +105,6 @@ This site publishes an [Open Knowledge Format](https://github.com/GoogleCloudPla
 
 - [Design Test Page Prompt](https://www.joshcoolman.com/docs/prompts/design-test-page): Reusable prompt template for generating design experiment pages. Describes the expected structure, styling conventions, and patterns that new experiments should follow.
 
-## News
-
-Curated AI video digest at `/news`, generated on demand via the local `/ai-news` skill. The skill runs `yt-ai-news.py` to fetch recent videos from YouTube subscriptions and discovery searches, then curates the digest in-conversation and prepends the net-new videos to a single running feed at `news/feed.md` (with frontmatter and clickable thumbnails). Committing the file triggers a Vercel deploy. Keeps: technical deep-dives, tutorials with practical value, significant model announcements, research breakdowns from known educators. Skips: clickbait, reaction videos, affiliate content, non-English, low-signal reposts. Grouped by theme (Agent Frameworks, Model News, Coding Tools, Research, Image/Video). The feed can be trimmed in-UI, with keeps and deletes logged to `news/.ledger.json`.
-
-- [AI News](https://www.joshcoolman.com/news): Curated AI/ML video feed
-
 ## Recommended
 
 - [Recommended Links](https://www.joshcoolman.com/recommended): A curated collection of links Josh finds valuable -- YouTube videos, GitHub repos, and web tools related to AI, design, and development. Each link includes a personal comment and an auto-fetched thumbnail (via oEmbed for YouTube, OG images for GitHub, and manual screenshots for web links). New links are added via the `/link` Claude Code skill.

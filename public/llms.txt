@@ -64,12 +64,6 @@ For agents: an [Open Knowledge Format](https://github.com/GoogleCloudPlatform/kn
 - [Stack Overview](https://www.joshcoolman.com/docs/stack/stack-overview): Full technology stack reference
 - [Design Test Page Prompt](https://www.joshcoolman.com/docs/prompts/design-test-page): Prompt template for design experiments
 
-## News
-
-Curated AI video digest, generated on demand via the `/ai-news` skill and maintained as a single running feed.
-
-- [AI News](https://www.joshcoolman.com/news): Curated AI/ML video feed
-
 ## Recommended
 
 - [Recommended Links](https://www.joshcoolman.com/recommended): Curated links to YouTube videos, GitHub repos, and web tools with auto-fetched thumbnails
