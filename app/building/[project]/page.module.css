@@ -42,28 +42,10 @@
   margin: 0 auto;
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font-space-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: var(--radius-pill);
-  border: var(--border-width) solid transparent;
-}
-
-.badgeDev {
-  color: var(--accent);
-  border-color: var(--accent-soft);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-}
-
 /* Typography from the shared house roles (.house-title / .house-dek /
-   .house-eyebrow / .house-section); these module classes carry only layout. */
+   .house-eyebrow); these module classes carry only layout. */
 .title {
-  margin: 14px 0 0;
+  margin: 0;
 }
 
 .lede {
@@ -71,79 +53,81 @@
   max-width: 620px;
 }
 
-.brief {
-  margin-top: 40px;
-  max-width: var(--col-max, 680px);
-}
-/* var(--col-max) = the blog's 680px reading measure (~65ch). */
-
-.progress {
-  margin-top: 72px;
-}
-
-.progressTitle {
-  margin: 0;
-  padding-bottom: 14px;
-  border-bottom: var(--border-width) solid var(--border);
-}
-/* Type from .house-eyebrow; this carries the divider rule + spacing only. */
-
-.empty {
-  margin: 24px 0 0;
-  font-family: var(--font-serif);
-  font-size: 16px;
-  font-style: italic;
-  color: var(--text-muted);
-}
-
-.entries {
-  display: flex;
-  flex-direction: column;
-}
-
-.entry {
-  padding: 36px 0;
-  border-bottom: var(--border-width) solid var(--border-soft);
-  max-width: var(--col-max, 680px);
-}
-
-.entry:last-child {
-  border-bottom: none;
-}
-
-.entryMeta {
+.stack {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
+  gap: 6px;
+  margin-top: 22px;
 }
 
-.entryDate {
+.chip {
   font-family: var(--font-space-mono);
   font-size: var(--text-xs);
   color: var(--text-faint);
-}
-
-.entryTag {
-  font-family: var(--font-space-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.03em;
-  color: var(--text-muted);
   padding: 2px 7px;
   border: var(--border-width) solid var(--border-soft);
   border-radius: var(--radius-sm);
 }
 
-.entryTagReversed {
-  color: var(--accent);
-  border-color: var(--accent-soft);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+.section {
+  margin-top: 52px;
+  max-width: var(--col-max, 680px);
 }
 
-.entryTitle {
-  margin: 12px 0 0;
+.sectionTitle {
+  margin: 0 0 16px;
 }
-/* Entry titles use .house-section (the Fraunces h2 role). */
+/* Type from .house-eyebrow; this carries spacing only. */
+
+.body {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text-body);
+}
+
+.structure {
+  margin: 0;
+  padding: 20px 22px;
+  overflow-x: auto;
+  background: var(--surface-sunken);
+  border: var(--border-width) solid var(--border-soft);
+  border-radius: var(--radius-md);
+  font-family: var(--font-space-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-body);
+}
+
+.highlights {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.highlights li {
+  position: relative;
+  padding-left: 22px;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--text-body);
+}
+
+.highlights li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 11px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
 
 .links {
   display: flex;

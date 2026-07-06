@@ -52,18 +52,7 @@
 }
 
 .section {
-  margin-top: 64px;
-}
-
-.sectionTitle {
-  margin: 0;
-}
-
-.sectionIntro {
-  margin: 8px 0 28px;
-  font-family: var(--font-serif);
-  font-size: 16px;
-  color: var(--text-muted);
+  margin-top: 48px;
 }
 
 .cardGrid {
@@ -99,32 +88,8 @@
 /* Stretched overlay: the whole card navigates to the detail page. The GitHub
    link sits above it (z-index 2) as the only thing that escapes outward. */
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--font-space-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: var(--radius-pill);
-  border: var(--border-width) solid transparent;
-}
-
-.badgeDev {
-  color: var(--accent);
-  border-color: var(--accent-soft);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-}
-
-.badgeShipped {
-  color: var(--text-muted);
-  border-color: var(--border);
-  background: var(--surface-sunken);
-}
-
 .cardName {
-  margin: 12px 0 0;
+  margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-lg);
   font-weight: 700;
