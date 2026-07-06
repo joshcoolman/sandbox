@@ -178,6 +178,17 @@ Fix any failures before telling the user it's ready.
 - Inline under 300 lines. Extract to `components/` when file exceeds 500 lines.
 - AI integration: stream responses when possible; show a loading state; never block the UI waiting for a completion.
 
+## Structural Conventions
+
+Lean on native platform vectors, not JS/library plumbing:
+
+- **Variants & state** -- style via `data-*` attributes (`.el[data-variant="primary"]`, `[data-size="sm"]`), not className string concatenation. The variant matrix lives in CSS; you can flip states in devtools without a re-render.
+- **Overlays & dropdowns** -- native `<dialog>` (`.showModal()`, style the `::backdrop`) and the Popover API (`popover` / `popovertarget`), not hand-rolled z-index modals. Focus trapping, Esc-to-close, and clip-escaping come free.
+- **Palette** -- define colors as CSS custom properties at the top of `styles.css`; derive hover/muted/border shades with `color-mix()` from one accent instead of hand-picking every hex. This keeps Phase 0 extraction reliable and makes theme swaps trivial.
+- **Motion** -- guard animation-heavy experiments with `prefers-reduced-motion`.
+
+Reach for these when they fit: `:has()` (parent-reacts-to-child, no JS state plumbing), container queries (self-contained responsiveness over viewport breakpoints), `@property` (animatable gradient angles / color stops), View Transitions API (near-free polish on state or view changes).
+
 ## Notes
 
 - Screenshot will happen later via `/ship-experiment`
