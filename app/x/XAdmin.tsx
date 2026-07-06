@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { useIsLocal } from './useIsLocal'
+import { useEffect, useState } from 'react'
 import { tweetIntentUrl } from '@/lib/x/intent'
 import { X_CHAR_LIMIT, type XQueueItem, type XPostedItem } from '@/lib/x/types'
 import styles from './x.module.css'
@@ -35,7 +34,13 @@ export default function XAdmin({
   initialPostsPerDay,
   initialPostedToday,
 }: Props) {
-  const isLocal = useIsLocal()
+  const [isLocal, setIsLocal] = useState(false)
+  useEffect(() => {
+    // Resolved on the client after mount so it never leaks into the
+    // SSR/prerendered markup. Hidden on the deployed site.
+    const h = window.location.hostname
+    setIsLocal(h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' || h.endsWith('.local'))
+  }, [])
   const [snap, setSnap] = useState<Snapshot>({
     queue: initialQueue,
     posted: initialPosted,
