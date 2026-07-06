@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTMX vs React: The honest verdict (with receipts)!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Fraunces:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #14130f;
+    --surface: #1f1d18;
+    --text: #ece7dd;
+    --text-body: #d7d1c5;
+    --text-muted: #9c958a;
+    --text-faint: #6e685e;
+    --border: #38342d;
+    --accent: #c67e5e;
+    --accent-soft: rgba(198, 126, 94, 0.16);
+    --font-display: 'Bitter', Georgia, serif;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-mono: 'Space Mono', 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-body);
+  }
+  body {
+    min-height: 100vh;
+    padding: 80px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .back {
+    width: 100%;
+    max-width: 680px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+  }
+  .back:hover { color: var(--accent); }
+  .post { width: 100%; max-width: 680px; }
+  .title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+  }
+  .meta a {
+    color: var(--accent);
+    word-break: break-all;
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-soft);
+  }
+  .meta a:hover { border-color: var(--accent); }
+  .prose {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.72;
+    letter-spacing: 0.008em;
+  }
+  .prose p { margin: 0 0 24px; }
+  .prose ul, .prose ol { margin: 0 0 24px; padding-left: 24px; }
+  .prose li { margin-bottom: 8px; }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--text);
+  }
+  .prose strong { font-weight: 600; color: var(--text); }
+  .prose em { font-style: italic; }
+  .prose ::selection { background: var(--accent); color: var(--bg); }
+  @media (max-width: 480px) {
+    body { padding: 48px 16px; }
+  }
+</style>
+</head>
+<body>
+  <a class="back" href="./index.html">&larr; transcripts</a>
+  <article class="post">
+    <h1 class="title">HTMX vs React: The honest verdict (with receipts)!</h1>
+    <div class="meta">
+      <time datetime="2026-07-06">Jul 6, 2026</time>
+      <a href="https://www.youtube.com/watch?v=k1TrnzZaygo" target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v=k1TrnzZaygo</a>
+    </div>
+    <div class="prose">
+      <p>This is a button. You click it and the number changes. Fresh from the server, no page reload. Now, here's the strange part: there is no JavaScript here — none that you wrote. The whole thing is one HTML attribute. And one real company used this idea to delete 67% of their React code. So, is dumb HTML really killing React? Let's settle it.</p>
+      <p>To make that one number update the modern way, you'd reach for React: a component, a piece of state, a fetch call, a JSON endpoint on the server, and a re-render to stitch it all back together. That is a lot of moving parts for one number on a screen. HTMX throws all of it out. The secret is almost insultingly simple: let plain HTML talk to the server directly and swap in whatever HTML comes back. Dumb, and it works. But the internet is split down the middle on whether that is genius or a step backwards. By the end of this, you will know exactly when to reach for it and when it will burn you.</p>
+      <p>Start with the weight. HTMX is about 16 kilobytes, zero dependencies, plain JavaScript you never have to touch. React plus React DOM, just the core before your app does anything, is roughly 45. And a real single page app ships hundreds of kilobytes before it shows you a thing. HTMX was made by Carson Gross, a computer science professor in Montana — not a trillion-dollar framework team. And the entire loop is three words: request, response, swap. You add an attribute, the element fires an HTTP request, the server sends back a chunk of HTML, and HTMX drops it into the page. That is it.</p>
+      <p>Now, let's actually break down the anatomy. <code>hx-get</code> or <code>hx-post</code> says where to send the request. <code>hx-target</code> says which element on the page should change. <code>hx-swap</code> says how — replace the insides, the whole element, or just add to it. An <code>hx-trigger</code> decides when it fires: a click, a key press, a form change, even a timer every couple of seconds for a real-time dashboard. Four attributes.</p>
+      <p>Here's the part that breaks the framework habit. It isn't just buttons — any element can make a request, any event can trigger it, every HTTP verb is on the table (get, post, put, delete — not just the two that HTML forms gave you), and you choose exactly which part of the page gets replaced. Any element, any event, any verb, any target.</p>
+      <p>So why does returning HTML instead of JSON matter so much? Because of an old idea with a fancy name: hypermedia. The server doesn't just send data — it sends the next set of actions baked right into the HTML. The page itself carries the state of your application. And here's the part that starts arguments: this is REST. The real REST, the way Roy Fielding actually defined it. Somewhere along the line, the word REST got hijacked to mean a JSON API. HTMX is just quietly going back. It also brings back something we lost: locality of behavior. Look at the element and you can see exactly what it does right there in the markup — no hunting through a dozen files to trace one click.</p>
+      <p>Which brings us to the receipt. A real company, Contact, rewrote their React app in HTMX. The result: 67% less code. Their JavaScript dependencies dropped from 255 down to nine. And build times fell by nearly 90%. This is no toy — 48,000 stars on GitHub, the number one rising star in front end, and in the big developer surveys, one of the single most admired tools in the entire industry.</p>
+      <p>In the React world, you keep state twice — once on the server, once in the browser — and write an API forever just to keep them in sync. HTMX keeps a single copy on the server and sends HTML. A whole category of bugs simply evaporates.</p>
+      <p>Because the server just needs to return HTML, your back end can be literally anything. The community even has a name for it: the Hower Stack — Hypermedia on whatever you'd like. Django, Flask, FastAPI, Rails, Laravel, Go, Express — pick your language, HTMX genuinely does not care. When you do need real client-side interactivity — a drop-down, a toggle, a small animation — you reach for a tiny partner like Alpine.js or Hyperscript. Small tools sprinkled in where you need them, instead of one giant framework running everything.</p>
+      <p>If this is reminding you of Rails Hotwire and Turbo, you're right — same instinct, different flavor. Turbo is more opinionated and batteries included; HTMX is lower level and does only what you explicitly tell it to.</p>
+      <p>Now, the comment section, because this is where the fight actually is. The most liked objection: isn't this just Ajax and jQuery reinvented? And honestly, yes, kind of — veterans who did this back in 2010 are watching the web close a full circle. HTMX's answer is that it took that old instinct and turned it into a clean, complete, declarative attribute system, not a pile of hand-wired scripts.</p>
+      <p>Objection two: "no JavaScript" is a lie — HTMX is JavaScript. Fair. The honest claim is no JavaScript that <em>you</em> write.</p>
+      <p>Objection three, the real technical one: every action is now a network request. On a slow connection, a snappy app can crawl. That is a genuine trade-off, and it's exactly why those tiny partner libraries exist. This isn't magic — it's a different set of trade-offs.</p>
+      <p>So let's be honest, because HTMX fans often aren't: this is the wrong tool for some apps. A spreadsheet like Google Sheets, a map you drag in real time, anything offline or with thousands of interdependent widgets reacting instantly — that is React's home turf, and it isn't close. And the skeptics have a point on adoption too: you'll see HTMX all over solo projects and side projects, and far less inside big enterprise front ends, for now.</p>
+      <p>So no, this is not React's funeral. If you're building a deeply interactive client application, reach for React — that is exactly what it's brilliant at. HTMX is for the other 90% of the web: forms, dashboards, content CRUD — the boring stuff that secretly makes up most of everything.</p>
+      <p>So, to recap: HTMX is about 16 kilobytes that let HTML talk to the server. It swaps in HTML instead of juggling JSON. It revives real hypermedia and real REST. And for most apps, it deletes a staggering amount of complexity. The team now calls the 2.x line feature complete, and HTMX 4 is already in beta, folding in DOM morphing and streaming responses. But the pitch hasn't changed since day one: do more by writing far less.</p>
+      <p>So here's the real question, the one the whole internet is arguing about: is HTMX a genuine breakthrough, or just jQuery with better marketing?</p>
+    </div>
+  </article>
+</body>
+</html>

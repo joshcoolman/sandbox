@@ -551,6 +551,9 @@ Draft a blog post from conversation context. Creates markdown with a placeholder
 **`/note`**
 Quick-fire a sticky note from the command line. Everything after `/note` becomes a new markdown file with auto-derived filename and rotating color.
 
+**`/transcript`**
+Fetch a YouTube video's transcript, save it into this repo at `transcripts/<slug>.html` -- a self-contained, dark-themed static page -- and open it immediately in your default browser. Run with no URL to open the existing transcripts index instead.
+
 **Site:**
 
 **`/update-my-work`**

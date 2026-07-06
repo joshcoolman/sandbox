@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Doomer Syndrome</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Fraunces:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #14130f;
+    --surface: #1f1d18;
+    --text: #ece7dd;
+    --text-body: #d7d1c5;
+    --text-muted: #9c958a;
+    --text-faint: #6e685e;
+    --border: #38342d;
+    --accent: #c67e5e;
+    --accent-soft: rgba(198, 126, 94, 0.16);
+    --font-display: 'Bitter', Georgia, serif;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-mono: 'Space Mono', 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-body);
+  }
+  body {
+    min-height: 100vh;
+    padding: 80px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .back {
+    width: 100%;
+    max-width: 680px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+  }
+  .back:hover { color: var(--accent); }
+  .post { width: 100%; max-width: 680px; }
+  .title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+  }
+  .meta a {
+    color: var(--accent);
+    word-break: break-all;
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-soft);
+  }
+  .meta a:hover { border-color: var(--accent); }
+  .prose {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.72;
+    letter-spacing: 0.008em;
+  }
+  .prose p { margin: 0 0 24px; }
+  .prose h2 {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 40px 0 20px;
+  }
+  .prose ul, .prose ol { margin: 0 0 24px; padding-left: 24px; }
+  .prose li { margin-bottom: 8px; }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--text);
+  }
+  .prose strong { font-weight: 600; color: var(--text); }
+  .prose em { font-style: italic; }
+  .prose ::selection { background: var(--accent); color: var(--bg); }
+  @media (max-width: 480px) {
+    body { padding: 48px 16px; }
+  }
+</style>
+</head>
+<body>
+  <a class="back" href="./index.html">&larr; transcripts</a>
+  <article class="post">
+    <h1 class="title">AI Doomer Syndrome</h1>
+    <div class="meta">
+      <time datetime="2026-07-01">Jul 1, 2026</time>
+      <a href="https://www.youtube.com/watch?v=HtTh52uhwLQ" target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v=HtTh52uhwLQ</a>
+    </div>
+    <div class="prose">
+      <p>AI denial syndrome is something we've had since about 2023, when AI really started to ramp up. It manifests through comments like "AI slop" or "you must not be doing advanced work, the stuff you're doing is just too simple" — common lines from people in denial about the current state of AI.</p>
+      <p>There's a concept known as Amara's Law, which states that we tend to overestimate the impact of a technology in the short term and underestimate it in the long term. The argument here is the opposite: we're underestimating AI's impact early and will overstate it long term. In the short term, the fears are job replacement, prompting instead of hand-coding, and security concerns — especially around newer models. But not much changes in the long term; the same fears we have now are really what ends up changing later. That isn't negative — it's a regularity. Software engineering has always evolved, from punch-card rubrics to where we are now. On security specifically: more people being able to "hack" means more bugs uncovered and more exploits found. This is already visible in online gaming, where cheats have become more common and more adaptive to anti-cheat systems as AI has improved.</p>
+      <h2>Responding to Andrew Diamond's article</h2>
+      <p>The video works through an article by Andrew Diamond, a novelist and software engineer, describing the old vs. new software workflow.</p>
+      <p>Old workflow: someone requests a feature, you write a formal definition of it, research data structures and algorithms, write the code/tests/docs, then open a PR for review. Diamond argues each of these steps has changed with AI. The response here pushes back point by point:</p>
+      <ul>
+        <li>Feature requests still come from a PM/customer-facing role to an engineer — that hasn't changed.</li>
+        <li>Researching data structures and algorithms has largely been automated by AI, though AI still has strong framework preferences (e.g., defaulting to React or Next.js) shaped by its training data — there's still room for a developer to steer that choice.</li>
+        <li>Writing code, tests, and docs is now essentially all AI's job.</li>
+        <li>Review and approval before merging still requires a human in the loop — if a released feature breaks, that's still on the engineer.</li>
+      </ul>
+      <p>Diamond's simplified new workflow (prompt AI, review/adjust, merge or PR) is seen as accurate but overly clean — it ignores that most engineers don't have a direct line to the customer. That's the PM's job: filtering what customers say they want down to what's actually worth prioritizing.</p>
+      <p>Diamond claims that in the new process, "you haven't done any of the hard thinking you would normally do." This is disputed strongly — prompting well is its own form of mental effort. Managing multiple agents working on different things simultaneously is arguably more taxing than the old workflow, not less. Energy that used to go into syntax and algorithms now goes into prompting, planning, and juggling parallel agent work — anecdotally, energy at the end of a workday feels no higher (often lower) than before AI.</p>
+      <p>Diamond argues AI doesn't know your legal requirements, timing constraints, or what a teammate will build three weeks from now, and that "a senior developer does know these things." This is rejected on two fronts: first, it's the engineer's job to feed that context into the AI — an LLM only knows what it's told; second, senior developers on real teams usually don't have that full picture either. People are focused on their own team's feature delivery, not deep cross-team awareness, regardless of AI.</p>
+      <p>On Diamond's novelist/software-developer analogy about flow state and immersion: the response agrees flow state still exists with AI — prompting and thinking ahead to the next feature can produce the same kind of absorption — but argues that staying connected to the work is a matter of workflow choice (working in small increments with checkpoints), not something AI takes away by default.</p>
+      <p>On AI-written emails and reports: agreement here. Getting a report someone generated with AI and didn't bother to review themselves is genuinely irritating — more so than an honest human mistake. If you send AI-written work, at least read it first.</p>
+      <p>Diamond's central worry — that creative people handing their "imaginative flow state" to AI is a long-term mistake, because AI's knowledge came from human code, writing, and Stack Overflow answers, and that source is drying up as people now ask AI instead of posting online — gets a mixed response. It's true Stack Overflow traffic has dropped and few people answer questions there anymore. But the framing that "bots ate up free data and now sell it back to us" is oversimplified — you're also paying for compute, not just data.</p>
+      <p>Diamond claims companies fired junior developers because AI + senior developers is cheaper, leaving no pipeline for future senior developers. This is challenged as outdated: hiring trends over the last year show companies increasingly posting new-grad roles, often because they believe a junior developer plus AI can now deliver comparable output to a senior developer for less money. That belief is debatable — seniors bring more than code output — but it contradicts the "no juniors being hired" narrative.</p>
+      <p>Diamond's closing argument — that programming has been reduced to "minding the bots," and that people should instead spend free time reading books, writing, and connecting with the people around them — is dismissed as overly dramatic. Writing and reading are valuable, but framing them as inherently superior to using AI, or implying real engineers are "raw-dogging" code without AI, misses how deeply AI is already integrated into serious technical work.</p>
+      <h2>Linus Torvalds' take</h2>
+      <p>An email exchange is highlighted: Linus Torvalds responding to a report about an AI-flagged "hallucination" in kernel code. Torvalds notes that some AI slop reports are indeed just pattern-matching false positives, but a noticeable and growing percentage of reports have become genuinely valid — some "deep and subtle," with the AI completely correct. His conclusion: anyone who thinks all AI output is slop is in denial about the current state of the technology.</p>
+      <p>This is framed as the right way to think about it — the same way "all code is bad" would be an absurd generalization, "AI is slop" is equally absurd as a blanket statement. Some AI output is good, some is bad, and it needs to be evaluated case by case rather than treated as all-or-nothing, which is the recurring pattern in AI-doomer thinking.</p>
+      <h2>Where sentiment is heading</h2>
+      <p>A separate article argues AI represents a real, permanent shift in society, not a bubble — denial will only leave people unprepared. That's agreed with fully.</p>
+      <p>The framing that there are two camps — "AI is ass" and "AI is amazing" — is rejected in favor of a middle position: AI is good, but it has to be evaluated honestly rather than treated as an extreme in either direction. Both extremes tend to have a financial incentive: AI doomers often sell courses about traditional coding, AI hype accounts often sell courses about prompting.</p>
+      <p>The video points to one creator (Theo/"Moitar" reference) whose public stance shifted over a few months from declaring AI-generated code "a slot machine" to admitting "I was wrong about AI" — used as an example of the broader trend of doomer sentiment cooling into a more moderate middle ground over time, with figures like Torvalds already there. The conclusion: neither "AI is garbage" nor "AI can do everything" is the right stance — the healthy position is the middle, and that shift is happening in real time.</p>
+    </div>
+  </article>
+</body>
+</html>

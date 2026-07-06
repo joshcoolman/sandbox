@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where is the Moat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Fraunces:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #14130f;
+    --surface: #1f1d18;
+    --text: #ece7dd;
+    --text-body: #d7d1c5;
+    --text-muted: #9c958a;
+    --text-faint: #6e685e;
+    --border: #38342d;
+    --accent: #c67e5e;
+    --accent-soft: rgba(198, 126, 94, 0.16);
+    --font-display: 'Bitter', Georgia, serif;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-mono: 'Space Mono', 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-body);
+  }
+  body {
+    min-height: 100vh;
+    padding: 80px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .back {
+    width: 100%;
+    max-width: 680px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+  }
+  .back:hover { color: var(--accent); }
+  .post { width: 100%; max-width: 680px; }
+  .title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+  }
+  .meta a {
+    color: var(--accent);
+    word-break: break-all;
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-soft);
+  }
+  .meta a:hover { border-color: var(--accent); }
+  .prose {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.72;
+    letter-spacing: 0.008em;
+  }
+  .prose p { margin: 0 0 24px; }
+  .prose ul, .prose ol { margin: 0 0 24px; padding-left: 24px; }
+  .prose li { margin-bottom: 8px; }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--text);
+  }
+  .prose strong { font-weight: 600; color: var(--text); }
+  .prose em { font-style: italic; }
+  .prose ::selection { background: var(--accent); color: var(--bg); }
+  @media (max-width: 480px) {
+    body { padding: 48px 16px; }
+  }
+</style>
+</head>
+<body>
+  <a class="back" href="./index.html">&larr; transcripts</a>
+  <article class="post">
+    <h1 class="title">Where is the Moat</h1>
+    <div class="meta">
+      <time datetime="2026-07-01">Jul 1, 2026</time>
+      <a href="https://www.youtube.com/watch?v=dDmJLezy-M4" target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v=dDmJLezy-M4</a>
+    </div>
+    <div class="prose">
+      <p>Anyone can build software now. The guy who never touched a line of code can whip up an entire website. The question is how this changes the landscape for the people who didn't have to build software before. There's an article that gets into this, and it's worth going through in detail.</p>
+      <p>Before getting into it: this has always been true, in a sense. There are apps that are absolutely terrible and still have a ton of users — Canva being an early example of an awkward experience that became the de facto tool because it found the right way to market itself to schools. Discord is another: it didn't really improve on Xfire or TeamSpeak, it just found a way to position and market itself to a different audience. Software has always been about marketing.</p>
+      <p>The article opens with layoffs attributed to AI: BlockFi cutting nearly half its 4,000 people, Atlassian laying off 1,600, Salesforce replacing 4,000 support roles with AI, Snapchat cutting 1,000, and a Czech insurance company laying off a third of its 1,200 employees, with its CEO saying "the time of playing around with AI is over." That sentiment shows up across a lot of CEOs, and it rings true — most roles now use AI in some degree, and software engineers use it constantly, good or bad.</p>
+      <p>Point one from the article: a lower entry barrier makes software a lower-respect field. The author illustrates this with a personal story about coming from mathematics and marketing, and observing that people show far more respect for mathematical expertise than for marketing — even though marketing is part of every business and, in the U.S. at least, gets treated like a notch below "real" work. No one argues with you about a proof of a theorem, but everyone has an opinion about the colors on your landing page. Experts get outsized influence over things once people feel like they understand them, which they rarely do — the classic advice is to never ask an expert's opinion, because a toy inventor and a child will evaluate the same toy completely differently, and a developer nitpicking a website will focus on things that don't actually matter to an end user.</p>
+      <p>This connects to a broader idea: once anyone can build software, everyone feels qualified to judge it. This shows up constantly with support staff and PMs who never had a coding background suddenly shipping dashboards and scripts — once you've tasted what it's like to build something, you start having opinions on it, the same way playing Forza Horizon can make you feel like you understand car handling even though you don't. The article frames this as two variables interacting: how hard a field is to enter, and how easily outsiders can evaluate the work. When both shift, barriers drop, visibility rises, and respect collapses.</p>
+      <p>As software moves into "everyone's a critic" territory, pay is expected to compress toward what other creative fields already look like — writers, designers, marketers — where the barrier to entry is low, the work is visible, and only the proven best command a premium. To stand out you need something beyond "software engineer" on a resume: a specialization, a track record, a reputation. Companies like Meta still pay enormous salaries, but getting in and staying in is brutal, and the top 10% of developers are pulling further ahead of the average. AI isn't perfect and produces bugs, but so did human engineers — codebases were messy before AI too. The average developer today can produce reasonably good code without trying that hard, and the ceiling for what a single person can do keeps rising.</p>
+      <p>The article draws a comparison to dating apps: once people saw how many options they had, they stopped settling. But that doesn't map perfectly onto software, because unlike a dating profile, software has a visible track record — reviews, history, bug reports — so even a fourth calculator app can break through if it nails the target audience and shows longevity through constant updates and iteration. Great apps are built over years of revision and customer feedback, which is exactly what a one-off vibe-coded app can't replicate overnight.</p>
+      <p>The article's next point: the middle class of software products will disappear. SaaS is heading toward an app-store-style power law — companies that survived by being "the only ones who could" lose that moat once anyone can vibe-code an alternative over a weekend, and the mid-size players with high overhead but no real aggregator power get squeezed from both sides. That's true to a point, but keeping a SaaS product running long-term — infrastructure, hosting, and above all distribution — is still genuinely hard and hasn't gotten meaningfully easier with AI. Getting an audience through word of mouth has always been the real bottleneck, before AI and after.</p>
+      <p>Next implication: if you want to win, sell services, not products. For every dollar companies spend on software, they spend roughly six on services — so the opportunity shifts from selling the software as a middleman to capturing that services dollar as margin, the way TurboTax doesn't sell you software, it sells you filed taxes. This changes what it means to be an expert too: a specialist doesn't need to be hired full-time by one company anymore when AI handles everything except the judgment calls. Still, there's a mundane layer that persists — someone still has to write and refine the prompts, back-and-forth, the same way boilerplate coding never disappeared, it just changed shape.</p>
+      <p>The article's conclusion: software's evolution is now following the same path other low-barrier fields have followed for decades. Get ready for less experienced people giving advice and evaluating work. The winning position is either being the absolute best, or combining strong technical skill with something else — design, distribution, brand, domain expertise. The worst position is being merely competent at software and nothing else. That was arguably already true before AI: good engineers were never valued purely for syntax, but for judgment, product sense, and the ability to work with a team. Younger engineers speaking up sooner, thanks to how quickly AI lets them ramp up, is actually a good thing on balance, even if it means more bad advice mixed in with the good.</p>
+      <p>The closing line lands well: coding was never the hard part. The hard part is taste, distribution, and making something people actually want — and that hasn't changed. The tool is a commodity; the work is the moat. The barrier to entry for software has fallen and isn't coming back up. The real question isn't whether that changes everything — it's whether you'll be the one doing the changing, or the one being changed.</p>
+    </div>
+  </article>
+</body>
+</html>

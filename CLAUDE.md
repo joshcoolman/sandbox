@@ -24,6 +24,7 @@ The hook lives in `.git/hooks/` (untracked), so on a fresh clone it won't exist.
 - `/note` -- sticky note, instant capture
 - `/link` -- save a link with comment, auto-thumbnails
 - `/blog-post` -- draft from conversation context
+- `/transcript` -- fetch a YouTube transcript, save it as a self-contained `.html` in `transcripts/`, and open it immediately; run with no URL to open the existing transcripts index instead
 
 **Design experiments:**
 - `/sketch` -- rapid prototype in `app/sketches/` (page.tsx + styles.css)
@@ -57,6 +58,7 @@ Word you'd say -> where it lives -> the skill for it. Rows are durable surfaces 
 | Experiments  | `app/design-experiments/` | `(experiments)/` (real, in `data.ts`) - `page.tsx` (gallery)        | `/design-experiment`, `/ship-experiment` |
 | Sketches     | `app/sketches/`         | `page.tsx` (index, folder-scanned) -- top-level scratch, unlinked from the site, safe to delete | `/sketch` |
 | Building     | `app/building/`         | `lib/projects/data.ts` (the public-repo catalog) - `app/types/projects.ts` (shape) | `/update-my-work` |
+| Transcripts  | `transcripts/`          | standalone dark-themed `.html` files, self-styled and opened directly (no route, no server) - `index.html` regenerated on each save | `/transcript` |
 | Docs         | `app/(docs)/`           | --                                                                    | -- |
 
 ## Structure
@@ -75,6 +77,10 @@ app/design-experiments/
 app/sketches/                      # Top-level scratch -- unlinked, safe to delete
 |-- page.tsx                       # Folder-scanned index at /sketches
 `-- [name]/                        # page.tsx + styles.css
+
+transcripts/                       # Saved YouTube transcripts -- standalone .html files,
+                                    # self-contained dark styling, no route/server needed.
+                                    # index.html (regenerated per save) lists them all.
 
 app/(blog)/
 |-- blog/                          # Blog index and posts

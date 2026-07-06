@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transcripts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Fraunces:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #14130f;
+    --surface: #1f1d18;
+    --text: #ece7dd;
+    --text-body: #d7d1c5;
+    --text-muted: #9c958a;
+    --text-faint: #6e685e;
+    --border: #38342d;
+    --accent: #c67e5e;
+    --font-display: 'Bitter', Georgia, serif;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-mono: 'Space Mono', 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text-body); }
+  body {
+    min-height: 100vh;
+    padding: 80px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .wrap { width: 100%; max-width: 680px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 12px;
+  }
+  .intro {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+    margin: 0 0 48px;
+    max-width: 60ch;
+  }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--border);
+  }
+  .list li { border-bottom: 1px solid var(--border); }
+  .list a {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 4px;
+    text-decoration: none;
+    color: inherit;
+    transition: padding-left 0.18s ease;
+  }
+  .list a:hover { padding-left: 12px; }
+  .list a:hover .entry-title { color: var(--accent); }
+  .entry-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .entry-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+  .empty {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">transcripts</p>
+    <p class="intro">Saved YouTube transcripts. Self-contained static files — no server required.</p>
+    <ul class="list">
+      <li><a href="see-cmux-solve-multi-agent-orchestration-claude-code-and-pi-agent.html"><span class="entry-title">SEE CMUX SOLVE Multi-Agent Orchestration (Claude Code and Pi Agent)</span><span class="entry-date">Jul 6, 2026</span></a></li>
+      <li><a href="htmx-vs-react-the-honest-verdict-with-receipts.html"><span class="entry-title">HTMX vs React: The honest verdict (with receipts)!</span><span class="entry-date">Jul 6, 2026</span></a></li>
+      <li><a href="adopting-effect-at-zendesk.html"><span class="entry-title">Adopting Effect at Zendesk | Attila Večerek | Cause &amp; Effect #1</span><span class="entry-date">Jul 6, 2026</span></a></li>
+      <li><a href="where-is-the-moat.html"><span class="entry-title">Where is the Moat</span><span class="entry-date">Jul 1, 2026</span></a></li>
+      <li><a href="ai-doomer-syndrome.html"><span class="entry-title">AI Doomer Syndrome</span><span class="entry-date">Jul 1, 2026</span></a></li>
+    </ul>
+  </div>
+</body>
+</html>

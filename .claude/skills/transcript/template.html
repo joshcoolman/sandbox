@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;700&family=Fraunces:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #14130f;
+    --surface: #1f1d18;
+    --text: #ece7dd;
+    --text-body: #d7d1c5;
+    --text-muted: #9c958a;
+    --text-faint: #6e685e;
+    --border: #38342d;
+    --accent: #c67e5e;
+    --accent-soft: rgba(198, 126, 94, 0.16);
+    --font-display: 'Bitter', Georgia, serif;
+    --font-serif: 'Fraunces', Georgia, serif;
+    --font-mono: 'Space Mono', 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-body);
+  }
+  body {
+    min-height: 100vh;
+    padding: 80px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .back {
+    width: 100%;
+    max-width: 680px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 32px;
+  }
+  .back:hover { color: var(--accent); }
+  .post { width: 100%; max-width: 680px; }
+  .title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 0 0 16px;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 40px;
+  }
+  .meta a {
+    color: var(--accent);
+    word-break: break-all;
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent-soft);
+  }
+  .meta a:hover { border-color: var(--accent); }
+  .prose {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.72;
+    letter-spacing: 0.008em;
+  }
+  .prose p { margin: 0 0 24px; }
+  .prose h2 {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin: 40px 0 20px;
+  }
+  .prose ul, .prose ol { margin: 0 0 24px; padding-left: 24px; }
+  .prose li { margin-bottom: 8px; }
+  .prose code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--text);
+  }
+  .prose strong { font-weight: 600; color: var(--text); }
+  .prose em { font-style: italic; }
+  .prose ::selection { background: var(--accent); color: var(--bg); }
+  @media (max-width: 480px) {
+    body { padding: 48px 16px; }
+  }
+</style>
+</head>
+<body>
+  <a class="back" href="./index.html">&larr; transcripts</a>
+  <article class="post">
+    <h1 class="title">{{TITLE}}</h1>
+    <div class="meta">
+      <time datetime="{{DATE_ISO}}">{{DATE_DISPLAY}}</time>
+      <a href="{{URL}}" target="_blank" rel="noopener noreferrer">{{URL}}</a>
+    </div>
+    <div class="prose">
+{{BODY}}
+    </div>
+  </article>
+</body>
+</html>
