@@ -73,14 +73,6 @@ export default function AboutMePage() {
             I&apos;m most active on{" "}
             <a href="https://x.com/joshiscoolman" target="_blank" rel="noopener noreferrer">
               X
-            </a>{" "}
-            and{" "}
-            <a
-              href="https://bsky.app/profile/joshcoolman.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Bluesky
             </a>
             , and the code lives on{" "}
             <a href="https://github.com/joshcoolman" target="_blank" rel="noopener noreferrer">
