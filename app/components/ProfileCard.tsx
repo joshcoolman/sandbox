@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import CurtainLink from './CurtainLink'
 import profile from '@/profile.json'
-import { BlueskyIcon, GitHubIcon, LinkedInIcon, XIcon, YouTubeIcon } from './icons'
+import { GitHubIcon, XIcon, YouTubeIcon } from './icons'
 import styles from './ProfileCard.module.css'
 
 /**
@@ -47,10 +47,8 @@ export default function ProfileCard() {
         </span>
         <div className={styles.links}>
           {links.x && <XIcon href={links.x} className={styles.link} />}
-          {links.linkedin && <LinkedInIcon href={links.linkedin} className={styles.link} />}
           {links.github && <GitHubIcon href={links.github} className={styles.link} />}
           {links.youtube && <YouTubeIcon href={links.youtube} className={styles.link} />}
-          {links.bluesky && <BlueskyIcon href={links.bluesky} className={styles.link} />}
         </div>
       </div>
     </aside>
